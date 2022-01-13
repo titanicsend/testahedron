@@ -1,6 +1,6 @@
 {
   "version": "0.4.0",
-  "timestamp": 1642061422848,
+  "timestamp": 1642105964840,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -255,8 +255,8 @@
             "patternIndex": 0,
             "patterns": [
               {
-                "id": 171,
-                "class": "bigartsorg.pattern.jeff.BasicRainbowPattern",
+                "id": 196,
+                "class": "titanicsend.pattern.jeff.BasicRainbowPattern",
                 "internal": {
                   "modulationColor": 0,
                   "expanded": true,
@@ -269,7 +269,7 @@
                 },
                 "children": {
                   "modulation": {
-                    "id": 172,
+                    "id": 197,
                     "class": "heronarts.lx.modulation.LXModulationEngine",
                     "internal": {
                       "modulationColor": 0
