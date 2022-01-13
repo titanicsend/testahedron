@@ -1,5 +1,7 @@
 Note: The contents of this directory originated as a copy of [LXStudio-IDE](https://github.com/heronarts/LXStudio-IDE) as of [97fd0b](https://github.com/heronarts/LXStudio-IDE/commit/97fd0bbdeed62a1dbd1dddb3c0a6cea1746b6c26). 
 
+If you're looking for the overall [Testahedron README](https://github.com/titanicsend/testahedron), it's in the parent directory.
+
 
 LX Studio
 ==

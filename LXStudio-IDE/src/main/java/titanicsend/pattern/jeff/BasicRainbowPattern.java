@@ -2,7 +2,7 @@
  * @author Jeff Vyduna <j@ngnr.org>
  */
 
-package bigartsorg.pattern.jeff;
+package titanicsend.pattern.jeff;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;

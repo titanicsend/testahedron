@@ -17,7 +17,7 @@ The tetrahedral object is made of four traingular panels that comprise 7 LED-PC 
 
 The shape is designed to simulate medium scale panels and incorporate the most acute convex and concave edges the car will have.
 
-Point coordinates are given in the [Model labels and geometry](https://docs.google.com/spreadsheets/d/1xg3VyxFnoMtjiKc9JUttWGl9H9YlJPBahsxc7eyymcE/edit?usp=sharing) sheet.
+Point coordinates are given in the [Testahedron geometry](https://docs.google.com/spreadsheets/d/1xg3VyxFnoMtjiKc9JUttWGl9H9YlJPBahsxc7eyymcE/edit?usp=sharing) sheet.
 
 
 ## Learning LX and Developing Patterns
@@ -26,18 +26,24 @@ We are planning to use LX Studio. This repo embeds both versions - the Processin
 
 Don't struggle - ask questions in [#Lighting on Slack](https://titanicsend.slack.com/archives/C02L0MDQB2M).
 
-We need your help right now. The problems that need to be solved are on a [board on Notion](https://titanicsend.notion.site/d4a7f54ab5f84784b79268e81c9342a7?v=1950f7f8703d498cb51e6e01ec84c577).
+We need your help right now. The problems that need to be solved are on a [board on Notion](https://www.notion.so/titanicsend/d4a7f54ab5f84784b79268e81c9342a7?v=1950f7f8703d498cb51e6e01ec84c577).
 
 **IDE**: Lighting lead Jeff has chosen to leave a troubling Eclipse past behind and is trying out IntelliJ for this Java project. So far it's been seamless and lovely. You can probably use any Java IDE until it interferes with others' workflows.
+
+
 
 ### Suggested quick start
 
 * Clone the repo. Have Jeff give you write access on GitHub.
+    ```
+    git clone https://github.com/titanicsend/testahedron.git
+    ```
+* Follow the [quick IDE setup](IDE Setup.md)
 * Build and run the project under /LXStudio-IDE.
     * Play with the UI for 10-30 minutes
-    * Read the [LX Wiki](https://github.com/heronarts/LXStudio/wiki)
+    * Read the [LX Studio Wiki](https://github.com/heronarts/LXStudio/wiki)
     * Load the Testahedron Playground.lxp project (top bar)
-    * Play with the UI until you have a modulator controlling the parameter for a pattern, and an effect applied on top/
+    * Play with the UI until you have a modulator controlling the parameter for a pattern, and an effect applied on top.
        * See [this guide](https://github.com/tracyscott/RainbowStudio/blob/master/LXStudioUserGuide.md) from another memorable Burning Man art piece as a guide
     * Define a new fixture in the UI
     * [Optional] Save your playgorund as a new project with your name: `Playground <YourName>.lxp`. You can mess this project up and experiment broadly.
@@ -45,7 +51,7 @@ We need your help right now. The problems that need to be solved are on a [board
     * Save as `Testaherdron <YourName>.lxp`. 
     * Make a sound reactive pattern in the UI; chose a song. Demo this at a weekly TE meeting.
 * Let's code
-    * Look through the very BasicRainbowPattern by Jeff. 
+    * Look through the very [BasicRainbowPattern](https://github.com/titanicsend/testahedron/blob/main/LXStudio-IDE/src/main/java/titanicsend/pattern/jeff/BasicRainbowPattern.java) by Jeff
     * Look through the patterns developed by others in these projects:
         * [EnvelopLX](https://github.com/EnvelopSound/EnvelopLX)'s [patterns](https://github.com/EnvelopSound/EnvelopLX/blob/master/EnvelopLX/Patterns.pde) are advanced (by Mark the creator of LX)
         * [Temple Galaxia](https://github.com/temple2018/Galaxia) (2018) [patterns](https://github.com/temple2018/Galaxia/tree/master/src/main/java/org/templegalaxia/patterns) - I think this has a sane multi-contributor repo layout
@@ -53,13 +59,15 @@ We need your help right now. The problems that need to be solved are on a [board
         * [Entwined](https://github.com/squaredproject/Entwined) (2022) has some nice beginner [pattern code](https://github.com/squaredproject/Entwined/blob/master/oldlx/Trees/Patterns_ColinHunt.java)
         * [RainbowBridge](https://github.com/tracyscott/RainbowStudio) (2018) kind of an example of a more scattered file structure. [Patterns](https://github.com/tracyscott/RainbowStudio/tree/master/src/main/java/com/giantrainbow/patterns)
         * [Titanic's End 2014](https://github.com/nottombrown/TitanicsEnd) was one of the first Burning Man projects to use LX. It uses a very early version, but the basic renderer paradigm is easier to study in these patterns.
-  * Develop a pattern in Java using its renderer/shader paradigm
-  * Save as `/testahedron/LXStudio-IDE/src/main/java/bigartsorg/pattern/<YourName>/<PatternName>.java`. (Java directory conventions - just, whoa)
-  * Remember to register it to LXStudioApp's initialize() to see it listed in the UI
+    * Develop a pattern in Java using the [LX renderer/shader convention for patterns](https://github.com/heronarts/LXStudio/wiki/Learning-LX:-Patterns)
+    * Save as `testahedron/LXStudio-IDE/src/main/java/titanicsend/pattern/<YourName>/<PatternName>.java`. (Java directory conventions - just, whoa)
+    * Remember to register it to LXStudioApp's initialize() to see it listed in the UI
+* Resources for getting better
+    * LX (underlying engine, not the Studio UI) [core classes](https://github.com/heronarts/LX/tree/master/src/main/java/heronarts/lx)
 
-### A note about LX
+### About LX Studio
 
-Initial impressions are that LX is powerful and thoughtful, though less documented than ideal. The maintainer, Mark Slee, is incredibly kind and responsive over email ([mark@heronarts.com](mailto:mark@heronarts.com)).  LX is not open source - I've copied some of it's license here:
+Initial impressions are that LX is powerful and thoughtful, though less documented than ideal. The maintainer, Mark Slee, is incredibly kind and responsive over email ([mark@heronarts.com](mailto:mark@heronarts.com)).  LX is not technically open source - I've copied some of it's license here:
 
 ---
 
