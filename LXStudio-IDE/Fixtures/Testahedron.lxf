@@ -1,0 +1,49 @@
+{
+  "fixtureType": "Tetrahedron",
+
+  "tags": [ "custom" ],
+  "components": [
+    // Geometry: https://docs.google.com/spreadsheets/d/1xg3VyxFnoMtjiKc9JUttWGl9H9YlJPBahsxc7eyymcE/edit#gid=0
+    // Units are inches
+
+    { "meta": {
+      "edge": "1-0",
+      "edgeType": "inner"
+    }, "type": "strip", "numPoints": 44, "spacing": 1.312337, "x": 58, "y": 0, "z": 0, "yaw": -180 },
+
+    { "meta": {
+      "edge": "0-3",
+      "edgeType": "inner"
+    }, "type": "strip", "numPoints": 44, "spacing": 1.312337, "x": 0, "y": 0, "z": 0, "direction": {"x": -13.692, "y": -23.82, "z": -51.084} },
+
+    { "meta": {
+      "edge": "2-0",
+      "edgeType": "inner"
+    }, "type": "strip", "numPoints": 44, "spacing": 1.312337, "x": 0, "y": 58, "z": 0, "direction": {"x": 0, "y": -1, "z": 0} },
+
+    { "meta": {
+      "edge": "0-4",
+      "edgeType": "inner"
+    }, "type": "strip", "numPoints": 44, "spacing": 1.312337, "x": 0, "y": 0, "z": 0, "direction": {"x": 0, "y": -37.284, "z": 44.436} },
+
+    { "meta": {
+      "edge": "4-3",
+      "edgeType": "outer"
+    }, "type": "strip", "numPoints": 74, "spacing": 1.312337, "x": 0, "y": -37.284, "z": 44.436, "direction": {"x": -13.692, "y": 13.464, "z":-95.52} },
+
+    { "meta": {
+      "edge": "3-2",
+      "edgeType": "outer"
+    }, "type": "strip", "numPoints": 74, "spacing": 1.312337, "x": -13.692, "y": -23.82, "z": -51.084, "direction": {"x": 13.692, "y": 81.82, "z": 51.084} },
+
+    { "meta": {
+      "edge": "2-1",
+      "edgeType": "outer"
+    }, "type": "strip", "numPoints": 62, "spacing": 1.312337, "x": 0, "y": 58, "z": 0, "direction": {"x": 58, "y": -58, "z": 0} },
+
+    { "meta": {
+      "edge": "1-4",
+      "edgeType": "outer"
+    }, "type": "strip", "numPoints": 62, "spacing": 1.312337, "x": 58, "y": 0, "z": 0, "direction": {"x": -58, "y": -37.284	, "z": 44.436} }
+  ]
+}

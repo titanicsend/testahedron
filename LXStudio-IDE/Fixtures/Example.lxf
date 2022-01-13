@@ -1,0 +1,25 @@
+{
+  "fixtureType": "Cube",
+
+  "tags": [ "custom" ],
+  "components": [
+
+    /* Bottom square */
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 5, "y": 0, "z": 0 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 160, "y": 0, "z": 5, "yaw": -90 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 155, "y": 0, "z": 160, "yaw": -180  },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 0, "y": 0, "z": 155, "yaw": -270  },
+    
+    /* Top square */
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 5, "y": 160, "z": 0 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 160, "y": 160, "z": 5, "yaw": -90 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 155, "y": 160, "z": 160, "yaw": -180 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 0, "y": 160, "z": 155, "yaw": -270 },
+    
+    /* Verticals */
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 0, "y": 5, "z": 0, "roll": 90 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 160, "y": 5, "z": 0, "roll": 90 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 160, "y": 5, "z": 160, "roll": 90 },
+    { "type": "strip", "numPoints": 15, "spacing": 10, "x": 0, "y": 5, "z": 160, "roll": 90 }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "fixtures": [
+    {
+      "id": 33,
+      "class": "heronarts.lx.structure.GridFixture",
+      "internal": {
+        "modulationColor": 0
+      },
+      "parameters": {
+        "label": "Grid 1",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "scale": 1.0,
+        "selected": false,
+        "deactivate": false,
+        "enabled": false,
+        "brightness": 1.0,
+        "identify": false,
+        "mute": false,
+        "solo": false,
+        "tags": "grid",
+        "protocol": 0,
+        "byteOrder": 0,
+        "transport": 0,
+        "reverse": false,
+        "host": "127.0.0.1",
+        "port": 7890,
+        "dmxChannel": 0,
+        "artNetUniverse": 0,
+        "opcChannel": 0,
+        "opcOffset": 0,
+        "ddpDataOffset": 0,
+        "kinetPort": 1,
+        "numRows": 15,
+        "numColumns": 15,
+        "rowSpacing": 10.0,
+        "columnSpacing": 10.0,
+        "positionMode": 0,
+        "wiring": 0
+      },
+      "children": {}
+    },
+    {
+      "jsonFixtureType": "Helix",
+      "jsonParameters": {},
+      "id": 49,
+      "class": "heronarts.lx.structure.JsonFixture",
+      "internal": {
+        "modulationColor": 0
+      },
+      "parameters": {
+        "label": "Helix 2",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "scale": 1.0,
+        "selected": false,
+        "deactivate": false,
+        "enabled": false,
+        "brightness": 1.0,
+        "identify": false,
+        "mute": false,
+        "solo": false,
+        "tags": "helix",
+        "fixtureType": "Helix"
+      },
+      "children": {}
+    },
+    {
+      "id": 74,
+      "class": "heronarts.lx.structure.StripFixture",
+      "internal": {
+        "modulationColor": 0
+      },
+      "parameters": {
+        "label": "Strip 3",
+        "x": 0.0,
+        "y": 145.0,
+        "z": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "scale": 1.0,
+        "selected": true,
+        "deactivate": false,
+        "enabled": false,
+        "brightness": 1.0,
+        "identify": false,
+        "mute": false,
+        "solo": false,
+        "tags": "strip",
+        "protocol": 0,
+        "byteOrder": 0,
+        "transport": 0,
+        "reverse": false,
+        "host": "127.0.0.1",
+        "port": 7890,
+        "dmxChannel": 0,
+        "artNetUniverse": 0,
+        "opcChannel": 0,
+        "opcOffset": 0,
+        "ddpDataOffset": 0,
+        "kinetPort": 1,
+        "numPoints": 36,
+        "spacing": 4.0
+      },
+      "children": {}
+    }
+  ]
+}
