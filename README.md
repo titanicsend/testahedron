@@ -28,16 +28,17 @@ Don't struggle - ask questions in [#Lighting on Slack](https://titanicsend.slack
 
 We need your help right now. The problems that need to be solved are on a [board on Notion](https://www.notion.so/titanicsend/d4a7f54ab5f84784b79268e81c9342a7?v=1950f7f8703d498cb51e6e01ec84c577).
 
-**IDE**: Lighting lead Jeff has chosen to leave a troubling Eclipse past behind and is trying out IntelliJ for this Java project. So far it's been seamless and lovely. You can probably use any Java IDE until it interferes with others' workflows.
+**IDE**: Lighting lead Jeff has chosen to leave a troubling Eclipse past behind and is trying out IntelliJ for this Java project. So far it's been seamless and lovely. You can probably use any Java IDE.
 
 
 
 ### Suggested quick start
 
-* Clone the repo. Have Jeff give you write access on GitHub.
+* Clone the repo. Have Jeff give you write access on GitHub. We can skip fork/PRs for now.
     ```
     git clone https://github.com/titanicsend/testahedron.git
     ```
+* Download and install [Processing 4](https://processing.org/download). Just drag the uncompressed app to Applications.
 * Follow the [quick IDE setup](IDE Setup.md)
 * Build and run the project under /LXStudio-IDE.
     * Play with the UI for 10-30 minutes
