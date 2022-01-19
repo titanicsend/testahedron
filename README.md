@@ -38,7 +38,7 @@ We need your help right now. The problems that need to be solved are on a [board
     ```
     git clone https://github.com/titanicsend/testahedron.git
     ```
-* Download and install [Processing 4](https://processing.org/download). Just drag the uncompressed app to Applications.
+* Download and install [Processing 4](https://processing.org/download). Just drag the uncompressed app to Applications. If you already had a Java IDE running, you should now restart it to resolve dependencies on GlueGen, JOGL, and Processing Core.
 * Follow the [quick IDE setup](IDE Setup.md)
 * Build and run the project under /LXStudio-IDE.
     * Play with the UI for 10-30 minutes
