@@ -11,32 +11,32 @@ If you'd like to try IntelliJ, downloa IntelliJ IDEA **Community Edition** [here
 
 Open the project in IntelliJ using `LXStudio-IDE/` as the root.
 
-![Open Project](assets/IDE Setup/Open Project.png)
+![Open Project](assets/IDE%20Setup/Open%20Project.png)
 
 You will need to download the right Java SDK. Most people should see IntelliJ automatically prompt them to do it for them - accept these prompts.
 
-![Auto install Java SDK](assets/IDE Setup/Auto install Java SDK.png)
+![Auto install Java SDK](assets/IDE%20Setup/Auto%20install%20Java%20SDK.png)
 
 
 ### Manual config of Java SDK (shouldn't be needed)
 
 You may need to select the Java SDK in the Project Structure:
 
-![Project Structure](assets/IDE Setup/SDK in Project Structure.png)
+![Project Structure](assets/IDE%20Setup/SDK%20in%20Project%20Structure.png)
 
 As well as in the App Run Config:
 
-![App config menu](assets/IDE Setup/App configuration menu.png)
+![App config menu](assets/IDE%20Setup/App%20configuration menu.png)
 
-![Run Configurations](assets/IDE Setup/Run Configurations.png)
+![Run Configurations](assets/IDE%20Setup/Run%20Configurations.png)
 
 ### Recognize LX Studio JSON file extensions
 
 If can be handy to edit LX Studio's JSON config files in the IDE. Add the .lfp and .lxp extension to be recognized as JSON.
 
-Open preferences (⌘-, on Mac) and go to Editor → File Types → JSON.
+Open IntelliJ preferences (⌘-, on Mac) and go to Editor → File Types → JSON.
 
-![JSON File Types](assets/IDE Setup/JSON File Types.png)
+![JSON File Types](assets/IDE%20Setup/JSON%20File%20Types.png)
 
 ### Optional Plugins
 
