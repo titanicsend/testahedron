@@ -18,12 +18,12 @@
 
 package heronarts.lx.app;
 
-import java.io.File;
-
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
+
+import java.io.File;
 
 /**
  * This is an example top-level class to build and run an LX Studio
@@ -70,6 +70,7 @@ public class LXStudioApp extends PApplet implements LXPlugin {
     // Register custom pattern and effect types
     lx.registry.addPattern(heronarts.lx.app.pattern.AppPattern.class);
     lx.registry.addPattern(titanicsend.pattern.jeff.BasicRainbowPattern.class);
+    lx.registry.addPattern(titanicsend.pattern.tmc.SimpleSolidPattern.class);
 
     lx.registry.addEffect(heronarts.lx.app.effect.AppEffect.class);
   }
