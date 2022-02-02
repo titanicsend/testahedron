@@ -22,9 +22,11 @@ import java.io.File;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
+import heronarts.lx.model.LXModel;
+import heronarts.lx.model.LXPoint;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
-import titanicsend.model.TEVehicleModel;
+import titanicsend.model.Triangle;
 
 public class TEApp extends PApplet implements LXPlugin  {
 
@@ -52,6 +54,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     flags.startMultiThreaded = true;
 
     TEVehicleModel model = TEVehicleModel.build();
+
     new LXStudio(this, flags, model);
     this.surface.setTitle(WINDOW_TITLE);
   }
