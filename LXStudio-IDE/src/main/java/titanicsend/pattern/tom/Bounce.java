@@ -9,6 +9,7 @@ import heronarts.lx.parameter.CompoundParameter;
 import heronarts.lx.parameter.FunctionalParameter;
 import heronarts.lx.parameter.LXParameter;
 import titanicsend.model.Edge;
+import titanicsend.model.TEEdgeModel;
 import titanicsend.pattern.TEPattern;
 
 import static heronarts.lx.LX.TWO_PI;
@@ -36,7 +37,7 @@ public class Bounce extends TEPattern {
     public void run(double deltaMs) {
         float phase = this.phase.getValuef();
 
-        for (Edge edge : model.edges) {
+        for (TEEdgeModel edge : model.edges) {
             for (LXPoint point : edge.points) {
                 colors[point.index] = LXColor.BLACK;
             }
