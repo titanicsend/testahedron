@@ -8,8 +8,8 @@ public class TEEdgeModel extends LXModel {
   public TEVertex v0, v1;
   public int numConnectedPanels; // -1 if we don't know
 
-  // In microns, the same unit x,y,z coordinates use
-  public static final int DISTANCE_BETWEEN_PIXELS = 2500;
+  // In microns, the same unit x,y,z coordinates use. 25k microns ~= 1 inch
+  public static final int DISTANCE_BETWEEN_PIXELS = 25000;
 
   public boolean touches(TEEdgeModel other) {
     return this.v0.edges.contains(other) || this.v1.edges.contains(other);
