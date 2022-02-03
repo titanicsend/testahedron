@@ -1,13 +1,23 @@
 package titanicsend.model;
 
 import heronarts.lx.model.LXPoint;
-import java.util.Set;
+import java.util.*;
 
 public class TEVertex extends LXPoint {
+  public static HashMap<Integer, TEVertex> vertexesById;
+
+  public int id;
+  public int numConnectedEdges;  // -1 if we don't know
   public Set<TEEdgeModel> edges;
 
-  public TEVertex(LXPoint point) {
+  public TEVertex(LXPoint point, int id, int numConnectedEdges) {
     super(point);
+    this.id = id;
+    this.numConnectedEdges = numConnectedEdges;
+  }
+
+  public TEVertex(LXPoint point, int id) {
+    this(point, id, -1);
   }
 
   public double distanceTo(TEVertex other) {
