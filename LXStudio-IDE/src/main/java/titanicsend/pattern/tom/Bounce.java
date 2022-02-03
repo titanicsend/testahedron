@@ -4,16 +4,12 @@ import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
-import heronarts.lx.modulator.SawLFO;
 import heronarts.lx.modulator.SinLFO;
 import heronarts.lx.parameter.CompoundParameter;
 import heronarts.lx.parameter.FunctionalParameter;
 import heronarts.lx.parameter.LXParameter;
-import titanicsend.model.Edge;
 import titanicsend.model.TEEdgeModel;
 import titanicsend.pattern.TEPattern;
-
-import static heronarts.lx.LX.TWO_PI;
 
 @LXCategory("Testahedron")
 public class Bounce extends TEPattern {
