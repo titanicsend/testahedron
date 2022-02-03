@@ -2,41 +2,34 @@ package titanicsend.model;
 
 import java.util.*;
 
-import heronarts.lx.model.StripModel;
-
 import heronarts.lx.model.LXModel;
-import heronarts.lx.model.LXModelBuilder;
 import heronarts.lx.model.LXPoint;
 
 public class TEVehicleModel extends LXModel {
-  private LXModelBuilder modelBuilder;
+  public TEEdgeModel[] edges;
 
-  // Should only be externally constructable by calling .build()
-  private TEVehicleModel(TEVehicleBuilder builder) {
-    super(builder.children);
+  public TEVehicleModel() {
+    this(makeEdges());
   }
 
-  public static TEVehicleModel build() {
-    TEVehicleBuilder builder = new TEVehicleBuilder();
-    return new TEVehicleModel(builder);
+  private TEVehicleModel(TEEdgeModel[] edges) {
+    super(edges);
+    this.edges = edges;
+    reindexPoints();
   }
 
-  private static class TEVehicleBuilder extends LXModelBuilder {
-    private final LXModel[] children;
+  private static TEEdgeModel[] makeEdges() {
+    List<LXModel> childList = new ArrayList<LXModel>();
 
-    public TEVehicleBuilder() {
-      setTags("Titanic's End Vehicle");
-      List<LXModel> childList = new ArrayList<LXModel>();
+    TEVertex v0 = new TEVertex(new LXPoint(0, 0, 0));
+    TEVertex v1 = new TEVertex(new LXPoint(50000, 0, 0));
+    childList.add(new TEEdgeModel(v0, v1));
 
-      // For the first version of this, I just hardcoded one strip:
-      // childList.add(new StripModel(10));
+    TEVertex v2 = new TEVertex(new LXPoint(0, 50000, 0));
+    childList.add(new TEEdgeModel(v1, v2));
 
-      // That worked, but for some reason, I can't replace it with a TEEdgeModel:
-      TEVertex v0 = new TEVertex(new LXPoint(1,1,1));
-      TEVertex v1 = new TEVertex(new LXPoint(5000,5000,5000));
-      childList.add(new TEEdgeModel(v0, v1));
+    childList.add(new TEEdgeModel(v2, v0));
 
-      this.children = childList.toArray(new LXModel[0]);
-    }
+    return childList.toArray(new TEEdgeModel[0]);
   }
 }
