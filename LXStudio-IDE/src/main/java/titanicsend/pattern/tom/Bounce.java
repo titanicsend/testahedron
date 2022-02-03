@@ -5,6 +5,7 @@ import heronarts.lx.LXCategory;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.modulator.SawLFO;
+import heronarts.lx.modulator.SinLFO;
 import heronarts.lx.parameter.CompoundParameter;
 import heronarts.lx.parameter.FunctionalParameter;
 import heronarts.lx.parameter.LXParameter;
@@ -22,7 +23,7 @@ public class Bounce extends TEPattern {
                     .setUnits(LXParameter.Units.HERTZ)
                     .setDescription("Rate of the rotation");
 
-    protected final SawLFO phase = new SawLFO(0, TWO_PI, new FunctionalParameter() {
+    protected final SinLFO phase = new SinLFO(0, 1, new FunctionalParameter() {
         public double getValue() {
             return 1000 / rate.getValue();
         }
@@ -41,7 +42,7 @@ public class Bounce extends TEPattern {
             for (LXPoint point : edge.points) {
                 colors[point.index] = LXColor.BLACK;
             }
-            int onIndex = (int) (edge.size * phase) % edge.size;
+            int onIndex = (int) ((edge.size * phase) % edge.size);
             colors[edge.points[onIndex].index] = LXColor.WHITE;
         }
     }
