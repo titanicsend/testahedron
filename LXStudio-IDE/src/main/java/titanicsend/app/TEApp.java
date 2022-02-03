@@ -51,7 +51,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     flags.useGLPointCloud = false;
     flags.startMultiThreaded = true;
 
-    TEVehicleModel model = new TEVehicleModel();
+    TEVehicleModel model = TEVehicleModel.build();
     new LXStudio(this, flags, model);
     this.surface.setTitle(WINDOW_TITLE);
   }

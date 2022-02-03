@@ -1,11 +1,39 @@
 package titanicsend.model;
 
-import heronarts.lx.model.LXModel;
+import java.util.*;
+
 import heronarts.lx.model.StripModel;
 
+import heronarts.lx.model.LXModel;
+import heronarts.lx.model.LXModelBuilder;
+import heronarts.lx.model.LXPoint;
+
 public class TEVehicleModel extends LXModel {
-  public TEVehicleModel() {
-    // Gotta start somewhere. Our first model of the vehicle is just a strip of lights.
-    super(new LXModel[] {new StripModel(10)});
+  private LXModelBuilder modelBuilder;
+
+  // Should only be externally constructable by calling .build()
+  private TEVehicleModel(TEVehicleBuilder builder) {
+    super(builder.children);
+  }
+
+  public static TEVehicleModel build() {
+    TEVehicleBuilder builder = new TEVehicleBuilder();
+    return new TEVehicleModel(builder);
+  }
+
+  private static class TEVehicleBuilder extends LXModelBuilder {
+    private final LXModel[] children;
+
+    public TEVehicleBuilder() {
+      setTags("Titanic's End Vehicle");
+      List<LXModel> childList = new ArrayList<LXModel>();
+      //childList.add(new StripModel(10));
+      TEVertex v0 = new TEVertex(new LXPoint(1,1,1));
+      TEVertex v1 = new TEVertex(new LXPoint(5000,5000,5000));
+
+      childList.add(new TEEdgeModel(v0, v1));
+
+      this.children = childList.toArray(new LXModel[0]);
+    }
   }
 }
