@@ -33,13 +33,12 @@ public class TEEdgeModel extends LXModel {
     float dz = v1.z - v0.z;
 
     List<LXPoint> points = new ArrayList<LXPoint>(numPixels);
-    for (int i = 0; i < 3 /*numPixels*/; i++) {
+    for (int i = 0; i < numPixels; i++) {
       float fraction = (float)(i) / numPixels;
-      points.add(new LXPoint(/*
+      points.add(new LXPoint(
               v0.x + dx * fraction,
               v0.y + dy * fraction,
-              v0.z + dz * fraction*/
-              i,i,i
+              v0.z + dz * fraction
       ));
     }
     return points;

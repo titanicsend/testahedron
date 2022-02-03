@@ -27,10 +27,13 @@ public class TEVehicleModel extends LXModel {
     public TEVehicleBuilder() {
       setTags("Titanic's End Vehicle");
       List<LXModel> childList = new ArrayList<LXModel>();
-      //childList.add(new StripModel(10));
+
+      // For the first version of this, I just hardcoded one strip:
+      // childList.add(new StripModel(10));
+
+      // That worked, but for some reason, I can't replace it with a TEEdgeModel:
       TEVertex v0 = new TEVertex(new LXPoint(1,1,1));
       TEVertex v1 = new TEVertex(new LXPoint(5000,5000,5000));
-
       childList.add(new TEEdgeModel(v0, v1));
 
       this.children = childList.toArray(new LXModel[0]);
