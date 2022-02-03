@@ -34,7 +34,7 @@ public class Bounce extends TEPattern {
     public void run(double deltaMs) {
         float phase = this.phase.getValuef();
 
-        for (TEEdgeModel edge : model.edges) {
+        for (TEEdgeModel edge : model.edgesById.values()) {
             for (LXPoint point : edge.points) {
                 colors[point.index] = LXColor.BLACK;
             }

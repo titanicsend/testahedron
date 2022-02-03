@@ -6,6 +6,7 @@ import java.util.*;
 
 public class TEEdgeModel extends LXModel {
   public TEVertex v0, v1;
+  public int numConnectedPanels; // -1 if we don't know
 
   // In microns, the same unit x,y,z coordinates use
   public static final int DISTANCE_BETWEEN_PIXELS = 2500;
@@ -18,10 +19,15 @@ public class TEEdgeModel extends LXModel {
     return this.v0 == v || this.v1 == v;
   }
 
-  public TEEdgeModel(TEVertex v0, TEVertex v1) {
+  public TEEdgeModel(TEVertex v0, TEVertex v1, int numConnectedPanels) {
     super(makePoints(v0, v1));
     this.v0 = v0;
     this.v1 = v1;
+    this.numConnectedPanels = numConnectedPanels;
+  }
+
+  public TEEdgeModel(TEVertex v0, TEVertex v1) {
+    this(v0, v1, -1);
   }
 
   private static List<LXPoint> makePoints(TEVertex v0, TEVertex v1) {

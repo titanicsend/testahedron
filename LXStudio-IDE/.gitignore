@@ -16,4 +16,5 @@ application.windows64
 application.macosx
 bin/
 target/
-
+classes/
+Projects/project.lxp
