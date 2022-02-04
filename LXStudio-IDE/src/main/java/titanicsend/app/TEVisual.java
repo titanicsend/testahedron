@@ -1,26 +1,39 @@
 package titanicsend.app;
 
+import java.util.*;
 import heronarts.p4lx.ui.UI;
 import heronarts.p4lx.ui.UI3dComponent;
-import heronarts.p4lx.ui.UIObject;
 import processing.core.PGraphics;
+import titanicsend.model.*;
 
 public class TEVisual extends UI3dComponent {
+  TEVehicleModel model;
+
+  public TEVisual(TEVehicleModel model) {
+    super();
+    this.model = model;
+  }
+
   @Override
   public void onDraw(UI ui, PGraphics pg) {
-    //if (isVisible()) {
-      //beginDraw(ui, pg);
-
-      pg.ambientLight(40, 40, 40);
-      pg.translate(1, 1, 1);
+    if (isVisible()) {
+      beginDraw(ui, pg);
       pg.noStroke();
-      pg.fill(0xff00ddff);
-      pg.sphere(50);
-      pg.noLights();
-      pg.scale(1, -1);
-      pg.textSize(4);
-      pg.text("hi", 10, 10);
-      //endDraw(ui, pg);
+      pg.textSize(40);
+      for (Map.Entry<Integer,TEVertex> entry : model.vertexesById.entrySet()) {
+        TEVertex v = entry.getValue();
+        pg.pushMatrix();
+        pg.translate(v.x, v.y, v.z);
+        pg.ambientLight(255, 255, 255);
+        pg.fill(255, 255, 255);
+        pg.sphere(100000);
+        pg.noLights();
+        pg.scale(10000, -10000);
+        pg.fill(128, 128, 128);
+        pg.text(entry.getKey().toString(), 0, -20, 0);
+        pg.popMatrix();
+      }
+      endDraw(ui, pg);
     }
-  //}
+  }
 }
