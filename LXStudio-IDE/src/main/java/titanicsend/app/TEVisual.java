@@ -3,6 +3,7 @@ package titanicsend.app;
 import java.util.*;
 import heronarts.p4lx.ui.UI;
 import heronarts.p4lx.ui.UI3dComponent;
+import heronarts.lx.model.LXPoint;
 import processing.core.PGraphics;
 import titanicsend.model.*;
 
@@ -31,6 +32,17 @@ public class TEVisual extends UI3dComponent {
         pg.scale(10000, -10000);
         pg.fill(128, 128, 128);
         pg.text(entry.getKey().toString(), 0, -20, 0);
+        pg.popMatrix();
+      }
+      for (Map.Entry<String,TEPanelModel> entry : model.panelsById.entrySet()) {
+        TEPanelModel p = entry.getValue();
+        LXPoint centroid = p.points[0];
+        pg.pushMatrix();
+        pg.translate(centroid.x, centroid.y, centroid.z);
+        pg.rotateY((float)(-Math.PI / 2.0));
+        pg.scale(10000, -10000);
+        pg.fill(255, 0, 0);
+        pg.text(entry.getKey(), 0, 0, 0);
         pg.popMatrix();
       }
       endDraw(ui, pg);
