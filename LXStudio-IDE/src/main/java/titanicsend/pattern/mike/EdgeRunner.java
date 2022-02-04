@@ -7,6 +7,7 @@ import heronarts.lx.LXCategory;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
 
+import titanicsend.app.TEVirtualColor;
 import titanicsend.model.*;
 import titanicsend.pattern.TEPattern;
 
@@ -29,6 +30,10 @@ public class EdgeRunner extends TEPattern {
     this.currentPoint = 0;
     this.fwd = true;
     this.moveNumber = 0;
+    for (TEVertex v : model.vertexesById.values()) {
+      // Initialize all vertexes to gray
+      v.virtualColor = new TEVirtualColor(50, 50, 50, 255);
+    }
   }
 
   // Select the edge least-recently visited (unless a subclass overrides this)
@@ -37,7 +42,7 @@ public class EdgeRunner extends TEPattern {
     TEEdgeModel winner = null;
 
     assert choices.size() > 0;
-    for(TEEdgeModel e : choices) {
+    for (TEEdgeModel e : choices) {
       int lastVisit = this.edgeLastVisit.getOrDefault(e, -1);
       if (lastVisit < oldestMove) {
         oldestMove = lastVisit;
@@ -77,6 +82,8 @@ public class EdgeRunner extends TEPattern {
     // We're still in the middle of an Edge
     if (reachedVertex == null) return;
 
+    reachedVertex.virtualColor = new TEVirtualColor(0, 100, 255, 255);
+
     // We've reached a Vertex
     Set<TEEdgeModel> connectedEdges = reachedVertex.edges;
 
@@ -99,7 +106,7 @@ public class EdgeRunner extends TEPattern {
       this.move();
     }
 
-    for (LXPoint point : model.points) {
+    for (LXPoint point : model.edgePoints) {
       int lastVisit = this.pointLastVisit.getOrDefault(point, -1);
       int color;
       if (lastVisit == -1) {
@@ -112,6 +119,23 @@ public class EdgeRunner extends TEPattern {
         else color = LXColor.rgb(0, 0, 100);
       }
       colors[point.index] = color;
+    }
+    for (Map.Entry<String, TEPanelModel> entry : model.panelsById.entrySet()) {
+      TEPanelModel panel = entry.getValue();
+      if (!panel.panelType.equals(TEPanelModel.SOLID)) continue;
+      assert panel.points.length == 1;
+      LXPoint point = panel.points[0];
+      int numVisitedEdges = 0;
+      if (edgeLastVisit.getOrDefault(panel.e0, -1) >= 0) numVisitedEdges++;
+      if (edgeLastVisit.getOrDefault(panel.e1, -1) >= 0) numVisitedEdges++;
+      if (edgeLastVisit.getOrDefault(panel.e2, -1) >= 0) numVisitedEdges++;
+      int color;
+      if (numVisitedEdges == 3) color = LXColor.rgb(0, 180, 255);
+      else if (numVisitedEdges == 2) color = LXColor.rgb(0, 0, 255);
+      else if (numVisitedEdges == 1) color = LXColor.rgb(0, 0, 128);
+      else color = LXColor.rgb(50, 50, 50);
+      colors[point.index] = color;  // Used to control the real-life spotlight
+      panel.virtualColor = new TEVirtualColor(color, 200); // Used to render a triangle in the virtual model
     }
   }
 }
