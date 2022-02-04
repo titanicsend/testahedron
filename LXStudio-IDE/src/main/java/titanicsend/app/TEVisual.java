@@ -12,6 +12,7 @@ import titanicsend.model.*;
 public class TEVisual extends TEUIComponent {
   TEVehicleModel model;
 
+<<<<<<< HEAD
   public final BooleanParameter vertexSpheresVisible =
           new BooleanParameter("Vertex Spheres")
                   .setDescription("Toggle whether vertex spheres are visible")
@@ -26,13 +27,21 @@ public class TEVisual extends TEUIComponent {
           new BooleanParameter("Panel Labels")
                   .setDescription("Toggle whether panel labels are visible")
                   .setValue(true);
+=======
+  public final BooleanParameter vertexesVisible = new BooleanParameter("Vertexes Visible")
+          .setDescription("Toggle whether vertexes are visible");
+>>>>>>> a0f12aef4cde228efe075282a2cb7c8b32bf1799
 
   public TEVisual(TEVehicleModel model) {
     super();
     this.model = model;
+<<<<<<< HEAD
     addParameter("vertexSpheresVisible", this.vertexSpheresVisible);
     addParameter("vertexLabelsVisible", this.vertexLabelsVisible);
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
+=======
+    addParameter("vertexesVisible", this.vertexesVisible);
+>>>>>>> a0f12aef4cde228efe075282a2cb7c8b32bf1799
   }
 
   @Override
