@@ -1,5 +1,7 @@
 package titanicsend.model;
 
+import Jama.Matrix;
+import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
 import titanicsend.app.TEVirtualColor;
 
@@ -36,5 +38,18 @@ public class TEVertex extends LXPoint {
 
   public void addEdge(TEEdgeModel edge) {
     edges.add(edge);
+  }
+
+  public TEVertex transform(Matrix transformation) {
+    Matrix transformed = transformation.times(new Matrix(new double[][]{{x}, {y}, {z}, {1}}));
+    return new TEVertex(
+            new LXPoint(
+                    transformed.get(0,0),
+                    transformed.get(1, 0),
+                    transformed.get(2, 0)
+                    ),
+            -1,
+            -1
+            );
   }
 }

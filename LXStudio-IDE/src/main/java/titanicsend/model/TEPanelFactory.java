@@ -1,7 +1,12 @@
 package titanicsend.model;
 
 import java.util.ArrayList;
+
+import Jama.LUDecomposition;
+import Jama.Matrix;
+import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
+import heronarts.lx.transform.LXMatrix;
 import heronarts.lx.transform.LXVector;
 
 public class TEPanelFactory {
@@ -25,7 +30,12 @@ public class TEPanelFactory {
       points.add(centroid);
     }
 
-    copyToXYPlane(v0, v1, v2);
+    TEVertex[] transformedVertices = copyToXYPlane(v0, v1, v2);
+    Matrix transform = solveTransform(transformedVertices, new TEVertex[]{v0, v1, v2});
+
+    LXPoint test = transformedVertices[0].transform(transform);
+    LXPoint test2 = transformedVertices[1].transform(transform);
+    LXPoint test3 = transformedVertices[2].transform(transform);
 
     return new TEPanelModel(points, v0, v1, v2, e0, e1, e2, panelType, centroid);
   }
@@ -43,6 +53,26 @@ public class TEPanelFactory {
     TEVertex v2_prime = new TEVertex(new LXPoint(v2_vector.x, v2_vector.y, v2_vector.z), -1, -1);
 
     return new TEVertex[]{v0_prime, v1_prime, v2_prime};
+  }
+
+  public static Matrix solveTransform(TEVertex[] originalVertices, TEVertex[] transformedVertices) {
+    double[][] originalVals = {
+            {originalVertices[0].x, originalVertices[1].x, originalVertices[2].x},
+            {originalVertices[0].y, originalVertices[1].y, originalVertices[2].y},
+            {originalVertices[0].z, originalVertices[1].z, originalVertices[2].z},
+            {1, 1, 1},
+    };
+    Matrix original = new Matrix(originalVals);
+
+    double[][] transformedVals = {
+            {transformedVertices[0].x, transformedVertices[1].x, transformedVertices[2].x},
+            {transformedVertices[0].y, transformedVertices[1].y, transformedVertices[2].y},
+            {transformedVertices[0].z, transformedVertices[1].z, transformedVertices[2].z},
+            {1, 1, 1},
+    };
+    Matrix transformed = new Matrix(transformedVals);
+
+    return transformed.times(original.inverse());
   }
 
 /*
