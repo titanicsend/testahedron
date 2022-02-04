@@ -19,6 +19,16 @@ public class TEEdgeModel extends LXModel {
     return this.v0 == v || this.v1 == v;
   }
 
+  public TEVertex otherSide(TEVertex v) {
+    if (v == v0) {
+      return v1;
+    } else if (v == v1) {
+      return v0;
+    } else {
+      throw new Error("otherSide() called with invalid vertex");
+    }
+  }
+
   public TEEdgeModel(TEVertex v0, TEVertex v1, int numConnectedPanels) {
     super(makePoints(v0, v1));
     this.v0 = v0;

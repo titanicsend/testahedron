@@ -14,6 +14,7 @@ public class TEVertex extends LXPoint {
     super(point);
     this.id = id;
     this.numConnectedEdges = numConnectedEdges;
+    this.edges = new HashSet<TEEdgeModel>();
   }
 
   public TEVertex(LXPoint point, int id) {

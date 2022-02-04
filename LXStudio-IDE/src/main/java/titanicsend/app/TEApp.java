@@ -31,6 +31,7 @@ import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEVehicleModel;
 import titanicsend.pattern.tom.Bounce;
+import titanicsend.pattern.mike.EdgeRunner;
 
 public class TEApp extends PApplet implements LXPlugin  {
 
@@ -73,6 +74,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     // Register custom pattern and effect types
     lx.registry.addPattern(titanicsend.pattern.jeff.BasicRainbowPattern.class);
     lx.registry.addPattern(Bounce.class);
+    lx.registry.addPattern(EdgeRunner.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
     StreamingACNDatagram output = new StreamingACNDatagram(lx, lx.getModel());

@@ -61,6 +61,8 @@ public class TEVehicleModel extends LXModel {
       TEVertex v0 = geometry.vertexesById.get(v0Id);
       TEVertex v1 = geometry.vertexesById.get(v1Id);
       TEEdgeModel e = new TEEdgeModel(v0, v1, num_connected_panels);
+      v0.addEdge(e);
+      v1.addEdge(e);
 
       geometry.edgesById.put(id, e);
     }
@@ -80,8 +82,8 @@ public class TEVehicleModel extends LXModel {
       int y = Integer.parseInt(tokens[2]);
       int z = Integer.parseInt(tokens[3]);
       LXPoint p = new LXPoint(x, y, z);
-      int num_connected_edges = Integer.parseInt(tokens[4]);
-      TEVertex v = new TEVertex(p, id, num_connected_edges);
+      int numConnectedEdges = Integer.parseInt(tokens[4]);
+      TEVertex v = new TEVertex(p, id, numConnectedEdges);
       geometry.vertexesById.put(id, v);
     }
     s.close();
