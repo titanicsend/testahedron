@@ -83,8 +83,9 @@ public class TEApp extends PApplet implements LXPlugin  {
   public void onUIReady(LXStudio lx, LXStudio.UI ui) {
     // At this point, the LX Studio application UI has been built. You may now add
     // additional views and components to the Ui heirarchy.
-
-    lx.ui.preview.addComponent(new TEVisual(this.model));
+    TEVisual visual = new TEVisual(this.model);
+    lx.ui.preview.addComponent(visual);
+    new TEUIControls(ui, visual, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global);
   }
 
   @Override

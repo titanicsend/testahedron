@@ -1,23 +1,30 @@
 package titanicsend.app;
 
 import java.util.*;
+
+import heronarts.lx.parameter.BooleanParameter;
 import heronarts.p4lx.ui.UI;
 import heronarts.p4lx.ui.UI3dComponent;
 import heronarts.lx.model.LXPoint;
 import processing.core.PGraphics;
 import titanicsend.model.*;
 
-public class TEVisual extends UI3dComponent {
+public class TEVisual extends TEUIComponent {
   TEVehicleModel model;
+
+  public final BooleanParameter vertexesVisible = new BooleanParameter("Vertexes Visible")
+          .setDescription("Toggle whether vertexes are visible");
 
   public TEVisual(TEVehicleModel model) {
     super();
     this.model = model;
+    addParameter("vertexesVisible", this.vertexesVisible);
   }
 
   @Override
   public void onDraw(UI ui, PGraphics pg) {
-    if (isVisible()) {
+    boolean visible = vertexesVisible.getValueb();
+    if (visible) {
       beginDraw(ui, pg);
       pg.noStroke();
       pg.textSize(40);
