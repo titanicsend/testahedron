@@ -1,6 +1,10 @@
 package titanicsend.model;
 
+import Jama.Matrix;
+import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
+import titanicsend.app.TEVirtualColor;
+
 import java.util.*;
 
 public class TEVertex extends LXPoint {
@@ -10,11 +14,15 @@ public class TEVertex extends LXPoint {
   public int numConnectedEdges;  // -1 if we don't know
   public Set<TEEdgeModel> edges;
 
+  // Set to non-null and the virtual display will shade vertex's sphere
+  public TEVirtualColor virtualColor;
+
   public TEVertex(LXPoint point, int id, int numConnectedEdges) {
     super(point);
     this.id = id;
     this.numConnectedEdges = numConnectedEdges;
     this.edges = new HashSet<TEEdgeModel>();
+    this.virtualColor = new TEVirtualColor(255, 255, 255, 255);
   }
 
   public TEVertex(LXPoint point, int id) {
@@ -25,7 +33,7 @@ public class TEVertex extends LXPoint {
     float dx = this.x - other.x;
     float dy = this.y - other.y;
     float dz = this.z - other.z;
-    return Math.sqrt(dx*dx + dy*dy + dz*dz);
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
 
   public void addEdge(TEEdgeModel edge) {

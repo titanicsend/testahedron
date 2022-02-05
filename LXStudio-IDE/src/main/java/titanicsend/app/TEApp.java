@@ -34,8 +34,8 @@ import titanicsend.pattern.tom.Bounce;
 import titanicsend.pattern.mike.EdgeRunner;
 
 public class TEApp extends PApplet implements LXPlugin  {
-
   private static final String WINDOW_TITLE = "Titanic's End";
+  private TEVehicleModel model;
 
   private static int WIDTH = 1280;
   private static int HEIGHT = 800;
@@ -58,9 +58,9 @@ public class TEApp extends PApplet implements LXPlugin  {
     flags.useGLPointCloud = false;
     flags.startMultiThreaded = true;
 
-    TEVehicleModel model = new TEVehicleModel();
+    this.model = new TEVehicleModel();
 
-    new LXStudio(this, flags, model);
+    new LXStudio(this, flags, this.model);
     this.surface.setTitle(WINDOW_TITLE);
   }
 
@@ -97,6 +97,10 @@ public class TEApp extends PApplet implements LXPlugin  {
   public void onUIReady(LXStudio lx, LXStudio.UI ui) {
     // At this point, the LX Studio application UI has been built. You may now add
     // additional views and components to the Ui heirarchy.
+
+    TEVisual visual = new TEVisual(this.model);
+    lx.ui.preview.addComponent(visual);
+    new TEUIControls(ui, visual, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global);
   }
 
   @Override
