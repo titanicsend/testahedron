@@ -30,8 +30,15 @@ public class TEPanelFactory {
       points.add(centroid);
     }
 
+    TEVertex[] originalVertices = new TEVertex[]{v0, v1, v2};
     TEVertex[] transformedVertices = copyToXYPlane(v0, v1, v2);
-    Matrix transform = solveTransform(transformedVertices, new TEVertex[]{v0, v1, v2});
+    for (int i = 0; i < 3; i++) {
+      for (int j = i + 1; j < 3; j++) {
+        double error = transformedVertices[i].distanceTo(transformedVertices[j]) - originalVertices[i].distanceTo(originalVertices[j]);
+        assert error < 1 : String.format("length of edge between vertices %d and %d is off by %f", i, j, error);
+      }
+    }
+    Matrix transform = solveTransform(transformedVertices, originalVertices);
 
     LXPoint test = transformedVertices[0].transform(transform);
     LXPoint test2 = transformedVertices[1].transform(transform);
