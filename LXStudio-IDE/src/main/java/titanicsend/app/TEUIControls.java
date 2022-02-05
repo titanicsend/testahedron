@@ -10,7 +10,7 @@ import java.util.Map;
 public class TEUIControls extends UICollapsibleSection {
     private final Map<TEUIComponent, UI2dContainer> controls = new HashMap<TEUIComponent, UI2dContainer>();
 
-    TEUIControls(final LXStudio.UI ui, TEVisual visual, float width) {
+    TEUIControls(final LXStudio.UI ui, TEVirtualOverlays visual, float width) {
         super(ui, 0, 0, width, 124);
         setTitle("TE UI controls");
         setLayout(UI2dContainer.Layout.VERTICAL);

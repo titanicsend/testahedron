@@ -33,25 +33,27 @@ public class TEPanelModel extends LXModel {
                       LXPoint centroid) {
     super(points);
 
-    assert (panelType.equals(NONEXISTENT) ||
-            panelType.equals(SOLID) ||
-            panelType.equals(LIT));
     this.panelType = panelType;
-
     this.centroid = centroid;
 
-    if (panelType.equals(NONEXISTENT)) {
-      // Display nonexistent panels as wispy pink
-      this.virtualColor = new TEVirtualColor(255, 0, 255, 100);
-    } else if (panelType.equals(LIT)) {
-        // Display nonexistent panels as semi-transparent gold, for now
-        this.virtualColor = new TEVirtualColor(255, 255, 0, 200);
-    } else if (panelType.equals(SOLID)) {
-      // Display solid panels as semi-transparent blue, unless repainted by a pattern
-      this.virtualColor = new TEVirtualColor(0, 0, 255, 200);
-    } else {
-      // In the long run, we'll use null for LIT panels
-      this.virtualColor = null;
+    switch (panelType) {
+      case NONEXISTENT:
+        // Display nonexistent panels as wispy pink
+        this.virtualColor = new TEVirtualColor(255, 0, 255, 100);
+        break;
+      case LIT:
+        // Display lit panels as semi-transparent gold
+        //this.virtualColor = new TEVirtualColor(255, 255, 0, 200);
+
+        // Don't display lit panels
+        this.virtualColor = null;
+        break;
+      case SOLID:
+        // Display solid panels as semi-transparent blue, unless repainted by a pattern
+        this.virtualColor = new TEVirtualColor(0, 0, 255, 200);
+        break;
+      default:
+        throw new Error("Unknown panel type: " + panelType);
     }
 
     // Make sure we have three different edges

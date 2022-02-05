@@ -19,9 +19,9 @@
 package titanicsend.app;
 
 import java.io.File;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
 import heronarts.lx.model.LXModel;
@@ -77,6 +77,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(EdgeRunner.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
+    /*
     StreamingACNDatagram output = new StreamingACNDatagram(lx, lx.getModel());
     try {
       output.setAddress(InetAddress.getByName("127.0.0.1"));
@@ -85,7 +86,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     }
     output.setPort(7890);
 
-    lx.addOutput(output);
+    lx.addOutput(output);*/
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
@@ -98,7 +99,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     // At this point, the LX Studio application UI has been built. You may now add
     // additional views and components to the Ui heirarchy.
 
-    TEVisual visual = new TEVisual(this.model);
+    TEVirtualOverlays visual = new TEVirtualOverlays(this.model);
     lx.ui.preview.addComponent(visual);
     new TEUIControls(ui, visual, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global);
   }

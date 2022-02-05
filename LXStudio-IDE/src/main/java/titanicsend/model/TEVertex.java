@@ -29,11 +29,15 @@ public class TEVertex extends LXPoint {
     this(point, id, -1);
   }
 
-  public double distanceTo(TEVertex other) {
-    float dx = this.x - other.x;
-    float dy = this.y - other.y;
-    float dz = this.z - other.z;
+  public static double distance(LXPoint p0, LXPoint p1) {
+    float dx = p0.x - p1.x;
+    float dy = p0.y - p1.y;
+    float dz = p0.z - p1.z;
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  }
+
+  public double distanceTo(LXPoint p) {
+    return TEVertex.distance(this, p);
   }
 
   public void addEdge(TEEdgeModel edge) {
