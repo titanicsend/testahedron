@@ -19,9 +19,14 @@
 package titanicsend.app;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
+import heronarts.lx.model.LXModel;
+import heronarts.lx.output.OPCSocket;
+import heronarts.lx.output.StreamingACNDatagram;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEVehicleModel;
@@ -71,6 +76,16 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(Bounce.class);
     lx.registry.addPattern(EdgeRunner.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
+
+    StreamingACNDatagram output = new StreamingACNDatagram(lx, lx.getModel());
+    try {
+      output.setAddress(InetAddress.getByName("127.0.0.1"));
+    } catch (UnknownHostException e) {
+      System.out.println("whoops");
+    }
+    output.setPort(7890);
+
+    lx.addOutput(output);
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
