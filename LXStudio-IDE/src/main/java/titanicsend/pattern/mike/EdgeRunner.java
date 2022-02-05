@@ -13,6 +13,9 @@ import titanicsend.pattern.TEPattern;
 
 @LXCategory("Testahedron")
 public class EdgeRunner extends TEPattern {
+  private static final int NUM_RUNNERS = 10;  // TODO: Make this a config variable in the UI, and gracefully handle changes
+  private static final double MOVE_PERIOD_MSEC = 10.0;
+
   // Useful data related to LIT panels
   private class PanelData {
     int numEdgePixels; // Total number of pixels within the Edges of this panel
@@ -40,23 +43,35 @@ public class EdgeRunner extends TEPattern {
       this.radiusFraction = radiusFraction;
     }
   }
+  private class Runner {
+    private TEEdgeModel currentEdge;
+    private int currentPoint;
+    private boolean fwd;
+
+    Runner(TEEdgeModel currentEdge) {
+      this.currentEdge = currentEdge;
+      this.currentPoint = 0;
+      this.fwd = true;
+    }
+  }
   private HashMap<TEEdgeModel, Integer> edgeLastVisit;
   private HashMap<LXPoint, Integer> pointLastVisit;
   private HashMap<TEPanelModel, PanelData> panelData;
-  private TEEdgeModel currentEdge;
+  private List<Runner> runners;
   private int moveNumber;
-  private int currentPoint;
-  private boolean fwd;
   private double accumulatedMsec;
-  private static final double MOVE_PERIOD_MSEC = 2.5;
 
   public EdgeRunner(LX lx) {
     super(lx);
     this.edgeLastVisit = new HashMap<TEEdgeModel, Integer>();
     this.pointLastVisit = new HashMap<LXPoint, Integer>();
-    this.currentEdge = model.edgesById.values().iterator().next(); // Get any value
-    this.currentPoint = 0;
-    this.fwd = true;
+    this.runners = new ArrayList<>();
+
+    Iterator<TEEdgeModel> edges = model.edgesById.values().iterator();
+    for (int i = 0; i < NUM_RUNNERS; i++) {
+      // TODO: Handle the case where there are more runners than edges
+      this.runners.add(new Runner(edges.next()));
+    }
     this.moveNumber = 0;
     for (TEVertex v : model.vertexesById.values()) {
       // Initialize all vertexes to gray
@@ -97,12 +112,12 @@ public class EdgeRunner extends TEPattern {
 
   // This is a hook for subclasses to do something with the current point
   // in between moves. By default, we just note when it was last visited.
-  public void mark() {
-    LXPoint currentPoint = this.currentEdge.points[this.currentPoint];
+  public void mark(Runner runner) {
+    LXPoint currentPoint = runner.currentEdge.points[runner.currentPoint];
     assert currentPoint != null;
     if (this.pointLastVisit.getOrDefault(currentPoint, -1) < 0) {
       // First visit to this point. Increment neighbor Panels' lit-edge-pixel count.
-      for (TEPanelModel panel : this.currentEdge.connectedPanels) {
+      for (TEPanelModel panel : runner.currentEdge.connectedPanels) {
         if (panel.panelType.equals(TEPanelModel.LIT)) {
           this.panelData.get(panel).litEdgePixels++;
         }
@@ -114,17 +129,17 @@ public class EdgeRunner extends TEPattern {
   // Move along the current edge until we reach the end. Use selectEdge()
   // to pick a new one at that point; unless overridden, it picks the
   // path least recently visited.
-  public void move() {
-    this.edgeLastVisit.put(this.currentEdge, ++this.moveNumber);
+  public void move(Runner runner) {
+    this.edgeLastVisit.put(runner.currentEdge, ++this.moveNumber);
     TEVertex reachedVertex = null;
 
-    if (this.fwd) {
-      if (++this.currentPoint >= currentEdge.points.length) {
-        reachedVertex = currentEdge.v1;
+    if (runner.fwd) {
+      if (++runner.currentPoint >= runner.currentEdge.points.length) {
+        reachedVertex = runner.currentEdge.v1;
       }
     } else {
-      if (--this.currentPoint < 0) {
-        reachedVertex = currentEdge.v0;
+      if (--runner.currentPoint < 0) {
+        reachedVertex = runner.currentEdge.v0;
       }
     }
 
@@ -137,13 +152,13 @@ public class EdgeRunner extends TEPattern {
     Set<TEEdgeModel> connectedEdges = reachedVertex.edges;
 
     TEEdgeModel newEdge = selectEdge(connectedEdges);
-    this.currentEdge = newEdge;
+    runner.currentEdge = newEdge;
     if (newEdge.v0 == reachedVertex) {
-      this.fwd = true;
-      this.currentPoint = 0;
+      runner.fwd = true;
+      runner.currentPoint = 0;
     } else {
-      this.fwd = false;
-      this.currentPoint = newEdge.points.length - 1;
+      runner.fwd = false;
+      runner.currentPoint = newEdge.points.length - 1;
     }
   }
 
@@ -151,8 +166,10 @@ public class EdgeRunner extends TEPattern {
     this.accumulatedMsec += deltaMs;
     while (this.accumulatedMsec >= MOVE_PERIOD_MSEC) {
       this.accumulatedMsec -= MOVE_PERIOD_MSEC;
-      this.mark();
-      this.move();
+      for (Runner runner : this.runners) {
+        this.mark(runner);
+        this.move(runner);
+      }
     }
 
     for (LXPoint point : model.edgePoints) {
