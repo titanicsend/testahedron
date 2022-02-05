@@ -13,21 +13,21 @@ import titanicsend.model.TEPanelModel;
 import titanicsend.pattern.TEPattern;
 
 /**
- * SimpleSolidEdgePattern is a trivial pattern that accepts input to
- * control the output color of just the edges in the model.
+ * SimpleSolidPanelPattern is a trivial pattern that accepts input to
+ * control the output color of just the panels in the model.
  */
 @LXCategory("Testahedron")
-public class SimpleSolidEdgePattern extends TEPattern {
+public class SimpleSolidPanelPattern extends TEPattern {
 
   public final ColorParameter color =
           new ColorParameter("Color")
                   .setDescription("Color of the pattern");
 
-  public SimpleSolidEdgePattern(LX lx) {
+  public SimpleSolidPanelPattern(LX lx) {
     this(lx, LXColor.RED);
   }
 
-  public SimpleSolidEdgePattern(LX lx, int color) {
+  public SimpleSolidPanelPattern(LX lx, int color) {
     super(lx);
     this.color.setColor(color);
     addParameter("color", this.color);
@@ -40,8 +40,10 @@ public class SimpleSolidEdgePattern extends TEPattern {
             this.color.saturation.getValue(),
             this.color.brightness.getValue()
     );
-    for (LXPoint point : this.model.edgePoints) {
-      colors[point.index] = color;
+    for (TEPanelModel panel : this.model.panelsById.values()) {
+      for (LXPoint point : panel.points) {
+        colors[point.index] = color;
+      }
     }
   }
 }
