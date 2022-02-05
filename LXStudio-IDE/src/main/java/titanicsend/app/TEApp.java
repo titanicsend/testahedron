@@ -20,8 +20,13 @@ package titanicsend.app;
 
 import java.io.File;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
+import heronarts.lx.model.LXModel;
+import heronarts.lx.output.OPCSocket;
+import heronarts.lx.output.StreamingACNDatagram;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEVehicleModel;
