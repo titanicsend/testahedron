@@ -13,8 +13,8 @@ import titanicsend.model.TEPanelModel;
 import titanicsend.pattern.TEPattern;
 
 /**
- * SimpleSolidPanelPattern is a trivial pattern that accepts input to
- * control the output color of the just the panels in the model.
+ * SimpleSolidEdgePattern is a trivial pattern that accepts input to
+ * control the output color of just the edges in the model.
  */
 @LXCategory("Testahedron")
 public class SimpleSolidEdgePattern extends TEPattern {
