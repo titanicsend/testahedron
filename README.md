@@ -3,7 +3,7 @@ Testahedron
 
 You may wish to get context first from the [Lighting Design Doc](https://docs.google.com/document/d/1YK9umrhOodwnRWGRzYOR1iOocrO6Cf9ZpHF7FWgBKKI/edit#).
 
-The testahedron is a HW+SW [spike](https://en.wikipedia.org/wiki/Spike_(software_development)) for Titanic's End 2022 which will allow us to validate, learn about, or decide:
+The testahedron is a HW+SW [spike](https://en.wikipedia.org/wiki/Spike_(software_development)) for Titanic's End 2022 which will allow us to validate, learn about, and decide:
  
 * LED density for panels
 * Polycarbonate transmission grade and the diffusion offset distance 
@@ -22,7 +22,7 @@ Point coordinates are given in the [Testahedron geometry](https://docs.google.co
 
 ## Learning LX and Developing Patterns
 
-We are planning to use LX Studio. This repo embeds both versions - the Processing 4 Applet at /LXStudio-P4 and the full IDE-ready distribution in /LXStudio-IDE. The latter is the recommended way of running LX and we will focus initial efforts there.
+We are planning to use LX Studio. We've chosed to use the full IDE-ready distribution instead of the P4 Processing Applet version. Place LX code in /LXStudio-IDE and any other code and assets outside this directory (for example, scripts that convert CAD geometry, or test apps for the controller hardware). 
 
 Don't struggle - ask questions in [#Lighting on Slack](https://titanicsend.slack.com/archives/C02L0MDQB2M).
 
@@ -34,7 +34,7 @@ We need your help right now. The problems that need to be solved are on a [board
 
 ### Suggested quick start
 
-* Clone the repo. Have Jeff give you write access on GitHub. We can skip fork/PRs for now.
+* Clone the repo. Have Jeff give you write access on GitHub.
     ```
     git clone https://github.com/titanicsend/testahedron.git
     ```
@@ -45,7 +45,7 @@ We need your help right now. The problems that need to be solved are on a [board
     * Read the [LX Studio Wiki](https://github.com/heronarts/LXStudio/wiki)
     * Load the Testahedron Playground.lxp project (top bar)
     * Play with the UI until you have a modulator controlling the parameter for a pattern, and an effect applied on top.
-       * See [this guide](https://github.com/tracyscott/RainbowStudio/blob/master/LXStudioUserGuide.md) from another memorable Burning Man art piece as a guide
+       * See [this guide](https://github.com/tracyscott/RainbowStudio/blob/master/LXStudioUserGuide.md) from another memorable Burning Man art piece
     * Define a new fixture in the UI
     * [Optional] Save your playgorund as a new project with your name: `Playground <YourName>.lxp`. You can mess this project up and experiment broadly.
 * Load Testahedron.lxp
@@ -68,7 +68,7 @@ We need your help right now. The problems that need to be solved are on a [board
 
 ### About LX Studio
 
-Initial impressions are that LX is powerful and thoughtful, though less documented than ideal. The maintainer, Mark Slee, is incredibly kind and responsive over email ([mark@heronarts.com](mailto:mark@heronarts.com)).  LX is not technically open source - I've copied some of it's license here:
+Initial impressions are that [LX](https://github.com/heronarts/LXStudio) is powerful and thoughtful, though less documented than ideal. The maintainer, Mark Slee, is incredibly kind and responsive over email ([mark@heronarts.com](mailto:mark@heronarts.com)). LX is not open source - I've copied some of it's license here:
 
 ---
 
