@@ -1,12 +1,11 @@
 package titanicsend.model;
 
-import java.util.ArrayList;
+import java.util.*;
+
 import heronarts.lx.model.LXPoint;
+import titanicsend.util.PanelStriper;
 
 public class TEPanelFactory {
-  public static int MARGIN = 75000; // 75k microns ~= 3 inches
-  public static int DISTANCE_BETWEEN_PIXELS = 25000; // 25k microns ~= 1 inch
-
   public static TEPanelModel build(TEVertex v0, TEVertex v1, TEVertex v2,
                             TEEdgeModel e0, TEEdgeModel e1, TEEdgeModel e2,
                             String panelType) {
@@ -19,18 +18,12 @@ public class TEPanelFactory {
     LXPoint centroid = new LXPoint(centroidX, centroidY, centroidZ);
 
     if (panelType.equals(TEPanelModel.LIT)) {
-      //stripe(points, v0, v1, v2, centroid);
+      List<LXPoint> stripedPoints = PanelStriper.stripe(v0, v1, v2);
+      points.addAll(stripedPoints);
     } else if (panelType.equals(TEPanelModel.SOLID)) {
       points.add(centroid);
     }
 
     return new TEPanelModel(points, v0, v1, v2, e0, e1, e2, panelType, centroid);
   }
-
-/*
-  private void stripe(ArrayList<LXPoint> points, TEVertex v0, TEVertex v1, TEVertex v2,
-                      LXPoint centroid) {
-
-  }
-*/
 }

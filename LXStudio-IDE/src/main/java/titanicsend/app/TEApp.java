@@ -22,7 +22,6 @@ import java.io.File;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
-import heronarts.lx.model.LXModel;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEVehicleModel;
