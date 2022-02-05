@@ -27,12 +27,19 @@ public class TEVisual extends TEUIComponent {
                   .setDescription("Toggle whether panel labels are visible")
                   .setValue(true);
 
+  public final BooleanParameter nonExistentPanelsVisible =
+          new BooleanParameter("NE Panels")
+                  .setDescription("Toggle whether non-existent panels are visible")
+                  .setValue(true);
+
+
   public TEVisual(TEVehicleModel model) {
     super();
     this.model = model;
     addParameter("vertexSpheresVisible", this.vertexSpheresVisible);
     addParameter("vertexLabelsVisible", this.vertexLabelsVisible);
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
+    addParameter("nonExistentPanelsVisible", this.nonExistentPanelsVisible);
   }
 
   @Override
@@ -59,6 +66,10 @@ public class TEVisual extends TEUIComponent {
     for (Map.Entry<String, TEPanelModel> entry : model.panelsById.entrySet()) {
       TEPanelModel p = entry.getValue();
       if (p.virtualColor != null) {
+        // respect non-existent panel rendering ui toggle.
+        if (p.panelType.equals(TEPanelModel.NONEXISTENT) && !this.nonExistentPanelsVisible.isOn()) {
+          continue;
+        }
         pg.fill(p.virtualColor.rgb, p.virtualColor.alpha);
         pg.beginShape();
         pg.vertex(p.v0.x, p.v0.y, p.v0.z);
