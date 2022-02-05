@@ -13,8 +13,36 @@ import titanicsend.pattern.TEPattern;
 
 @LXCategory("Testahedron")
 public class EdgeRunner extends TEPattern {
+  // Useful data related to LIT panels
+  private class PanelData {
+    int numEdgePixels; // Total number of pixels within the Edges of this panel
+    int litEdgePixels; // Number that are lit up
+    double maxRadius;  // Distance from any vertex to the centroid
+    List<PanelPointData> pointData;
+
+    PanelData(int numEdgePixels, double maxRadius) {
+      assert numEdgePixels > 0;
+      this.numEdgePixels = numEdgePixels;
+      this.maxRadius = maxRadius;
+      this.litEdgePixels = 0;
+      this.pointData = new ArrayList<PanelPointData>();
+    }
+  }
+  // Useful data for points inside LIT panels
+  private class PanelPointData {
+    LXPoint point;
+    double radius;         // Distance from the centroid
+    double radiusFraction; // ...expressed as a fraction <= 1.0
+
+    PanelPointData(LXPoint point, double radius, double radiusFraction) {
+      this.point = point;
+      this.radius = radius;
+      this.radiusFraction = radiusFraction;
+    }
+  }
   private HashMap<TEEdgeModel, Integer> edgeLastVisit;
   private HashMap<LXPoint, Integer> pointLastVisit;
+  private HashMap<TEPanelModel, PanelData> panelData;
   private TEEdgeModel currentEdge;
   private int moveNumber;
   private int currentPoint;
@@ -33,6 +61,19 @@ public class EdgeRunner extends TEPattern {
     for (TEVertex v : model.vertexesById.values()) {
       // Initialize all vertexes to gray
       v.virtualColor = new TEVirtualColor(50, 50, 50, 255);
+    }
+    this.panelData = new HashMap<>();
+    for (TEPanelModel panel : model.panelsById.values()) {
+      if (!panel.panelType.equals(TEPanelModel.LIT)) continue;
+      int numEdgePixels = panel.e0.points.length + panel.e1.points.length + panel.e2.points.length;
+      double maxRadius = panel.v0.distanceTo(panel.centroid);
+      PanelData pd = new PanelData(numEdgePixels, maxRadius);
+      for (LXPoint point : panel.points) {
+        double radius = TEVertex.distance(point, panel.centroid);
+        double radiusFraction = radius / maxRadius;
+        pd.pointData.add(new PanelPointData(point, radius, radiusFraction));
+      }
+      this.panelData.put(panel, pd);
     }
   }
 
@@ -59,6 +100,14 @@ public class EdgeRunner extends TEPattern {
   public void mark() {
     LXPoint currentPoint = this.currentEdge.points[this.currentPoint];
     assert currentPoint != null;
+    if (this.pointLastVisit.getOrDefault(currentPoint, -1) < 0) {
+      // First visit to this point. Increment neighbor Panels' lit-edge-pixel count.
+      for (TEPanelModel panel : this.currentEdge.connectedPanels) {
+        if (panel.panelType.equals(TEPanelModel.LIT)) {
+          this.panelData.get(panel).litEdgePixels++;
+        }
+      }
+    }
     this.pointLastVisit.put(currentPoint, this.moveNumber);
   }
 
@@ -122,20 +171,33 @@ public class EdgeRunner extends TEPattern {
     }
     for (Map.Entry<String, TEPanelModel> entry : model.panelsById.entrySet()) {
       TEPanelModel panel = entry.getValue();
-      if (!panel.panelType.equals(TEPanelModel.SOLID)) continue;
-      assert panel.points.length == 1;
-      LXPoint point = panel.points[0];
-      int numVisitedEdges = 0;
-      if (edgeLastVisit.getOrDefault(panel.e0, -1) >= 0) numVisitedEdges++;
-      if (edgeLastVisit.getOrDefault(panel.e1, -1) >= 0) numVisitedEdges++;
-      if (edgeLastVisit.getOrDefault(panel.e2, -1) >= 0) numVisitedEdges++;
-      int color;
-      if (numVisitedEdges == 3) color = LXColor.rgb(0, 180, 255);
-      else if (numVisitedEdges == 2) color = LXColor.rgb(0, 0, 255);
-      else if (numVisitedEdges == 1) color = LXColor.rgb(0, 0, 128);
-      else color = LXColor.rgb(50, 50, 50);
-      colors[point.index] = color;  // Used to control the real-life spotlight
-      panel.virtualColor = new TEVirtualColor(color, 200); // Used to render a triangle in the virtual model
+      if (panel.panelType.equals(TEPanelModel.SOLID)) {
+        assert panel.points.length == 1;
+        LXPoint point = panel.points[0];
+        int numVisitedEdges = 0;
+        if (edgeLastVisit.getOrDefault(panel.e0, -1) >= 0) numVisitedEdges++;
+        if (edgeLastVisit.getOrDefault(panel.e1, -1) >= 0) numVisitedEdges++;
+        if (edgeLastVisit.getOrDefault(panel.e2, -1) >= 0) numVisitedEdges++;
+        int color;
+        if (numVisitedEdges == 3) color = LXColor.rgb(0, 180, 255);
+        else if (numVisitedEdges == 2) color = LXColor.rgb(0, 0, 255);
+        else if (numVisitedEdges == 1) color = LXColor.rgb(0, 0, 128);
+        else color = LXColor.rgb(50, 50, 50);
+        colors[point.index] = color;  // Used to control the real-life spotlight
+        panel.virtualColor = new TEVirtualColor(color, 200); // Used to render a triangle in the virtual model
+      } else if (panel.panelType.equals(TEPanelModel.LIT)) {
+        PanelData panelData = this.panelData.get(panel);
+        double litFraction = (double)panelData.litEdgePixels / panelData.numEdgePixels;
+        for (PanelPointData pd : panelData.pointData) {
+          int color;
+          if (pd.radiusFraction <= litFraction) {
+            color = LXColor.rgb(0, 180, 255);
+          } else {
+            color = LXColor.rgb(0,0,120);
+          }
+          colors[pd.point.index] = color;
+        }
+      }
     }
   }
 }

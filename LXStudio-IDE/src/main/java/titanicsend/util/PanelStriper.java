@@ -1,15 +1,14 @@
 package titanicsend.util;
 
+import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
 import titanicsend.model.TEVertex;
 
 import java.util.*;
 
-import static java.lang.Math.cos;
-
 public class PanelStriper {
   public static final int MARGIN = 75000; // 75k microns ~= 3 inches
-  public static final int DISTANCE_BETWEEN_PIXELS = 50000; // 25k microns ~= 1 inch
+  public static final int DISTANCE_BETWEEN_PIXELS = 50000; // 50k microns ~= 2 inches
 
   public static List<LXPoint> stripe(TEVertex v0, TEVertex v1, TEVertex v2) {
     FloorTransform floorTransform = new FloorTransform(v0, v1, v2);
@@ -25,6 +24,10 @@ public class PanelStriper {
     return rv;
   }
 
+  // Lays out all the pixels in a LIT panel, once it's been sent through FloorTransform
+  // to lay it on the X-Z plane. Starts at f0 and finds the nearest point inside the
+  // border margin, and that's where the first pixel goes, then it stripes back and forth,
+  // one row at a time, until it runs out of triangle.
   private static List<FloorPoint> stripeFloor(FloorPoint f0, FloorPoint f1, FloorPoint f2) {
     FloorPoint currentPoint = findStartingPoint(f0, f1, f2);
     ArrayList<FloorPoint> rv = new ArrayList<FloorPoint>();
@@ -61,6 +64,8 @@ public class PanelStriper {
         // And reverse the heading
         heading = (Math.PI + heading) % (2.0 * Math.PI);
 
+        // TODO: Will we have to burn a pixel when we switch rows?
+
         // And swap end-of-row headings
         double tmp = endOfRowHeadingNext;
         endOfRowHeadingNext = endOfRowHeading;
@@ -68,10 +73,11 @@ public class PanelStriper {
 
         // And get started on the next row... unless there's no room for it.
         currentPoint = new FloorPoint(nextX, nextZ);
-        if (distanceToEdge(f0, f1, f2, currentPoint) < MARGIN) break;
+        if (distanceToEdge(f0, f1, f2, currentPoint) < MARGIN) return rv;
       }
     }
 
+    LX.log("Giving up on a panel after " + MAX_POINTS + " points");
     return rv;
   }
 
@@ -138,7 +144,7 @@ public class PanelStriper {
         throw new Error("Never found the starting point; impossible margins?");
       }
 
-      x = nudgeToward(floorCentroid.x, x, EPSILON * Math.abs(cos(heading)));
+      x = nudgeToward(floorCentroid.x, x, EPSILON * Math.abs(Math.cos(heading)));
       z = nudgeToward(floorCentroid.z, z, EPSILON * Math.abs(Math.sin(heading)));
     }
   }

@@ -4,12 +4,11 @@ import java.util.*;
 
 import heronarts.lx.parameter.BooleanParameter;
 import heronarts.p4lx.ui.UI;
-import heronarts.p4lx.ui.UI3dComponent;
 import heronarts.lx.model.LXPoint;
 import processing.core.PGraphics;
 import titanicsend.model.*;
 
-public class TEVisual extends TEUIComponent {
+public class TEVirtualOverlays extends TEUIComponent {
   TEVehicleModel model;
 
   public final BooleanParameter vertexSpheresVisible =
@@ -33,7 +32,7 @@ public class TEVisual extends TEUIComponent {
                   .setValue(true);
 
 
-  public TEVisual(TEVehicleModel model) {
+  public TEVirtualOverlays(TEVehicleModel model) {
     super();
     this.model = model;
     addParameter("vertexSpheresVisible", this.vertexSpheresVisible);
