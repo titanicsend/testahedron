@@ -1,6 +1,7 @@
 package titanicsend.pattern.mike;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
@@ -9,41 +10,26 @@ import heronarts.lx.model.LXPoint;
 
 import titanicsend.app.TEVirtualColor;
 import titanicsend.model.*;
-import titanicsend.pattern.TEPattern;
+import titanicsend.pattern.PeriodicPattern;
 
 @LXCategory("Testahedron")
-public class EdgeRunner extends TEPattern {
+public class EdgeRunner extends PeriodicPattern {
   private static final int NUM_RUNNERS = 10;  // TODO: Make this a config variable in the UI, and gracefully handle changes
-  private static final double MOVE_PERIOD_MSEC = 10.0;
+  private static final double MOVE_PERIOD_MSEC = 5.0;
 
   // Useful data related to LIT panels
-  private class PanelData {
+  private static class PanelData {
     int numEdgePixels; // Total number of pixels within the Edges of this panel
     int litEdgePixels; // Number that are lit up
-    double maxRadius;  // Distance from any vertex to the centroid
-    List<PanelPointData> pointData;
 
-    PanelData(int numEdgePixels, double maxRadius) {
+    PanelData(int numEdgePixels) {
       assert numEdgePixels > 0;
       this.numEdgePixels = numEdgePixels;
-      this.maxRadius = maxRadius;
       this.litEdgePixels = 0;
-      this.pointData = new ArrayList<PanelPointData>();
     }
   }
-  // Useful data for points inside LIT panels
-  private class PanelPointData {
-    LXPoint point;
-    double radius;         // Distance from the centroid
-    double radiusFraction; // ...expressed as a fraction <= 1.0
 
-    PanelPointData(LXPoint point, double radius, double radiusFraction) {
-      this.point = point;
-      this.radius = radius;
-      this.radiusFraction = radiusFraction;
-    }
-  }
-  private class Runner {
+  private static class Runner {
     private TEEdgeModel currentEdge;
     private int currentPoint;
     private boolean fwd;
@@ -54,15 +40,16 @@ public class EdgeRunner extends TEPattern {
       this.fwd = true;
     }
   }
-  private HashMap<TEEdgeModel, Integer> edgeLastVisit;
-  private HashMap<LXPoint, Integer> pointLastVisit;
-  private HashMap<TEPanelModel, PanelData> panelData;
-  private List<Runner> runners;
+
+  private final HashMap<TEEdgeModel, Integer> edgeLastVisit;
+  private final HashMap<LXPoint, Integer> pointLastVisit;
+  private final HashMap<TEPanelModel, PanelData> panelData;
+  private final List<Runner> runners;
   private int moveNumber;
-  private double accumulatedMsec;
 
   public EdgeRunner(LX lx) {
     super(lx);
+    super.register(this::update, MOVE_PERIOD_MSEC);
     this.edgeLastVisit = new HashMap<TEEdgeModel, Integer>();
     this.pointLastVisit = new HashMap<LXPoint, Integer>();
     this.runners = new ArrayList<>();
@@ -81,13 +68,8 @@ public class EdgeRunner extends TEPattern {
     for (TEPanelModel panel : model.panelsById.values()) {
       if (!panel.panelType.equals(TEPanelModel.LIT)) continue;
       int numEdgePixels = panel.e0.points.length + panel.e1.points.length + panel.e2.points.length;
-      double maxRadius = panel.v0.distanceTo(panel.centroid);
-      PanelData pd = new PanelData(numEdgePixels, maxRadius);
-      for (LXPoint point : panel.points) {
-        double radius = TEVertex.distance(point, panel.centroid);
-        double radiusFraction = radius / maxRadius;
-        pd.pointData.add(new PanelPointData(point, radius, radiusFraction));
-      }
+
+      PanelData pd = new PanelData(numEdgePixels);
       this.panelData.put(panel, pd);
     }
   }
@@ -162,14 +144,10 @@ public class EdgeRunner extends TEPattern {
     }
   }
 
-  public void run(double deltaMs) {
-    this.accumulatedMsec += deltaMs;
-    while (this.accumulatedMsec >= MOVE_PERIOD_MSEC) {
-      this.accumulatedMsec -= MOVE_PERIOD_MSEC;
-      for (Runner runner : this.runners) {
-        this.mark(runner);
-        this.move(runner);
-      }
+  public void update() {
+    for (Runner runner : this.runners){
+      this.mark(runner);
+      this.move(runner);
     }
 
     for (LXPoint point : model.edgePoints) {
@@ -179,10 +157,10 @@ public class EdgeRunner extends TEPattern {
         color = LXColor.rgb(50, 50, 50);
       } else {
         int age = this.moveNumber - lastVisit;
-        if (age <= 3) color = LXColor.WHITE;
-        else if (age <= 10) color = LXColor.rgb(0, 180, 255);
-        else if (age <= 50) color = LXColor.rgb(0, 0, 255);
-        else color = LXColor.rgb(0, 0, 100);
+        if (age <= 15) color = LXColor.rgb(255, 255, 255);
+        else if (age <= 50) color = LXColor.rgb(0, 255, 180);
+        else if (age <= 150) color = LXColor.rgb(0, 255, 50);
+        else color = LXColor.rgb(0, 100, 0);
       }
       colors[point.index] = color;
     }
@@ -196,7 +174,7 @@ public class EdgeRunner extends TEPattern {
         if (edgeLastVisit.getOrDefault(panel.e1, -1) >= 0) numVisitedEdges++;
         if (edgeLastVisit.getOrDefault(panel.e2, -1) >= 0) numVisitedEdges++;
         int color;
-        if (numVisitedEdges == 3) color = LXColor.rgb(0, 180, 255);
+        if (numVisitedEdges == 3) color = LXColor.rgb(0, 90, 128);
         else if (numVisitedEdges == 2) color = LXColor.rgb(0, 0, 255);
         else if (numVisitedEdges == 1) color = LXColor.rgb(0, 0, 128);
         else color = LXColor.rgb(50, 50, 50);
@@ -204,15 +182,15 @@ public class EdgeRunner extends TEPattern {
         panel.virtualColor = new TEVirtualColor(color, 200); // Used to render a triangle in the virtual model
       } else if (panel.panelType.equals(TEPanelModel.LIT)) {
         PanelData panelData = this.panelData.get(panel);
-        double litFraction = (double)panelData.litEdgePixels / panelData.numEdgePixels;
-        for (PanelPointData pd : panelData.pointData) {
+        double litFraction = (double) panelData.litEdgePixels / panelData.numEdgePixels;
+        for (TEPanelModel.LitPointData lpd : panel.litPointData) {
           int color;
-          if (pd.radiusFraction <= litFraction) {
+          if (lpd.radiusFraction <= litFraction) {
             color = LXColor.rgb(0, 180, 255);
           } else {
-            color = LXColor.rgb(0,0,120);
+            color = LXColor.rgb(0, 0, 120);
           }
-          colors[pd.point.index] = color;
+          colors[lpd.point.index] = color;
         }
       }
     }

@@ -26,9 +26,9 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setDescription("Toggle whether panel labels are visible")
                   .setValue(true);
 
-  public final BooleanParameter nonExistentPanelsVisible =
-          new BooleanParameter("NE Panels")
-                  .setDescription("Toggle whether non-existent panels are visible")
+  public final BooleanParameter unknownPanelsVisible =
+          new BooleanParameter("Unk Panels")
+                  .setDescription("Toggle whether unknown panels are visible")
                   .setValue(true);
 
 
@@ -38,7 +38,7 @@ public class TEVirtualOverlays extends TEUIComponent {
     addParameter("vertexSpheresVisible", this.vertexSpheresVisible);
     addParameter("vertexLabelsVisible", this.vertexLabelsVisible);
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
-    addParameter("nonExistentPanelsVisible", this.nonExistentPanelsVisible);
+    addParameter("unknownPanelsVisible", this.unknownPanelsVisible);
   }
 
   @Override
@@ -65,8 +65,8 @@ public class TEVirtualOverlays extends TEUIComponent {
     for (Map.Entry<String, TEPanelModel> entry : model.panelsById.entrySet()) {
       TEPanelModel p = entry.getValue();
       if (p.virtualColor != null) {
-        // respect non-existent panel rendering ui toggle.
-        if (p.panelType.equals(TEPanelModel.NONEXISTENT) && !this.nonExistentPanelsVisible.isOn()) {
+        // respect unknown panel rendering ui toggle.
+        if (p.panelType.equals(TEPanelModel.UNKNOWN) && !this.unknownPanelsVisible.isOn()) {
           continue;
         }
         pg.fill(p.virtualColor.rgb, p.virtualColor.alpha);
