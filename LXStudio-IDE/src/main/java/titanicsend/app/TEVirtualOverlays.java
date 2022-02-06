@@ -2,7 +2,6 @@ package titanicsend.app;
 
 import java.util.*;
 
-import heronarts.lx.color.LXColor;
 import heronarts.lx.parameter.BooleanParameter;
 import heronarts.lx.transform.LXVector;
 import heronarts.p4lx.ui.UI;
@@ -92,7 +91,9 @@ public class TEVirtualOverlays extends TEUIComponent {
       }
     }
     for (TELaserModel laser : model.lasers) {
-      if (laser.color == LXColor.BLACK) continue;
+      // Tried checking for LXColor.BLACK and LXColor.rgb(0,0,0) but neither worked. Weird.
+      if (laser.color == 0) continue;
+
       pg.stroke(laser.color);
 
       double targetX = laser.origin.x + LASER_DISTANCE * Math.sin(laser.azimuth) * Math.cos(laser.elevation);

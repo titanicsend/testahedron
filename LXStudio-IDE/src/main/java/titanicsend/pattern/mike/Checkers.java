@@ -39,7 +39,7 @@ public class Checkers extends TEPattern {
       int panelColor = entry.getValue();
       int rgb = panelColor == 0 ? LXColor.rgb(249, 64, 97) : LXColor.rgb(249, 229, 237);
       for (LXPoint point : panel.points) colors[point.index] = rgb;
-      if (panel.panelType.equals(TEPanelModel.SOLID)) panel.virtualColor.rgb = rgb;
     }
+    this.updateVirtualColors();
   }
 }

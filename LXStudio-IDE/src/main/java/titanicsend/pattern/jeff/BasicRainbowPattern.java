@@ -8,11 +8,11 @@ import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
-import heronarts.lx.pattern.LXPattern;
 import heronarts.lx.modulator.SawLFO;
+import titanicsend.pattern.TEPattern;
 
 @LXCategory("Testahedron")
-public class BasicRainbowPattern extends LXPattern {
+public class BasicRainbowPattern extends TEPattern {
 
     public final SawLFO t1 = new SawLFO(0, 1, 4500);
 
@@ -30,6 +30,7 @@ public class BasicRainbowPattern extends LXPattern {
             // Hue is a 360 degree wheel, so the final 0..1 value is multiplied by 360
             colors[p.index] = LXColor.hsb(360 * ((t1.getValuef() + ((float) p.index) / model.points.length) % 1), 100, 100);
         }
+        this.updateVirtualColors();
     }
 
 }
