@@ -31,6 +31,7 @@ import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEVehicleModel;
 import titanicsend.pattern.jeff.*;
+import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
 import titanicsend.pattern.mike.*;
 
