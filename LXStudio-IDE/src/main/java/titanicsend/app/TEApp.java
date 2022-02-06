@@ -35,7 +35,7 @@ import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.mike.*;
-
+import titanicsend.pattern.tmc.*;
 public class TEApp extends PApplet implements LXPlugin  {
   private static final String WINDOW_TITLE = "Titanic's End";
   private TEVehicleModel model;
@@ -82,6 +82,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(EdgeRunner.class);
     lx.registry.addPattern(SimpleSolidEdgePattern.class);
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
+    lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
     /*
