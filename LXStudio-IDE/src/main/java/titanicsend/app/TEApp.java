@@ -77,6 +77,8 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(Bounce.class);
     lx.registry.addPattern(Bubbles.class);
     lx.registry.addPattern(EdgeRunner.class);
+    lx.registry.addPattern(SimpleSolidEdgePattern.class);
+    lx.registry.addPattern(SimpleSolidPanelPattern.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
     /*
