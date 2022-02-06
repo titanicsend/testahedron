@@ -48,12 +48,7 @@ public class TEVertex extends LXVector {
     edges.add(edge);
   }
 
-  public void nudgeToward(LXPoint other, float distance) {
-    LXVector thisVector = new LXVector(this);
-    LXVector otherVector = new LXVector(other);
-    LXVector newPosition = thisVector.lerp(otherVector, distance);
-    this.x = newPosition.x;
-    this.y = newPosition.y;
-    this.z = newPosition.z;
+  public void nudgeToward(LXVector other, float distance) {
+    lerp(other, distance);
   }
 }

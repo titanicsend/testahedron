@@ -74,23 +74,23 @@ public class Pulse extends TEPattern {
         Set<LXPoint> unassignedPoints = Arrays.stream(panel.points).collect(Collectors.toSet());
 
         TEVertex[] currentVertices = {
-                new TEVertex(new LXPoint(panel.v0), -1),
-                new TEVertex(new LXPoint(panel.v1), -1),
-                new TEVertex(new LXPoint(panel.v2), -1)
+                new TEVertex(new LXVector(panel.v0), -1),
+                new TEVertex(new LXVector(panel.v1), -1),
+                new TEVertex(new LXVector(panel.v2), -1)
         };
 
         int currentIndex = 0;
         while (currentVertices[0].distanceTo(panel.centroid) > (10 * PanelStriper.DISTANCE_BETWEEN_PIXELS)) {
             points.add(new ArrayList<LXPoint>());
             ArrayList<LXPoint> assignedPoints = new ArrayList<LXPoint>();
-            LXPoint[][] edges = {
+            LXVector[][] edges = {
                     {currentVertices[0], currentVertices[1]},
                     {currentVertices[1], currentVertices[2]},
                     {currentVertices[0], currentVertices[2]},
             };
 
             for (LXPoint point : unassignedPoints) {
-                for (LXPoint[] edge : edges) {
+                for (LXVector[] edge : edges) {
                     if (distanceBetPointAndLine(edge[0], edge[1], point) < 5 * PanelStriper.DISTANCE_BETWEEN_PIXELS) {
                         points.get(currentIndex).add(point);
                     }
@@ -112,7 +112,7 @@ public class Pulse extends TEPattern {
                 .toArray(LXPoint[][]::new);
     }
 
-    private static double distanceBetPointAndLine(LXPoint line_p1, LXPoint line_p2, LXPoint p) {
+    private static double distanceBetPointAndLine(LXVector line_p1, LXVector line_p2, LXPoint p) {
         LXVector v0 = new LXVector(p);
         LXVector v1 = new LXVector(line_p1);
         LXVector v2 = new LXVector(line_p2);

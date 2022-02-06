@@ -33,9 +33,8 @@ import titanicsend.model.TEVehicleModel;
 import titanicsend.pattern.jeff.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
-import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.mike.*;
-import titanicsend.pattern.tmc.*;
+
 public class TEApp extends PApplet implements LXPlugin  {
   private static final String WINDOW_TITLE = "Titanic's End";
   private TEVehicleModel model;
