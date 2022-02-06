@@ -5,11 +5,9 @@ import java.util.*;
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
 import heronarts.lx.color.LXColor;
-import heronarts.lx.model.LXPoint;
-
-import titanicsend.app.TEVirtualColor;
 import titanicsend.model.*;
 import titanicsend.pattern.TEPattern;
+
 
 import static java.util.Collections.shuffle;
 

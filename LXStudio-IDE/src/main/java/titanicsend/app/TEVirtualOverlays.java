@@ -3,8 +3,8 @@ package titanicsend.app;
 import java.util.*;
 
 import heronarts.lx.parameter.BooleanParameter;
+import heronarts.lx.transform.LXVector;
 import heronarts.p4lx.ui.UI;
-import heronarts.lx.model.LXPoint;
 import processing.core.PGraphics;
 import titanicsend.model.*;
 
@@ -80,7 +80,7 @@ public class TEVirtualOverlays extends TEUIComponent {
       // Label each panel
       if (this.panelLabelsVisible.getValueb()) {
         pg.pushMatrix();
-        LXPoint centroid = p.centroid;
+        LXVector centroid = p.centroid;
         pg.translate(centroid.x, centroid.y, centroid.z);
         pg.rotateY((float) (-Math.PI / 2.0));
         pg.scale(10000, -10000);

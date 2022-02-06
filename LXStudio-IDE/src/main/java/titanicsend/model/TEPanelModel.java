@@ -4,6 +4,7 @@ import java.util.*;
 
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
+import heronarts.lx.transform.LXVector;
 import titanicsend.app.TEVirtualColor;
 
 public class TEPanelModel extends LXModel {
@@ -24,9 +25,10 @@ public class TEPanelModel extends LXModel {
   public final static String SOLID = "solid";
   public final static String LIT = "lit";
 
+  public String id;
   public final TEVertex v0, v1, v2;
   public final TEEdgeModel e0, e1, e2;
-  public final LXPoint centroid; // TODO: We shouldn't be using LXPoints for non-lights; try LXVector
+  public final LXVector centroid;
   public String panelType;
   public List<LitPointData> litPointData;
 
@@ -34,7 +36,7 @@ public class TEPanelModel extends LXModel {
   public TEVirtualColor virtualColor;
 
   // Given an Edge and three Vertexes, return the number of vertexes the edge touches
-  private int count_touches(TEEdgeModel e, TEVertex v0, TEVertex v1, TEVertex v2) {
+  private static int countTouches(TEEdgeModel e, TEVertex v0, TEVertex v1, TEVertex v2) {
     int rv = 0;
     if (e.touches(v0)) rv++;
     if (e.touches(v1)) rv++;
@@ -42,11 +44,12 @@ public class TEPanelModel extends LXModel {
     return rv;
   }
 
-  public TEPanelModel(ArrayList<LXPoint> points, TEVertex v0, TEVertex v1, TEVertex v2,
+  public TEPanelModel(String id, ArrayList<LXPoint> points, TEVertex v0, TEVertex v1, TEVertex v2,
                       TEEdgeModel e0, TEEdgeModel e1, TEEdgeModel e2, String panelType,
-                      LXPoint centroid) {
+                      LXVector centroid) {
     super(points);
 
+    this.id = id;
     this.panelType = panelType;
     this.centroid = centroid;
 
@@ -70,14 +73,14 @@ public class TEPanelModel extends LXModel {
 
         this.litPointData = new ArrayList<LitPointData>();
         for (LXPoint point : points) {
-          double radius = TEVertex.distance(point, this.centroid);
+          double radius = TEVertex.distance(this.centroid, point);
           double radiusFraction = radius / maxRadius;
           litPointData.add(new LitPointData(point, radius, radiusFraction));
         }
         break;
       case SOLID:
-        // Display solid panels as semi-transparent blue, unless repainted by a pattern
-        this.virtualColor = new TEVirtualColor(0, 0, 255, 200);
+        // Display solid panels as semi-transparent black, recolorable by patterns
+        this.virtualColor = new TEVirtualColor(0, 0, 0, 200);
         this.litPointData = null;
         break;
       default:
@@ -100,9 +103,9 @@ public class TEPanelModel extends LXModel {
     assert e1.touches(e2);
 
     // Make sure each edge touches exactly two of the three vertexes
-    assert count_touches(e0, v0, v1, v2) == 2;
-    assert count_touches(e1, v0, v1, v2) == 2;
-    assert count_touches(e2, v0, v1, v2) == 2;
+    assert countTouches(e0, v0, v1, v2) == 2;
+    assert countTouches(e1, v0, v1, v2) == 2;
+    assert countTouches(e2, v0, v1, v2) == 2;
 
     this.e0 = e0;
     this.e1 = e1;
@@ -111,5 +114,24 @@ public class TEPanelModel extends LXModel {
     this.v0 = v0;
     this.v1 = v1;
     this.v2 = v2;
+  }
+
+  // Checks if two panels touch along an edge (not just at a vertex)
+  public boolean touches(TEPanelModel other) {
+    for (TEEdgeModel eThis : new TEEdgeModel[]{this.e0, this.e1, this.e2}) {
+      for (TEEdgeModel eOther : new TEEdgeModel[]{other.e0, other.e1, other.e2}) {
+        if (eThis == eOther) return true;
+      }
+    }
+    return false;
+  }
+
+  // Returns set of panels that touch along an edge (not just at a vertex)
+  public Set<TEPanelModel> neighbors() {
+    HashSet<TEPanelModel> rv = new HashSet<>();
+    for (TEEdgeModel e : new TEEdgeModel[]{this.e0, this.e1, this.e2}) {
+      rv.addAll(e.connectedPanels);
+    }
+    return rv;
   }
 }

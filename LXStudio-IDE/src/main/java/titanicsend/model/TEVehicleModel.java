@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import heronarts.lx.LX;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
+import heronarts.lx.transform.LXVector;
 
 public class TEVehicleModel extends LXModel {
   public HashMap<Integer, TEVertex> vertexesById;
@@ -65,9 +66,9 @@ public class TEVehicleModel extends LXModel {
       int x = Integer.parseInt(tokens[1]);
       int y = Integer.parseInt(tokens[2]);
       int z = Integer.parseInt(tokens[3]);
-      LXPoint p = new LXPoint(x, y, z);
+      LXVector vector = new LXVector(x, y, z);
       int numConnectedEdges = Integer.parseInt(tokens[4]);
-      TEVertex v = new TEVertex(p, id, numConnectedEdges);
+      TEVertex v = new TEVertex(vector, id, numConnectedEdges);
       geometry.vertexesById.put(id, v);
     }
     s.close();
@@ -128,7 +129,7 @@ public class TEVehicleModel extends LXModel {
       TEVertex[] vertexes = vh.toArray(new TEVertex[0]);
       assert vertexes.length == 3;
 
-      TEPanelModel p = TEPanelFactory.build(vertexes[0], vertexes[1], vertexes[2],
+      TEPanelModel p = TEPanelFactory.build(id, vertexes[0], vertexes[1], vertexes[2],
               e0, e1, e2, panelType);
       e0.connectedPanels.add(p);
       e1.connectedPanels.add(p);
@@ -145,8 +146,7 @@ public class TEVehicleModel extends LXModel {
 
     loadVertexes(geometry);
 
-    ArrayList<TEVertex> cloud = new ArrayList<TEVertex>(geometry.vertexesById.values());
-    childList.add(new TEVertexCloudModel(cloud));
+    // Vertexes aren't LXPoints (and thus, not LXModels) so they're not children
 
     loadEdges(geometry);
 

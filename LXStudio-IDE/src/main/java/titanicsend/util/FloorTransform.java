@@ -47,7 +47,7 @@ public class FloorTransform {
     double denominator = 2.0 * distance01 * distance02;
     double fraction = (d01Squared + d02Squared - d12Squared) / denominator;
     double angle = Math.acos(fraction);
-    LXVector vector = new LXVector(new LXPoint(distance02, 0, 0));
+    LXVector vector = new LXVector((float)distance02, 0, 0);
     vector.rotate((float)angle);
     assert vector.z == 0.0;
     this.f2 = new FloorPoint(vector.x, vector.y);
