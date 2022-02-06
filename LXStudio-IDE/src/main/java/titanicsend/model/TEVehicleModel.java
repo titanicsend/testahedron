@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import heronarts.lx.LX;
+import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
@@ -13,12 +14,14 @@ public class TEVehicleModel extends LXModel {
   public HashMap<Integer, TEVertex> vertexesById;
   public HashMap<String, TEEdgeModel> edgesById;
   public HashMap<String, TEPanelModel> panelsById;
+  public List<TELaserModel> lasers;
   public Set<LXPoint> edgePoints; // Points belonging to edges
 
   private static class Geometry {
     public HashMap<Integer, TEVertex> vertexesById;
     public HashMap<String, TEEdgeModel> edgesById;
     public HashMap<String, TEPanelModel> panelsById;
+    public List<TELaserModel> lasers;
     public LXModel[] children;
   }
 
@@ -31,6 +34,7 @@ public class TEVehicleModel extends LXModel {
     this.vertexesById = geometry.vertexesById;
     this.edgesById = geometry.edgesById;
     this.panelsById = geometry.panelsById;
+    this.lasers = geometry.lasers;
     this.edgePoints = new HashSet<LXPoint>();
     for (TEEdgeModel e : this.edgesById.values()) {
       this.edgePoints.addAll(Arrays.asList(e.points));
@@ -147,6 +151,16 @@ public class TEVehicleModel extends LXModel {
     loadVertexes(geometry);
 
     // Vertexes aren't LXPoints (and thus, not LXModels) so they're not children
+
+    // TODO: Store this in a config file
+    LXVector laserAnchor = geometry.vertexesById.get(48);
+    double laserElevation = -Math.PI / 4.0;  // Shine down at a 45-degree angle
+    double laserAzimuth = Math.PI / 2.0;  // ...towards the audience
+    TELaserModel laser = new TELaserModel(laserAnchor, laserElevation, laserAzimuth);
+    laser.color = LXColor.rgb(255,0,0);
+    geometry.lasers = new ArrayList<>();
+    geometry.lasers.add(laser);
+    childList.add(laser);
 
     loadEdges(geometry);
 

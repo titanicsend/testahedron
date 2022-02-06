@@ -18,10 +18,7 @@ public class Checkers extends TEPattern {
   public Checkers(LX lx) {
     super(lx);
     this.panelColors = new HashMap<>();
-    ArrayList<TEPanelModel> queue = new ArrayList<>(model.panelsById.values());
-
-    while (!queue.isEmpty()) {
-      TEPanelModel panel = queue.remove(0);
+    for (TEPanelModel panel : model.panelsById.values()) {
       if (!this.panelColors.containsKey(panel)) {
         // If not yet colored, color it 0
         this.panelColors.put(panel, 0);
@@ -32,7 +29,6 @@ public class Checkers extends TEPattern {
       for (TEPanelModel neighbor : panel.neighbors()) {
         if (this.panelColors.containsKey(neighbor)) continue;  // Already colored
         this.panelColors.put(neighbor, newColor);
-        queue.add(neighbor);
       }
     }
   }
