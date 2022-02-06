@@ -4,6 +4,7 @@ import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import heronarts.lx.LX;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 
@@ -34,6 +35,12 @@ public class TEVehicleModel extends LXModel {
       this.edgePoints.addAll(Arrays.asList(e.points));
     }
     reindexPoints();
+
+    LX.log("Titanics End loaded. " +
+            this.vertexesById.size() + " vertexes, " +
+            this.edgesById.size() + " edges, " +
+            this.panelsById.size() + " panels, " +
+            this.points.length + " pixels");
   }
 
   private static Scanner loadFile(String filename) {
@@ -150,6 +157,7 @@ public class TEVehicleModel extends LXModel {
     childList.addAll(geometry.panelsById.values());
 
     geometry.children = childList.toArray(new LXModel[0]);
+
     return geometry;
   }
 }

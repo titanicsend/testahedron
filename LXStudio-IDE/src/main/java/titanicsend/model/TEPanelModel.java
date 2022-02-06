@@ -1,20 +1,34 @@
 package titanicsend.model;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import titanicsend.app.TEVirtualColor;
 
 public class TEPanelModel extends LXModel {
-  public final static String NONEXISTENT = "nonexistent";
+  // Useful data for points inside LIT panels
+  public static class LitPointData {
+    public LXPoint point;
+    public double radius;         // Distance from the centroid
+    public double radiusFraction; // ...expressed as a fraction <= 1.0
+
+    LitPointData(LXPoint point, double radius, double radiusFraction) {
+      this.point = point;
+      this.radius = radius;
+      this.radiusFraction = radiusFraction;
+    }
+  }
+
+  public final static String UNKNOWN = "unknown";
   public final static String SOLID = "solid";
   public final static String LIT = "lit";
 
   public final TEVertex v0, v1, v2;
   public final TEEdgeModel e0, e1, e2;
-  public final LXPoint centroid;
+  public final LXPoint centroid; // TODO: We shouldn't be using LXPoints for non-lights; try LXVector
   public String panelType;
+  public List<LitPointData> litPointData;
 
   // Set to non-null and the virtual display will shade the panel's triangle
   public TEVirtualColor virtualColor;
@@ -37,9 +51,10 @@ public class TEPanelModel extends LXModel {
     this.centroid = centroid;
 
     switch (panelType) {
-      case NONEXISTENT:
-        // Display nonexistent panels as wispy pink
+      case UNKNOWN:
+        // Display unknown panels as wispy pink
         this.virtualColor = new TEVirtualColor(255, 0, 255, 100);
+        this.litPointData = null;
         break;
       case LIT:
         // Display lit panels as semi-transparent gold
@@ -47,10 +62,23 @@ public class TEPanelModel extends LXModel {
 
         // Don't display lit panels
         this.virtualColor = null;
+
+        double radius0 = v0.distanceTo(this.centroid);
+        double radius1 = v1.distanceTo(this.centroid);
+        double radius2 = v2.distanceTo(this.centroid);
+        double maxRadius = Math.max(radius0, Math.max(radius1, radius2));
+
+        this.litPointData = new ArrayList<LitPointData>();
+        for (LXPoint point : points) {
+          double radius = TEVertex.distance(point, this.centroid);
+          double radiusFraction = radius / maxRadius;
+          litPointData.add(new LitPointData(point, radius, radiusFraction));
+        }
         break;
       case SOLID:
         // Display solid panels as semi-transparent blue, unless repainted by a pattern
         this.virtualColor = new TEVirtualColor(0, 0, 255, 200);
+        this.litPointData = null;
         break;
       default:
         throw new Error("Unknown panel type: " + panelType);
