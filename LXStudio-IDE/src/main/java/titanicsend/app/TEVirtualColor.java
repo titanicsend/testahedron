@@ -3,8 +3,8 @@ package titanicsend.app;
 import heronarts.lx.color.LXColor;
 
 public class TEVirtualColor {
-  public final int rgb;
-  public final float alpha;
+  public int rgb;
+  public float alpha;
 
   public TEVirtualColor(int rgb, float alpha) {
     this.rgb = rgb;

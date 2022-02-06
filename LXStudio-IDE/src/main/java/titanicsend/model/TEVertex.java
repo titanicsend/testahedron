@@ -1,13 +1,12 @@
 package titanicsend.model;
 
-import Jama.Matrix;
-import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
+import heronarts.lx.transform.LXVector;
 import titanicsend.app.TEVirtualColor;
 
 import java.util.*;
 
-public class TEVertex extends LXPoint {
+public class TEVertex extends LXVector {
   public static HashMap<Integer, TEVertex> vertexesById;
 
   public int id;
@@ -17,27 +16,32 @@ public class TEVertex extends LXPoint {
   // Set to non-null and the virtual display will shade vertex's sphere
   public TEVirtualColor virtualColor;
 
-  public TEVertex(LXPoint point, int id, int numConnectedEdges) {
-    super(point);
+  public TEVertex(LXVector vector, int id, int numConnectedEdges) {
+    super(vector);
     this.id = id;
     this.numConnectedEdges = numConnectedEdges;
     this.edges = new HashSet<TEEdgeModel>();
     this.virtualColor = new TEVirtualColor(255, 255, 255, 255);
   }
 
-  public TEVertex(LXPoint point, int id) {
-    this(point, id, -1);
+  public TEVertex(LXVector vector, int id) {
+    this(vector, id, -1);
   }
 
-  public static double distance(LXPoint p0, LXPoint p1) {
-    float dx = p0.x - p1.x;
-    float dy = p0.y - p1.y;
-    float dz = p0.z - p1.z;
+  public static double distance(LXVector v, float x, float y, float z) {
+    float dx = v.x - x;
+    float dy = v.y - y;
+    float dz = v.z - z;
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
 
-  public double distanceTo(LXPoint p) {
-    return TEVertex.distance(this, p);
+
+  public static double distance(LXVector v, LXPoint p) {
+    return distance(v, p.x, p.y, p.z);
+  }
+
+  public double distanceTo(LXVector v) {
+    return distance(this, v.x, v.y, v.z);
   }
 
   public void addEdge(TEEdgeModel edge) {

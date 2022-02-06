@@ -1,7 +1,6 @@
 package titanicsend.pattern.mike;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
@@ -178,8 +177,7 @@ public class EdgeRunner extends PeriodicPattern {
         else if (numVisitedEdges == 2) color = LXColor.rgb(0, 0, 255);
         else if (numVisitedEdges == 1) color = LXColor.rgb(0, 0, 128);
         else color = LXColor.rgb(50, 50, 50);
-        colors[point.index] = color;  // Used to control the real-life spotlight
-        panel.virtualColor = new TEVirtualColor(color, 200); // Used to render a triangle in the virtual model
+        colors[point.index] = color;
       } else if (panel.panelType.equals(TEPanelModel.LIT)) {
         PanelData panelData = this.panelData.get(panel);
         double litFraction = (double) panelData.litEdgePixels / panelData.numEdgePixels;
