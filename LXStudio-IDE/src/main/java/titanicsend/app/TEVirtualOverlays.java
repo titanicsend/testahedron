@@ -10,6 +10,7 @@ import titanicsend.model.*;
 
 public class TEVirtualOverlays extends TEUIComponent {
   TEVehicleModel model;
+  public static final int LASER_DISTANCE = 10000000; // 10,000,000 microns ~= 33 feet
 
   public final BooleanParameter vertexSpheresVisible =
           new BooleanParameter("Vertex Spheres")
@@ -88,6 +89,17 @@ public class TEVirtualOverlays extends TEUIComponent {
         pg.text(entry.getKey(), 0, 0, -100000);
         pg.popMatrix();
       }
+    }
+    for (TELaserModel laser : model.lasers) {
+      // Tried checking for LXColor.BLACK and LXColor.rgb(0,0,0) but neither worked. Weird.
+      if (laser.color == 0) continue;
+
+      pg.stroke(laser.color);
+
+      double targetX = laser.origin.x + LASER_DISTANCE * Math.sin(laser.azimuth) * Math.cos(laser.elevation);
+      double targetY = laser.origin.y + LASER_DISTANCE * Math.sin(laser.elevation);
+      double targetZ = laser.origin.z + LASER_DISTANCE * Math.cos(laser.azimuth) * Math.cos(laser.elevation);
+      pg.line(laser.origin.x, laser.origin.y, laser.origin.z, (float)targetX, (float)targetY, (float)targetZ);
     }
     endDraw(ui, pg);
   }
