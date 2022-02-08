@@ -47,4 +47,8 @@ public class TEVertex extends LXVector {
   public void addEdge(TEEdgeModel edge) {
     edges.add(edge);
   }
+
+  public void nudgeToward(LXVector other, float distance) {
+    lerp(other, distance);
+  }
 }

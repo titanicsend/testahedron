@@ -33,7 +33,6 @@ import titanicsend.model.TEVehicleModel;
 import titanicsend.pattern.jeff.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
-import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.mike.*;
 
 public class TEApp extends PApplet implements LXPlugin  {
@@ -82,6 +81,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(EdgeRunner.class);
     lx.registry.addPattern(SimpleSolidEdgePattern.class);
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
+    lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
     /*
