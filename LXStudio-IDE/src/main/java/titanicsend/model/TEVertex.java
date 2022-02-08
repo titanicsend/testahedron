@@ -10,22 +10,16 @@ public class TEVertex extends LXVector {
   public static HashMap<Integer, TEVertex> vertexesById;
 
   public int id;
-  public int numConnectedEdges;  // -1 if we don't know
   public Set<TEEdgeModel> edges;
 
   // Set to non-null and the virtual display will shade vertex's sphere
   public TEVirtualColor virtualColor;
 
-  public TEVertex(LXVector vector, int id, int numConnectedEdges) {
+  public TEVertex(LXVector vector, int id) {
     super(vector);
     this.id = id;
-    this.numConnectedEdges = numConnectedEdges;
     this.edges = new HashSet<TEEdgeModel>();
     this.virtualColor = new TEVirtualColor(255, 255, 255, 255);
-  }
-
-  public TEVertex(LXVector vector, int id) {
-    this(vector, id, -1);
   }
 
   public static double distance(LXVector v, float x, float y, float z) {

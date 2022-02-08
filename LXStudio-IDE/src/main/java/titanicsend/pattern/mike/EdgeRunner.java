@@ -55,8 +55,11 @@ public class EdgeRunner extends PeriodicPattern {
 
     Iterator<TEEdgeModel> edges = model.edgesById.values().iterator();
     for (int i = 0; i < NUM_RUNNERS; i++) {
-      // TODO: Handle the case where there are more runners than edges
-      this.runners.add(new Runner(edges.next()));
+      try {
+        this.runners.add(new Runner(edges.next()));
+      } catch (NoSuchElementException e) {
+        // TODO: Handle this case (where there are more runners than edges)
+      }
     }
     this.moveNumber = 0;
     for (TEVertex v : model.vertexesById.values()) {
