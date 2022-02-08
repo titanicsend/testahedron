@@ -116,7 +116,7 @@ public class TEWholeModel extends LXModel {
       assert v0Id < v1Id;
       TEVertex v0 = geometry.vertexesById.get(v0Id);
       TEVertex v1 = geometry.vertexesById.get(v1Id);
-      TEEdgeModel e = new TEEdgeModel(v0, v1);
+      TEEdgeModel e = new TEEdgeModel(v0, v1, dark);
       v0.addEdge(e);
       v1.addEdge(e);
 
