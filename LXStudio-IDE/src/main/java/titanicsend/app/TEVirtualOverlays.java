@@ -9,7 +9,7 @@ import processing.core.PGraphics;
 import titanicsend.model.*;
 
 public class TEVirtualOverlays extends TEUIComponent {
-  TEVehicleModel model;
+  TEWholeModel model;
   public static final int LASER_DISTANCE = 10000000; // 10,000,000 microns ~= 33 feet
 
   public final BooleanParameter vertexSpheresVisible =
@@ -33,7 +33,7 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setValue(true);
 
 
-  public TEVirtualOverlays(TEVehicleModel model) {
+  public TEVirtualOverlays(TEWholeModel model) {
     super();
     this.model = model;
     addParameter("vertexSpheresVisible", this.vertexSpheresVisible);

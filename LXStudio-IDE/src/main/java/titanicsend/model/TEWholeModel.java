@@ -10,14 +10,19 @@ import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
 
-public class TEVehicleModel extends LXModel {
+public class TEWholeModel extends LXModel {
+  public String name;
   public HashMap<Integer, TEVertex> vertexesById;
   public HashMap<String, TEEdgeModel> edgesById;
   public HashMap<String, TEPanelModel> panelsById;
   public List<TELaserModel> lasers;
   public Set<LXPoint> edgePoints; // Points belonging to edges
 
+  private String subdir;
+
   private static class Geometry {
+    public String subdir;
+    public String name;
     public HashMap<Integer, TEVertex> vertexesById;
     public HashMap<String, TEEdgeModel> edgesById;
     public HashMap<String, TEPanelModel> panelsById;
@@ -25,12 +30,13 @@ public class TEVehicleModel extends LXModel {
     public LXModel[] children;
   }
 
-  public TEVehicleModel() {
-    this(loadGeometry());
+  public TEWholeModel(String subdir) {
+    this(loadGeometry(subdir));
   }
 
-  private TEVehicleModel(Geometry geometry) {
+  private TEWholeModel(Geometry geometry) {
     super(geometry.children);
+    this.name = geometry.name;
     this.vertexesById = geometry.vertexesById;
     this.edgesById = geometry.edgesById;
     this.panelsById = geometry.panelsById;
@@ -41,7 +47,7 @@ public class TEVehicleModel extends LXModel {
     }
     reindexPoints();
 
-    LX.log("Titanics End loaded. " +
+    LX.log(this.name + " loaded. " +
             this.vertexesById.size() + " vertexes, " +
             this.edgesById.size() + " edges, " +
             this.panelsById.size() + " panels, " +
@@ -60,19 +66,18 @@ public class TEVehicleModel extends LXModel {
 
   private static void loadVertexes(Geometry geometry) {
     geometry.vertexesById = new HashMap<Integer, TEVertex>();
-    Scanner s = loadFile("resources/vertexes.txt");
+    Scanner s = loadFile(geometry.subdir + "/vertexes.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
       String[] tokens = line.split("\t");
-      assert tokens.length == 5 : "Found " + tokens.length + " tokens";
+      assert tokens.length == 4 : "Found " + tokens.length + " tokens";
       int id = Integer.parseInt(tokens[0]);
       int x = Integer.parseInt(tokens[1]);
       int y = Integer.parseInt(tokens[2]);
       int z = Integer.parseInt(tokens[3]);
       LXVector vector = new LXVector(x, y, z);
-      int numConnectedEdges = Integer.parseInt(tokens[4]);
-      TEVertex v = new TEVertex(vector, id, numConnectedEdges);
+      TEVertex v = new TEVertex(vector, id);
       geometry.vertexesById.put(id, v);
     }
     s.close();
@@ -80,7 +85,7 @@ public class TEVehicleModel extends LXModel {
 
   private static void loadEdges(Geometry geometry) {
     geometry.edgesById = new HashMap<String, TEEdgeModel>();
-    Scanner s = loadFile("resources/edges.txt");
+    Scanner s = loadFile(geometry.subdir + "/edges.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
@@ -88,7 +93,19 @@ public class TEVehicleModel extends LXModel {
       assert tokens.length == 2 : "Found " + tokens.length + " tokens";
 
       String id = tokens[0];
-      int num_connected_panels = Integer.parseInt(tokens[1]);
+      String edgeKind = tokens[1];
+
+      boolean dark;
+      switch (edgeKind) {
+        case "default":
+          dark = false;
+          break;
+        case "dark":
+          dark = true;
+          break;
+        default:
+          throw new Error("Weird edge config: " + line);
+      }
 
       tokens = id.split("-");
       if (tokens.length != 2) {
@@ -96,9 +113,10 @@ public class TEVehicleModel extends LXModel {
       }
       int v0Id = Integer.parseInt(tokens[0]);
       int v1Id = Integer.parseInt(tokens[1]);
+      assert v0Id < v1Id;
       TEVertex v0 = geometry.vertexesById.get(v0Id);
       TEVertex v1 = geometry.vertexesById.get(v1Id);
-      TEEdgeModel e = new TEEdgeModel(v0, v1, num_connected_panels);
+      TEEdgeModel e = new TEEdgeModel(v0, v1, dark);
       v0.addEdge(e);
       v1.addEdge(e);
 
@@ -109,7 +127,7 @@ public class TEVehicleModel extends LXModel {
 
   private static void loadPanels(Geometry geometry) {
     geometry.panelsById = new HashMap<String, TEPanelModel>();
-    Scanner s = loadFile("resources/panels.txt");
+    Scanner s = loadFile(geometry.subdir + "/panels.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
@@ -144,23 +162,47 @@ public class TEVehicleModel extends LXModel {
     s.close();
   }
 
-  private static Geometry loadGeometry() {
+  private static void loadGeneral(Geometry geometry) {
+    Scanner s = loadFile(geometry.subdir + "/general.txt");
+
+    while (s.hasNextLine()) {
+      String line = s.nextLine();
+      String[] tokens = line.split(":");
+      assert tokens.length == 2 : "Found " + tokens.length + " tokens";
+      switch (tokens[0].trim()) {
+        case "name":
+          geometry.name = tokens[1].trim();
+          break;
+        default:
+          throw new Error("Weird line: " + line);
+      }
+    }
+    s.close();
+    assert geometry.name != null : "Model has no name";
+  }
+
+  private static Geometry loadGeometry(String subdir) {
     Geometry geometry = new Geometry();
+    geometry.subdir = "resources/" + subdir;
     List<LXModel> childList = new ArrayList<LXModel>();
+
+    loadGeneral(geometry);
 
     loadVertexes(geometry);
 
     // Vertexes aren't LXPoints (and thus, not LXModels) so they're not children
 
     // TODO: Store this in a config file
-    LXVector laserAnchor = geometry.vertexesById.get(48);
-    double laserElevation = -Math.PI / 4.0;  // Shine down at a 45-degree angle
-    double laserAzimuth = Math.PI / 2.0;  // ...towards the audience
-    TELaserModel laser = new TELaserModel(laserAnchor, laserElevation, laserAzimuth);
-    laser.color = LXColor.rgb(255,0,0);
     geometry.lasers = new ArrayList<>();
-    geometry.lasers.add(laser);
-    childList.add(laser);
+    LXVector laserAnchor = geometry.vertexesById.get(48);
+    if (laserAnchor != null) {
+      double laserElevation = -Math.PI / 4.0;  // Shine down at a 45-degree angle
+      double laserAzimuth = Math.PI / 2.0;  // ...towards the audience
+      TELaserModel laser = new TELaserModel(laserAnchor, laserElevation, laserAzimuth);
+      laser.color = LXColor.rgb(255, 0, 0);
+      geometry.lasers.add(laser);
+      childList.add(laser);
+    }
 
     loadEdges(geometry);
 

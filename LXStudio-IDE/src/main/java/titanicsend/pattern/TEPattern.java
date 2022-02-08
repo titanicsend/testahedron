@@ -4,11 +4,9 @@ import heronarts.lx.LX;
 import heronarts.lx.pattern.LXModelPattern;
 import titanicsend.model.TELaserModel;
 import titanicsend.model.TEPanelModel;
-import titanicsend.model.TEVehicleModel;
+import titanicsend.model.TEWholeModel;
 
-import java.util.Map;
-
-public abstract class TEPattern extends LXModelPattern<TEVehicleModel> {
+public abstract class TEPattern extends LXModelPattern<TEWholeModel> {
     protected TEPattern(LX lx) {
         super(lx);
     }

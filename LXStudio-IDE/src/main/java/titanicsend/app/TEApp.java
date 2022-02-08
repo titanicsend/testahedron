@@ -20,24 +20,18 @@ package titanicsend.app;
 
 import java.io.File;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
-import heronarts.lx.model.LXModel;
-import heronarts.lx.output.OPCSocket;
-import heronarts.lx.output.StreamingACNDatagram;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
-import titanicsend.model.TEVehicleModel;
+import titanicsend.model.TEWholeModel;
 import titanicsend.pattern.jeff.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
 import titanicsend.pattern.mike.*;
 
 public class TEApp extends PApplet implements LXPlugin  {
-  private static final String WINDOW_TITLE = "Titanic's End";
-  private TEVehicleModel model;
+  private TEWholeModel model;
 
   private static int WIDTH = 1280;
   private static int HEIGHT = 800;
@@ -60,10 +54,13 @@ public class TEApp extends PApplet implements LXPlugin  {
     flags.useGLPointCloud = false;
     flags.startMultiThreaded = true;
 
-    this.model = new TEVehicleModel();
+    String subdir = "testahedron";
+    //String subdir = "vehicle";
+
+    this.model = new TEWholeModel(subdir);
 
     new LXStudio(this, flags, this.model);
-    this.surface.setTitle(WINDOW_TITLE);
+    this.surface.setTitle(this.model.name);
   }
 
   @Override
