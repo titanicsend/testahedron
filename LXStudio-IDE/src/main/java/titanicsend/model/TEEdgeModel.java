@@ -18,6 +18,10 @@ public class TEEdgeModel extends LXModel {
     this.connectedPanels = new HashSet<TEPanelModel>();
   }
 
+  public String id() {
+    return this.v0.id + "-" + this.v1.id;
+  }
+
   public TEEdgeModel(TEVertex v0, TEVertex v1) {
     this(v0, v1, false);
   }
