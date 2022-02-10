@@ -30,17 +30,8 @@ import heronarts.lx.color.LXSwatch;
 import heronarts.lx.parameter.DiscreteParameter;
 import heronarts.lx.parameter.EnumParameter;
 
-  /*
-    Patterns creating a `TEColor color1` should call:
-      addParameter("color1", color1.color);
-      addParameter("color1Mode", color1.colorMode);
-      addParameter("color1PaletteIndex", color1.paletteIndex);
-    and then, in their run(),
-      colors[somePoint] = color1.getColor();
-   */
-
 public class TEColor {
-  LX lx;
+  public LX lx;
 
   public enum ColorMode {
     CUSTOM("Custom"),
