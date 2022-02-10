@@ -14,7 +14,7 @@ public class Checkers extends TEColorGroupPattern {
   private final HashMap<TEPanelModel, Integer> panelGroup;
 
   public Checkers(LX lx) {
-    super(lx, 2);
+    super(lx, new String[]{"ColorA", "ColorB"});
 
     this.panelGroup = new HashMap<>();
     for (TEPanelModel panel : model.panelsById.values()) {

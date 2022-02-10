@@ -15,15 +15,17 @@ import java.util.*;
 
 public abstract class TEColorGroupPattern extends TEPattern implements UIDeviceControls<TEColorGroupPattern> {
   public List<TEColor> teColors;
+  public String[] labels;
   public int numColors;
 
-  public TEColorGroupPattern(LX lx, int numColors) {
+  public TEColorGroupPattern(LX lx, String[] labels) {
     super(lx);
-    assert numColors <= 5;
+    this.labels = labels;
+    this.numColors = labels.length;
+    assert this.numColors <= 5;
 
     this.teColors = new ArrayList<>();
-    this.numColors = numColors;
-    for (int i = 0; i < numColors; i++) {
+    for (int i = 0; i < this.numColors; i++) {
       TEColor teColor = new TEColor(lx);
       String prefix = "color" + i;
       addParameter(prefix, teColor.color);
@@ -45,25 +47,24 @@ public abstract class TEColorGroupPattern extends TEPattern implements UIDeviceC
     }
   }
 
-  private void buildColorPicker(LXStudio.UI ui, UI2dContainer container, TEColor teColor) {
+  private void buildColorPicker(LXStudio.UI ui, UI2dContainer container, TEColor teColor, String label) {
     final UI2dComponent
+            paletteColor,
             paletteIndex,
             indexLabel,
-            paletteColor,
             colorPicker,
             hueSlider,
             satSlider,
             brightSlider;
 
     container.addChildren(
+            controlLabel(ui, label),
             newDropMenu(teColor.colorMode),
             paletteColor = new UIPaletteColor(ui, this, teColor, COL_WIDTH, 28),
             paletteIndex = newIntegerBox(teColor.paletteIndex),
             indexLabel = controlLabel(ui, "Index"),
-
-            colorPicker = new UIColorPicker(0, 0, COL_WIDTH, 28, teColor.color)
+            colorPicker = new UIColorPicker(0, 0, COL_WIDTH, 22, teColor.color)
                     .setCorner(UIColorPicker.Corner.TOP_RIGHT),
-
             hueSlider = newHorizontalSlider(teColor.color.hue),
             satSlider = newHorizontalSlider(teColor.color.saturation),
             brightSlider = newHorizontalSlider(teColor.color.brightness)
@@ -92,7 +93,7 @@ public abstract class TEColorGroupPattern extends TEPattern implements UIDeviceC
     for (int i = 0; i < this.numColors; i++) {
       UI2dContainer column = UI2dContainer.newVerticalContainer(COL_WIDTH, 6);
       column.addToContainer(uiDevice);
-      buildColorPicker(ui, column, this.teColors.get(i));
+      buildColorPicker(ui, column, this.teColors.get(i), this.labels[i]);
     }
   }
 }
