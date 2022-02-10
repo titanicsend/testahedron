@@ -1,6 +1,7 @@
 package titanicsend.pattern;
 
 import heronarts.lx.LX;
+import heronarts.lx.model.LXPoint;
 import heronarts.lx.pattern.LXModelPattern;
 import titanicsend.model.TELaserModel;
 import titanicsend.model.TEPanelModel;
@@ -9,6 +10,9 @@ import titanicsend.model.TEWholeModel;
 public abstract class TEPattern extends LXModelPattern<TEWholeModel> {
     protected TEPattern(LX lx) {
         super(lx);
+        for (LXPoint point : this.model.points) {
+            colors[point.index] = 0;  // Transparent
+        }
     }
 
     // Make the virtual model's solid panels and lasers get rendered to match
