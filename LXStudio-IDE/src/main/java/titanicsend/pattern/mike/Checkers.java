@@ -2,10 +2,21 @@ package titanicsend.pattern.mike;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
+import heronarts.lx.LXDeviceComponent;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.color.LXSwatch;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.parameter.DiscreteParameter;
+import heronarts.lx.parameter.LXParameterListener;
+import heronarts.lx.pattern.color.SolidPattern;
+import heronarts.lx.studio.LXStudio;
+import heronarts.lx.studio.ui.device.UIDevice;
+import heronarts.lx.studio.ui.device.UIDeviceControls;
+import heronarts.lx.studio.ui.device.UIPatternDevice;
+import heronarts.p4lx.ui.UI;
+import heronarts.p4lx.ui.UI2dComponent;
+import heronarts.p4lx.ui.UI2dContainer;
+import heronarts.p4lx.ui.component.UIColorPicker;
 import titanicsend.model.TEPanelModel;
 import titanicsend.pattern.TEPattern;
 import titanicsend.util.TEColor;
@@ -14,10 +25,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @LXCategory("Testahedron")
-public class Checkers extends TEPattern {
+public class Checkers extends TEPattern implements UIDeviceControls<titanicsend.pattern.mike.Checkers> {
   private final HashMap<TEPanelModel, Integer> panelGroup;
   TEColor groupColor1;
   TEColor groupColor2;
+
+  private class UIPaletteColor extends UI2dComponent {
+    private UIPaletteColor(UI ui, Checkers pattern, TEColor teColor, float w, float h) {
+      super(0, 0, w, h);
+      setBorderColor(ui.theme.getControlDisabledColor());
+      setBackgroundColor(teColor.getPaletteColor().getColor());
+      addLoopTask((deltaMs) -> {
+        setBackgroundColor(teColor.getPaletteColor().getColor());
+      });
+    }
+  }
 
   public Checkers(LX lx) {
     super(lx);
@@ -47,6 +69,58 @@ public class Checkers extends TEPattern {
         this.panelGroup.put(neighbor, newColor);
       }
     }
+  }
+
+  private void buildColorPicker(LXStudio.UI ui, UI2dContainer container, Checkers device, TEColor teColor) {
+    final UI2dComponent
+            paletteIndex,
+            indexLabel,
+            paletteColor,
+            colorPicker,
+            hueSlider,
+            satSlider,
+            brightSlider;
+
+    container.addChildren(
+            newDropMenu(teColor.colorMode),
+            paletteColor = new UIPaletteColor(ui, device, teColor, COL_WIDTH, 28),
+            paletteIndex = newIntegerBox(teColor.paletteIndex),
+            indexLabel = controlLabel(ui, "Index"),
+
+            colorPicker = new UIColorPicker(0, 0, COL_WIDTH, 28, teColor.color)
+                    .setCorner(UIColorPicker.Corner.TOP_RIGHT),
+
+            hueSlider = newHorizontalSlider(teColor.color.hue),
+            satSlider = newHorizontalSlider(teColor.color.saturation),
+            brightSlider = newHorizontalSlider(teColor.color.brightness)
+    );
+
+    final LXParameterListener update = (p) -> {
+      boolean isCustom = teColor.colorMode.getEnum() == TEColor.ColorMode.CUSTOM;
+      colorPicker.setVisible(isCustom);
+      paletteColor.setVisible(!isCustom);
+      paletteIndex.setVisible(!isCustom);
+      indexLabel.setVisible(!isCustom);
+      hueSlider.setVisible(isCustom);
+      satSlider.setVisible(isCustom);
+      brightSlider.setVisible(isCustom);
+    };
+    teColor.colorMode.addListener(update);
+    update.onParameterChanged(null);
+  }
+
+  @Override
+  public void buildDeviceControls(LXStudio.UI ui, UIDevice uiDevice, Checkers pattern) {
+    uiDevice.setLayout(UI2dContainer.Layout.HORIZONTAL);
+    uiDevice.setChildSpacing(6);
+    uiDevice.setContentWidth(COL_WIDTH * 2 + 6);
+
+    UI2dContainer column1 = UI2dContainer.newVerticalContainer(COL_WIDTH, 6);
+    UI2dContainer column2 = UI2dContainer.newVerticalContainer(COL_WIDTH, 6);
+    column1.addToContainer(uiDevice);
+    column2.addToContainer(uiDevice);
+    buildColorPicker(ui, column1, pattern, pattern.groupColor1);
+    buildColorPicker(ui, column2, pattern, pattern.groupColor2);
   }
 
   public void run(double deltaMs) {
