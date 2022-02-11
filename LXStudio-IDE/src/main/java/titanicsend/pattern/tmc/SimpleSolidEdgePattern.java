@@ -29,7 +29,6 @@ public class SimpleSolidEdgePattern extends TEPattern {
 
   public SimpleSolidEdgePattern(LX lx, int color) {
     super(lx);
-    this.color.setColor(color);
     addParameter("color", this.color);
   }
 
