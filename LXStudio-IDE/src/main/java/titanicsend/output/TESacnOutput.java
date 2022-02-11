@@ -24,13 +24,11 @@ public class TESacnOutput {
   private final List<EdgeEntry> edgeEntries;
   private boolean activated;
   private HashMap<Integer,Integer> deviceLengths;
-  private StreamingACNDatagram outputDevice;
 
   private TESacnOutput(String ipAddress) {
     this.ipAddress = ipAddress;
     this.edgeEntries = new ArrayList<>();
     this.activated = false;
-    this.outputDevice = null;
   }
 
   public static TESacnOutput getOrMake(String ipAddress) {
@@ -60,6 +58,14 @@ public class TESacnOutput {
     }
   }
 
+  private static void registerOutput(LX lx, InetAddress addr, List<Integer> indexBuffer, int universe) {
+    if (indexBuffer.size() == 0) return;
+    int[] ib = indexBuffer.stream().mapToInt(i -> i).toArray();
+    StreamingACNDatagram outputDevice = new StreamingACNDatagram(lx, ib, universe);
+    outputDevice.setAddress(addr);
+    lx.addOutput(outputDevice);
+  }
+
   private void activate(LX lx) {
     assert !this.activated;
     this.deviceLengths = new HashMap<>();
@@ -67,30 +73,30 @@ public class TESacnOutput {
     int currentUniverseNum = 0;
     int currentStrandOffset = -1;
 
+    InetAddress addr;
+    try {
+      addr = InetAddress.getByName(this.ipAddress);
+    } catch (UnknownHostException e) {
+      throw new Error(e);
+    }
+
     StringBuilder logString = new StringBuilder("sACN " + this.ipAddress + ": ");
+    ArrayList<Integer> indexBuffer = new ArrayList<>();
     for (EdgeEntry edgeEntry : this.edgeEntries) {
       int edgeLength = edgeEntry.edge.points.length;
       if (edgeEntry.universeNum > currentUniverseNum) {
+        registerOutput(lx, addr, indexBuffer, currentUniverseNum);
         currentUniverseNum = edgeEntry.universeNum;
         currentStrandOffset = 0;
         String deviceSummary = "#" + currentUniverseNum + " ";
         logString.append(deviceSummary);
       }
       assert edgeEntry.universeNum == currentUniverseNum;
-      assert edgeEntry.strandOffset == currentStrandOffset;
+      assert edgeEntry.strandOffset == currentStrandOffset : "Edge " + edgeEntry.edge.id() + " should start at " + currentStrandOffset;
       String edgeSummary = "[" + currentStrandOffset + ":Edge_" + edgeEntry.edge.id() + "=" + edgeLength + "] ";
       logString.append(edgeSummary);
       currentStrandOffset += edgeLength;
       this.deviceLengths.put(currentUniverseNum, currentStrandOffset);
-
-      // FIXME: We're not doing anything with the strand offset.
-      this.outputDevice = new StreamingACNDatagram(lx, edgeEntry.edge, currentUniverseNum);
-      try {
-        this.outputDevice.setAddress(InetAddress.getByName(this.ipAddress));
-      } catch (UnknownHostException e) {
-        throw new Error(e);
-      }
-      lx.addOutput(outputDevice);
     }
     LX.log(logString.toString());
     this.activated = true;
