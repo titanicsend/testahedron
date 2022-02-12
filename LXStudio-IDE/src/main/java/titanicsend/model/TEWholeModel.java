@@ -13,6 +13,7 @@ import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
   public String name;
+  public LXPoint gapPoint;  // Used for pixels that shouldn't actually be lit
   public HashMap<Integer, TEVertex> vertexesById;
   public HashMap<String, TEEdgeModel> edgesById;
   public HashMap<String, TEPanelModel> panelsById;
@@ -24,6 +25,7 @@ public class TEWholeModel extends LXModel {
   private static class Geometry {
     public String subdir;
     public String name;
+    public LXPoint gapPoint;
     public HashMap<Integer, TEVertex> vertexesById;
     public HashMap<String, TEEdgeModel> edgesById;
     public HashMap<String, TEPanelModel> panelsById;
@@ -38,6 +40,7 @@ public class TEWholeModel extends LXModel {
   private TEWholeModel(Geometry geometry) {
     super(geometry.children);
     this.name = geometry.name;
+    this.gapPoint = geometry.gapPoint;
     this.vertexesById = geometry.vertexesById;
     this.edgesById = geometry.edgesById;
     this.panelsById = geometry.panelsById;
@@ -237,6 +240,11 @@ public class TEWholeModel extends LXModel {
     loadPanels(geometry);
 
     childList.addAll(geometry.panelsById.values());
+
+    geometry.gapPoint = new LXPoint();
+    List<LXPoint> gapList = new ArrayList<>();
+    gapList.add(geometry.gapPoint);
+    childList.add(new LXModel(gapList));
 
     geometry.children = childList.toArray(new LXModel[0]);
 

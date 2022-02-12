@@ -7,11 +7,56 @@ import titanicsend.model.TEVertex;
 import java.util.*;
 
 public class PanelStriper {
-  public static final int MARGIN = 75000; // 75k microns ~= 3 inches
+  public static final int MARGIN = 50000; // 50k microns ~= 2 inches
   public static final int DISTANCE_BETWEEN_PIXELS = 50000; // 50k microns ~= 2 inches
 
   public static List<LXPoint> stripe(TEVertex v0, TEVertex v1, TEVertex v2) {
-    FloorTransform floorTransform = new FloorTransform(v0, v1, v2);
+    TEVertex vStart;
+    TEVertex vMid;
+    TEVertex vEnd;
+
+    double distance01 = v0.distanceTo(v1);
+    double distance02 = v0.distanceTo(v2);
+    double distance12 = v1.distanceTo(v2);
+
+    assert distance01 != distance02;
+    assert distance01 != distance12;
+    assert distance02 != distance12;
+
+    // Set vEnd to the vertex opposite the longest edge
+    // Set vStart to the vertex closest to vEnd
+    if (distance01 > distance02 && distance01 > distance12) {
+      vEnd = v2;
+      if (distance02 < distance12) {
+        vStart = v0;
+        vMid = v1;
+      } else {
+        vStart = v1;
+        vMid = v0;
+      }
+    } else if (distance02 > distance01 && distance02 > distance12) {
+      vEnd = v1;
+      if (distance01 < distance12) {
+        vStart = v0;
+        vMid = v2;
+      } else {
+        vStart = v2;
+        vMid = v0;
+      }
+    } else if (distance12 > distance01 && distance12 > distance02) {
+      vEnd = v0;
+      if (distance01 < distance02) {
+        vStart = v1;
+        vMid = v2;
+      } else {
+        vStart = v2;
+        vMid = v1;
+      }
+    } else {
+      throw new Error("Math fail");
+    }
+
+    FloorTransform floorTransform = new FloorTransform(vStart, vMid, vEnd);
 
     List<FloorPoint> floorPoints = stripeFloor(
             floorTransform.f0, floorTransform.f1, floorTransform.f2);
@@ -25,25 +70,25 @@ public class PanelStriper {
   }
 
   // Lays out all the pixels in a LIT panel, once it's been sent through FloorTransform
-  // to lay it on the X-Z plane. Starts at f0 and finds the nearest point inside the
+  // to lay it on the X-Z plane. Starts at fStart and finds the nearest point inside the
   // border margin, and that's where the first pixel goes, then it stripes back and forth,
   // one row at a time, until it runs out of triangle.
-  private static List<FloorPoint> stripeFloor(FloorPoint f0, FloorPoint f1, FloorPoint f2) {
-    FloorPoint currentPoint = findStartingPoint(f0, f1, f2);
+  private static List<FloorPoint> stripeFloor(FloorPoint fStart, FloorPoint fMid, FloorPoint fEnd) {
+    FloorPoint currentPoint = findStartingPoint(fStart, fMid, fEnd);
     ArrayList<FloorPoint> rv = new ArrayList<FloorPoint>();
 
-    // Calc the angle we set off at to get from near f0 -> f1
-    double heading = calcHeading(f0, f1);
+    // Calc the angle we set off at to get from near fStart -> fMid
+    double heading = calcHeading(fStart, fMid);
 
-    // When we get to f1 (or, at least, hit the margin),
-    // we bump over in this direction (toward f2) before
+    // When we get to fMid (or, at least, hit the margin),
+    // we bump over in this direction (toward fEnd) before
     // spinning 180 degrees and making a new stripe.
-    double endOfRowHeading = calcHeading(f1, f2);
+    double endOfRowHeading = calcHeading(fMid, fEnd);
 
     // And then when we reach the end of the second row,
-    // we again bump towards f2, but now the angle will
-    // be different because we're in the neighborhood of f0.
-    double endOfRowHeadingNext = calcHeading(f0, f2);
+    // we again bump towards fEnd, but now the angle will
+    // be different because we're in the neighborhood of fStart.
+    double endOfRowHeadingNext = calcHeading(fStart, fEnd);
 
     final int MAX_POINTS = 2500;  // Sanity check
 
@@ -53,7 +98,7 @@ public class PanelStriper {
       double nextX = currentPoint.x + DISTANCE_BETWEEN_PIXELS * Math.cos(heading);
       double nextZ = currentPoint.z + DISTANCE_BETWEEN_PIXELS * Math.sin(heading);
       FloorPoint nextPoint = new FloorPoint(nextX, nextZ);
-      if (distanceToEdge(f0, f1, f2, nextPoint) >= MARGIN) {
+      if (distanceToEdge(fStart, fMid, fEnd, nextPoint) >= MARGIN) {
         // We haven't yet reached the margin.
         currentPoint = nextPoint;
       } else {
@@ -73,7 +118,7 @@ public class PanelStriper {
 
         // And get started on the next row... unless there's no room for it.
         currentPoint = new FloorPoint(nextX, nextZ);
-        if (distanceToEdge(f0, f1, f2, currentPoint) < MARGIN) return rv;
+        if (distanceToEdge(fStart, fMid, fEnd, currentPoint) < MARGIN) return rv;
       }
     }
 

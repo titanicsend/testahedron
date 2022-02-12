@@ -79,9 +79,7 @@ public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDe
   }
 
   public void repaint(LXParameter unused) {
-    for (LXPoint point : this.model.points) {
-      colors[point.index] = 0; // Transparent
-    }
+    this.clearPixels();
     List<LXModel> subModels = new ArrayList<>();
     String idStr = this.objectId.getString().trim().toUpperCase();
     boolean getAll = idStr.equals("");

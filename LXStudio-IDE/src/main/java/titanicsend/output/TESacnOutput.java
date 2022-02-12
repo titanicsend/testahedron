@@ -68,7 +68,7 @@ public class TESacnOutput {
     lx.addOutput(outputDevice);
   }
 
-  private void activate(LX lx) {
+  private void activate(LX lx, int gapPointIndex) {
     assert !this.activated;
     this.deviceLengths = new HashMap<>();
     this.subModelEntries.sort(new SortSubModelEntries());
@@ -95,9 +95,18 @@ public class TESacnOutput {
         logString.append(deviceSummary);
       }
       assert subModelEntry.universeNum == currentUniverseNum;
-      assert subModelEntry.strandOffset == currentStrandOffset : subModelEntry.subModel.repr() + " should start at " + currentStrandOffset;
-      String edgeSummary = "[" + currentStrandOffset + ":" + subModelEntry.subModel.repr() + "=" + numPoints + "] ";
-      logString.append(edgeSummary);
+
+      int gap = subModelEntry.strandOffset - currentStrandOffset;
+      if (gap < 0) {
+        throw new Error(subModelEntry.subModel.repr() + " offset must be >= " + currentStrandOffset);
+      } else if (gap > 0) {
+        String gapSummary = "[Gap=" + gap + "] ";
+        logString.append(gapSummary);
+        currentStrandOffset += gap;
+        for (int i = 0; i < gap; i++) indexBuffer.add(gapPointIndex);
+      }
+      String smSummary = "[" + currentStrandOffset + ":" + subModelEntry.subModel.repr() + "=" + numPoints + "] ";
+      logString.append(smSummary);
       currentStrandOffset += numPoints;
       this.deviceLengths.put(currentUniverseNum, currentStrandOffset);
       for (LXPoint point : subModelEntry.subModel.points)
@@ -111,11 +120,11 @@ public class TESacnOutput {
     this.activated = true;
   }
 
-  public static void activateAll(LX lx) {
+  public static void activateAll(LX lx, int gapPointIndex) {
     List<String> ips = new ArrayList<>(ipMap.keySet());
     Collections.sort(ips);
     for (String ip : ips) {
-      ipMap.get(ip).activate(lx);
+      ipMap.get(ip).activate(lx, gapPointIndex);
     }
   }
 }
