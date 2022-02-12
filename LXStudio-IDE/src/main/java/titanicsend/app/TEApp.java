@@ -25,6 +25,7 @@ import heronarts.lx.LXPlugin;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEWholeModel;
+import titanicsend.output.TESacnOutput;
 import titanicsend.pattern.jeff.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
@@ -70,6 +71,8 @@ public class TEApp extends PApplet implements LXPlugin  {
     // you cannot assume you are working with an LXStudio class or that any UI will be
     // available.
 
+    TESacnOutput.activateAll(lx);
+
     // Register custom pattern and effect types
     lx.registry.addPattern(BasicRainbowPattern.class);
     lx.registry.addPattern(Bounce.class);
@@ -81,17 +84,6 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
     lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
-
-    /*
-    StreamingACNDatagram output = new StreamingACNDatagram(lx, lx.getModel());
-    try {
-      output.setAddress(InetAddress.getByName("127.0.0.1"));
-    } catch (UnknownHostException e) {
-      System.out.println("whoops");
-    }
-    output.setPort(7890);
-
-    lx.addOutput(output);*/
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {

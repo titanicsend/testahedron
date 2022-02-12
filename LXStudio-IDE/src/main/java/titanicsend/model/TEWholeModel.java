@@ -9,6 +9,7 @@ import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
+import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
   public String name;
@@ -48,10 +49,10 @@ public class TEWholeModel extends LXModel {
     reindexPoints();
 
     LX.log(this.name + " loaded. " +
-            this.vertexesById.size() + " vertexes, " +
-            this.edgesById.size() + " edges, " +
-            this.panelsById.size() + " panels, " +
-            this.points.length + " pixels");
+           this.vertexesById.size() + " vertexes, " +
+           this.edgesById.size() + " edges, " +
+           this.panelsById.size() + " panels, " +
+           this.points.length + " pixels");
   }
 
   private static Scanner loadFile(String filename) {
@@ -83,6 +84,17 @@ public class TEWholeModel extends LXModel {
     s.close();
   }
 
+  private static void registerController(TEModel subModel, String config) {
+    String[] tokens = tokens = config.split("#");
+    assert tokens.length == 2;
+    String ipAddress = tokens[0];
+    tokens = tokens[1].split(":");
+    assert tokens.length == 2;
+    int universeNum = Integer.parseInt(tokens[0]);
+    int strandOffset = Integer.parseInt(tokens[1]);
+    TESacnOutput.registerSubmodel(subModel, ipAddress, universeNum, strandOffset);
+  }
+
   private static void loadEdges(Geometry geometry) {
     geometry.edgesById = new HashMap<String, TEEdgeModel>();
     Scanner s = loadFile(geometry.subdir + "/edges.txt");
@@ -90,10 +102,11 @@ public class TEWholeModel extends LXModel {
     while (s.hasNextLine()) {
       String line = s.nextLine();
       String[] tokens = line.split("\t");
-      assert tokens.length == 2 : "Found " + tokens.length + " tokens";
+      assert tokens.length == 3 : "Found " + tokens.length + " tokens";
 
       String id = tokens[0];
       String edgeKind = tokens[1];
+      String controller = tokens[2];
 
       boolean dark;
       switch (edgeKind) {
@@ -102,6 +115,7 @@ public class TEWholeModel extends LXModel {
           break;
         case "dark":
           dark = true;
+          assert controller.equals("uncontrolled");
           break;
         default:
           throw new Error("Weird edge config: " + line);
@@ -119,6 +133,10 @@ public class TEWholeModel extends LXModel {
       TEEdgeModel e = new TEEdgeModel(v0, v1, dark);
       v0.addEdge(e);
       v1.addEdge(e);
+
+      if (!controller.equals("uncontrolled")) {
+        registerController(e, controller);
+      }
 
       geometry.edgesById.put(id, e);
     }
@@ -151,13 +169,21 @@ public class TEWholeModel extends LXModel {
       TEVertex[] vertexes = vh.toArray(new TEVertex[0]);
       assert vertexes.length == 3;
 
+      boolean lit = panelType.contains(".");
+      String outputConfig = panelType;
+
+      if (lit) panelType = "lit";
+
       TEPanelModel p = TEPanelFactory.build(id, vertexes[0], vertexes[1], vertexes[2],
               e0, e1, e2, panelType);
+
       e0.connectedPanels.add(p);
       e1.connectedPanels.add(p);
       e2.connectedPanels.add(p);
 
       geometry.panelsById.put(id, p);
+
+      if (lit) registerController(p, outputConfig);
     }
     s.close();
   }
