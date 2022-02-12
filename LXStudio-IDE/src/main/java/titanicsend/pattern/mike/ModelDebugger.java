@@ -59,15 +59,19 @@ public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDe
     uiDevice.setChildSpacing(6);
     uiDevice.setContentWidth(COL_WIDTH);
 
+    UITextBox tb;
+
     uiDevice.addChildren(
             newDropMenu(objectType),
             controlLabel(ui, "ID"),
-            new UITextBox(0, 0, COL_WIDTH, 16).setParameter(objectId),
+            tb = new UITextBox(0, 0, COL_WIDTH, 16).setParameter(objectId),
             controlLabel(ui, "Point"),
             newIntegerBox(pointIndex),
             this.idErrLabel = controlLabel(ui, "Bad ID"),
             this.pointErrLabel = controlLabel(ui, "Bad point")
     );
+
+    tb.setEmptyValueAllowed(true);
 
     this.objectType.addListener(this::repaint);
     this.objectId.addListener(this::repaint);
