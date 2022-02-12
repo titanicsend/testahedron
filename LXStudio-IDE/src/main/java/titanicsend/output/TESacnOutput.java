@@ -1,33 +1,35 @@
 package titanicsend.output;
 
 import heronarts.lx.LX;
+import heronarts.lx.model.LXPoint;
 import heronarts.lx.output.StreamingACNDatagram;
-import titanicsend.model.TEEdgeModel;
+import titanicsend.model.TEModel;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 
 public class TESacnOutput {
-  private static class EdgeEntry {
-    TEEdgeModel edge;
+  private static class SubModelEntry {
+    TEModel subModel;
     int universeNum;
     int strandOffset;
-    public EdgeEntry(TEEdgeModel edge, int universeNum, int strandOffset) {
-      this.edge = edge;
+    public SubModelEntry(TEModel subModel, int universeNum, int strandOffset) {
+      this.subModel = subModel;
       this.universeNum = universeNum;
       this.strandOffset = strandOffset;
     }
   }
+
   String ipAddress;
   static Map<String, TESacnOutput> ipMap = new HashMap<>();
-  private final List<EdgeEntry> edgeEntries;
+  private final List<SubModelEntry> subModelEntries;
   private boolean activated;
   private HashMap<Integer,Integer> deviceLengths;
 
   private TESacnOutput(String ipAddress) {
     this.ipAddress = ipAddress;
-    this.edgeEntries = new ArrayList<>();
+    this.subModelEntries = new ArrayList<>();
     this.activated = false;
   }
 
@@ -38,18 +40,18 @@ public class TESacnOutput {
     return ipMap.get(ipAddress);
   }
 
-  public static void register(TEEdgeModel edge, String ipAddress, int deviceNum, int strandOffset) {
+  public static void registerSubmodel(TEModel subModel, String ipAddress, int deviceNum, int strandOffset) {
     assert deviceNum >= 1;
     assert deviceNum <= 4;
     assert strandOffset >= 0;
     TESacnOutput output = getOrMake(ipAddress);
     assert !output.activated;
-    output.edgeEntries.add(new EdgeEntry(edge, deviceNum, strandOffset));
+    output.subModelEntries.add(new SubModelEntry(subModel, deviceNum, strandOffset));
   }
 
   // Sort by device number, then by strand offset
-  private static class SortEdgeEntries implements Comparator<EdgeEntry> {
-    public int compare(EdgeEntry a, EdgeEntry b) {
+  private static class SortSubModelEntries implements Comparator<SubModelEntry> {
+    public int compare(SubModelEntry a, SubModelEntry b) {
       if (a.universeNum != b.universeNum) {
         return a.universeNum - b.universeNum;
       } else {
@@ -69,7 +71,7 @@ public class TESacnOutput {
   private void activate(LX lx) {
     assert !this.activated;
     this.deviceLengths = new HashMap<>();
-    this.edgeEntries.sort(new SortEdgeEntries());
+    this.subModelEntries.sort(new SortSubModelEntries());
     int currentUniverseNum = 0;
     int currentStrandOffset = -1;
 
@@ -82,22 +84,29 @@ public class TESacnOutput {
 
     StringBuilder logString = new StringBuilder("sACN " + this.ipAddress + ": ");
     ArrayList<Integer> indexBuffer = new ArrayList<>();
-    for (EdgeEntry edgeEntry : this.edgeEntries) {
-      int edgeLength = edgeEntry.edge.points.length;
-      if (edgeEntry.universeNum > currentUniverseNum) {
+    for (SubModelEntry subModelEntry : this.subModelEntries) {
+      int numPoints = subModelEntry.subModel.points.length;
+      if (subModelEntry.universeNum > currentUniverseNum) {
         registerOutput(lx, addr, indexBuffer, currentUniverseNum);
-        currentUniverseNum = edgeEntry.universeNum;
+        indexBuffer = new ArrayList<>();
+        currentUniverseNum = subModelEntry.universeNum;
         currentStrandOffset = 0;
         String deviceSummary = "#" + currentUniverseNum + " ";
         logString.append(deviceSummary);
       }
-      assert edgeEntry.universeNum == currentUniverseNum;
-      assert edgeEntry.strandOffset == currentStrandOffset : "Edge " + edgeEntry.edge.id() + " should start at " + currentStrandOffset;
-      String edgeSummary = "[" + currentStrandOffset + ":Edge_" + edgeEntry.edge.id() + "=" + edgeLength + "] ";
+      assert subModelEntry.universeNum == currentUniverseNum;
+      assert subModelEntry.strandOffset == currentStrandOffset : subModelEntry.subModel.repr() + " should start at " + currentStrandOffset;
+      String edgeSummary = "[" + currentStrandOffset + ":" + subModelEntry.subModel.repr() + "=" + numPoints + "] ";
       logString.append(edgeSummary);
-      currentStrandOffset += edgeLength;
+      currentStrandOffset += numPoints;
       this.deviceLengths.put(currentUniverseNum, currentStrandOffset);
+      for (LXPoint point : subModelEntry.subModel.points)
+        indexBuffer.add(point.index);
     }
+
+    // We did this in the loop when we changed universes, but there might be one left at the end
+    registerOutput(lx, addr, indexBuffer, currentUniverseNum);
+
     LX.log(logString.toString());
     this.activated = true;
   }

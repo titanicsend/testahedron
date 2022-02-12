@@ -4,7 +4,8 @@ import heronarts.lx.model.LXPoint;
 import heronarts.lx.model.LXModel;
 import java.util.*;
 
-public class TEEdgeModel extends LXModel {
+public class TEEdgeModel extends TEModel {
+  String teModelType = "Edge";
   public TEVertex v0, v1;
   public HashSet<TEPanelModel> connectedPanels;
 
@@ -12,13 +13,13 @@ public class TEEdgeModel extends LXModel {
   public static final int DISTANCE_BETWEEN_PIXELS = 25000;
 
   public TEEdgeModel(TEVertex v0, TEVertex v1, boolean dark) {
-    super(makePoints(v0, v1, dark));
+    super("Edge", makePoints(v0, v1, dark));
     this.v0 = v0;
     this.v1 = v1;
     this.connectedPanels = new HashSet<TEPanelModel>();
   }
 
-  public String id() {
+  public String getId() {
     return this.v0.id + "-" + this.v1.id;
   }
 

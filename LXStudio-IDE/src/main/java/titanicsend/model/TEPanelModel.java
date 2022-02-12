@@ -7,7 +7,7 @@ import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
 import titanicsend.app.TEVirtualColor;
 
-public class TEPanelModel extends LXModel {
+public class TEPanelModel extends TEModel {
   // Useful data for points inside LIT panels
   public static class LitPointData {
     public LXPoint point;
@@ -35,19 +35,14 @@ public class TEPanelModel extends LXModel {
   // Set to non-null and the virtual display will shade the panel's triangle
   public TEVirtualColor virtualColor;
 
-  // Given an Edge and three Vertexes, return the number of vertexes the edge touches
-  private static int countTouches(TEEdgeModel e, TEVertex v0, TEVertex v1, TEVertex v2) {
-    int rv = 0;
-    if (e.touches(v0)) rv++;
-    if (e.touches(v1)) rv++;
-    if (e.touches(v2)) rv++;
-    return rv;
+  public String getId() {
+    return this.id;
   }
 
   public TEPanelModel(String id, ArrayList<LXPoint> points, TEVertex v0, TEVertex v1, TEVertex v2,
                       TEEdgeModel e0, TEEdgeModel e1, TEEdgeModel e2, String panelType,
                       LXVector centroid) {
-    super(points);
+    super("Panel", points);
 
     this.id = id;
     this.panelType = panelType;
@@ -124,6 +119,15 @@ public class TEPanelModel extends LXModel {
       }
     }
     return false;
+  }
+
+  // Given an Edge and three Vertexes, return the number of vertexes the edge touches
+  private static int countTouches(TEEdgeModel e, TEVertex v0, TEVertex v1, TEVertex v2) {
+    int rv = 0;
+    if (e.touches(v0)) rv++;
+    if (e.touches(v1)) rv++;
+    if (e.touches(v2)) rv++;
+    return rv;
   }
 
   // Returns set of panels that touch along an edge (not just at a vertex)

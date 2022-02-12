@@ -8,19 +8,24 @@ import heronarts.lx.transform.LXVector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TELaserModel extends LXModel {
+public class TELaserModel extends TEModel {
   public LXPoint origin;
   public double elevation;
   public double azimuth;
   public int color;
+  public String id;
 
   // Angles represent the direction the laser is aimed and are in radians, of course.
   public TELaserModel(LXVector v, double elevation, double azimuth) {
-    super(makePoint(v));
+    super("Laser", makePoint(v));
     this.origin = this.points[0];
     this.elevation = elevation;
     this.azimuth = azimuth;
     this.color = LXColor.rgb(0,0,0);
+  }
+
+  public String getId() {
+    return this.id;
   }
 
   private static List<LXPoint> makePoint(LXVector v) {
