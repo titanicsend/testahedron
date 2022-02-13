@@ -29,6 +29,9 @@ public class TEVertex extends LXVector {
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
 
+  public String repr() {
+    return "(" + this.x + "," + this.y + "," + this.z + ")";
+  }
 
   public static double distance(LXVector v, LXPoint p) {
     return distance(v, p.x, p.y, p.z);

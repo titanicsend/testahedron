@@ -83,7 +83,9 @@ public class TEVirtualOverlays extends TEUIComponent {
         pg.pushMatrix();
         LXVector centroid = p.centroid;
         pg.translate(centroid.x, centroid.y, centroid.z);
-        pg.rotateY((float) (-Math.PI / 2.0));
+        //pg.rotateY((float) (-Math.PI / 2.0));  // Face port (non-show) side
+        pg.rotateY((float) (Math.PI / 2.0));  // Face starboard (show) side
+
         pg.scale(10000, -10000);
         pg.fill(255, 0, 0);
         pg.text(entry.getKey(), 0, 0, -100000);

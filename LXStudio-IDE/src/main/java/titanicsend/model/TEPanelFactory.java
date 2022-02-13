@@ -2,6 +2,7 @@ package titanicsend.model;
 
 import java.util.*;
 
+import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
 import titanicsend.util.PanelStriper;
@@ -19,7 +20,13 @@ public class TEPanelFactory {
     LXVector centroid = new LXVector(centroidX, centroidY, centroidZ);
 
     if (panelType.equals(TEPanelModel.LIT)) {
-      List<LXPoint> stripedPoints = PanelStriper.stripe(v0, v1, v2);
+      List<LXPoint> stripedPoints;
+      try {
+        stripedPoints = PanelStriper.stripe(v0, v1, v2);
+      } catch (Throwable t) {
+        LX.log("Problem striping Panel " + id);
+        throw t;
+      }
       points.addAll(stripedPoints);
     } else if (panelType.equals(TEPanelModel.SOLID)) {
       points.add(new LXPoint(centroid));
