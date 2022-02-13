@@ -129,7 +129,7 @@ public class PanelStriper {
     // each time nudging by EPSILON, which is calculated as a ratio of the margin.
     final double EPSILON_MARGIN_RATIO = 10.0;
     final double EPSILON = MARGIN / EPSILON_MARGIN_RATIO;
-    final double MAX_ITERATIONS = EPSILON_MARGIN_RATIO * 8.0; // For worst case, a 45deg angle
+    final double MAX_ITERATIONS = EPSILON_MARGIN_RATIO * 10.0; // For some of the sharpest panels
     double x = f0.x;
     double z = f0.z;
     int curIteration = 0;

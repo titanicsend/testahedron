@@ -27,12 +27,16 @@ public class TEEdgeModel extends TEModel {
     this(v0, v1, false);
   }
 
+  public String repr() {
+    return this.v0.repr() + "-" + this.v1.repr();
+  }
+
   private static List<LXPoint> makePoints(TEVertex v0, TEVertex v1, boolean dark) {
     List<LXPoint> points = new ArrayList<LXPoint>();
     if (dark) return points;
 
     int numPixels = (int)(v0.distanceTo(v1) / DISTANCE_BETWEEN_PIXELS);
-    assert numPixels > 0 : "Edge so short it has no pixels";
+    assert numPixels > 0 : "Edge " + v0.repr() + "-" + v1.repr() + " so short it has no pixels";
 
     float dx = v1.x - v0.x;
     float dy = v1.y - v0.y;
