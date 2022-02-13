@@ -17,6 +17,7 @@ public class TEWholeModel extends LXModel {
   public HashMap<Integer, TEVertex> vertexesById;
   public HashMap<String, TEEdgeModel> edgesById;
   public HashMap<String, TEPanelModel> panelsById;
+  public HashMap<String, List<TEPanelModel>> panelsByFlavor;
   public List<TELaserModel> lasers;
   public Set<LXPoint> edgePoints; // Points belonging to edges
 
@@ -29,6 +30,7 @@ public class TEWholeModel extends LXModel {
     public HashMap<Integer, TEVertex> vertexesById;
     public HashMap<String, TEEdgeModel> edgesById;
     public HashMap<String, TEPanelModel> panelsById;
+    public HashMap<String, List<TEPanelModel>> panelsByFlavor;
     public List<TELaserModel> lasers;
     public LXModel[] children;
   }
@@ -44,6 +46,7 @@ public class TEWholeModel extends LXModel {
     this.vertexesById = geometry.vertexesById;
     this.edgesById = geometry.edgesById;
     this.panelsById = geometry.panelsById;
+    this.panelsByFlavor = geometry.panelsByFlavor;
     this.lasers = geometry.lasers;
     this.edgePoints = new HashSet<LXPoint>();
     for (TEEdgeModel e : this.edgesById.values()) {
@@ -148,6 +151,8 @@ public class TEWholeModel extends LXModel {
 
   private static void loadPanels(Geometry geometry) {
     geometry.panelsById = new HashMap<String, TEPanelModel>();
+    geometry.panelsByFlavor = new HashMap<>();
+
     Scanner s = loadFile(geometry.subdir + "/panels.txt");
 
     while (s.hasNextLine()) {
@@ -185,10 +190,25 @@ public class TEWholeModel extends LXModel {
       e2.connectedPanels.add(p);
 
       geometry.panelsById.put(id, p);
+      String flavor = p.flavor;
+      if (!geometry.panelsByFlavor.containsKey(flavor))
+        geometry.panelsByFlavor.put(flavor, new ArrayList<>());
+      geometry.panelsByFlavor.get(flavor).add(p);
 
       if (lit) registerController(p, outputConfig);
     }
     s.close();
+
+    for (String flavor : geometry.panelsByFlavor.keySet()) {
+      StringBuilder flavorStr = new StringBuilder("Panels of flavor ");
+      flavorStr.append(flavor);
+      flavorStr.append(": ");
+      for (TEPanelModel panel : geometry.panelsByFlavor.get(flavor)) {
+        flavorStr.append(panel.id);
+        flavorStr.append(" ");
+      }
+      // LX.log(flavorStr.toString());
+    }
   }
 
   private static void loadGeneral(Geometry geometry) {
