@@ -21,7 +21,7 @@ public class PanelStriper {
 
     assert distance01 != distance02;
     assert distance01 != distance12;
-    assert distance02 != distance12;
+    // distance02 and distance12 are equal at fore and aft
 
     // Set vEnd to the vertex opposite the longest edge
     // Set vStart to the vertex closest to vEnd
@@ -30,7 +30,14 @@ public class PanelStriper {
       if (distance02 < distance12) {
         vStart = v0;
         vMid = v1;
+      } else if (distance02 < distance12) {
+        vStart = v1;
+        vMid = v0;
+      } else if (v0.id < v1.id) {
+        vStart = v0;
+        vMid = v1;
       } else {
+        assert v0.id != v1.id;
         vStart = v1;
         vMid = v0;
       }
