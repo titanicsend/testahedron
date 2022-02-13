@@ -71,7 +71,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     // you cannot assume you are working with an LXStudio class or that any UI will be
     // available.
 
-    TESacnOutput.activateAll(lx);
+    TESacnOutput.activateAll(lx, this.model.gapPoint.index);
 
     // Register custom pattern and effect types
     lx.registry.addPattern(BasicRainbowPattern.class);
