@@ -30,6 +30,7 @@ public class TEPanelModel extends TEModel {
   public final TEEdgeModel e0, e1, e2;
   public final LXVector centroid;
   public String panelType;
+  public String flavor;
   public List<LitPointData> litPointData;
 
   // Set to non-null and the virtual display will shade the panel's triangle
@@ -41,11 +42,12 @@ public class TEPanelModel extends TEModel {
 
   public TEPanelModel(String id, ArrayList<LXPoint> points, TEVertex v0, TEVertex v1, TEVertex v2,
                       TEEdgeModel e0, TEEdgeModel e1, TEEdgeModel e2, String panelType,
-                      LXVector centroid) {
+                      String flavor, LXVector centroid) {
     super("Panel", points);
 
     this.id = id;
     this.panelType = panelType;
+    this.flavor = flavor;
     this.centroid = centroid;
 
     switch (panelType) {

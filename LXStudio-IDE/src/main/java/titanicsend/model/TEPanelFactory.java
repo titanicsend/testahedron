@@ -19,19 +19,24 @@ public class TEPanelFactory {
 
     LXVector centroid = new LXVector(centroidX, centroidY, centroidZ);
 
+    String flavor;
+
     if (panelType.equals(TEPanelModel.LIT)) {
-      List<LXPoint> stripedPoints;
+      List<LXPoint> stripedPoints = new ArrayList<>();
       try {
-        stripedPoints = PanelStriper.stripe(v0, v1, v2);
+        flavor = PanelStriper.stripe(v0, v1, v2, stripedPoints);
       } catch (Throwable t) {
         LX.log("Problem striping Panel " + id);
         throw t;
       }
       points.addAll(stripedPoints);
     } else if (panelType.equals(TEPanelModel.SOLID)) {
+      flavor = "solid";
       points.add(new LXPoint(centroid));
+    } else {
+      flavor = "unknown";
     }
 
-    return new TEPanelModel(id, points, v0, v1, v2, e0, e1, e2, panelType, centroid);
+    return new TEPanelModel(id, points, v0, v1, v2, e0, e1, e2, panelType, flavor, centroid);
   }
 }

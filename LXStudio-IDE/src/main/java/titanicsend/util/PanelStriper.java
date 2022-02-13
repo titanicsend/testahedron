@@ -10,7 +10,7 @@ public class PanelStriper {
   public static final int MARGIN = 50000; // 50k microns ~= 2 inches
   public static final int DISTANCE_BETWEEN_PIXELS = 50000; // 50k microns ~= 2 inches
 
-  public static List<LXPoint> stripe(TEVertex v0, TEVertex v1, TEVertex v2) {
+  public static String stripe(TEVertex v0, TEVertex v1, TEVertex v2, List<LXPoint> pointList) {
     TEVertex vStart;
     TEVertex vMid;
     TEVertex vEnd;
@@ -30,7 +30,7 @@ public class PanelStriper {
       if (distance02 < distance12) {
         vStart = v0;
         vMid = v1;
-      } else if (distance02 < distance12) {
+      } else if (distance12 < distance02) {
         vStart = v1;
         vMid = v0;
       } else if (v0.id < v1.id) {
@@ -70,10 +70,14 @@ public class PanelStriper {
 
     List<LXPoint> rv = new ArrayList<LXPoint>();
     for (FloorPoint f : floorPoints) {
-      rv.add(floorTransform.fly(f));
+      pointList.add(floorTransform.fly(f));
     }
 
-    return rv;
+    int distanceSM = (int)vStart.distanceTo(vMid);
+    int distanceME = (int)vMid.distanceTo(vEnd);
+    int distanceES = (int)vEnd.distanceTo(vStart);
+
+    return distanceSM + "-" + distanceME + "-" + distanceES;
   }
 
   // Lays out all the pixels in a LIT panel, once it's been sent through FloorTransform
