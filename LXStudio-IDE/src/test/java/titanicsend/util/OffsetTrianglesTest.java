@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class OffsetVertexesTest {
+class OffsetTrianglesTest {
     @Test
     public void OffsetVertexesCorrectDistance() {
         LXVector[] vertexes = new LXVector[]{
@@ -14,10 +14,12 @@ class OffsetVertexesTest {
                 new LXVector(1, 1, 0)
         };
 
-        LXVector[] offset = OffsetVertexes.copy(vertexes, 1);
+        OffsetTriangles ot = new OffsetTriangles(vertexes, 1);
 
-        for (int i=0; i < vertexes.length; i++) {
-            assertEquals(offset[i].copy().sub(vertexes[i]).mag(), 1);
+        assert ot.inner.length == 3;
+
+        for (int i=0; i < 3; i++) {
+            assertEquals(ot.inner[i].copy().sub(vertexes[i]).mag(), 1);
         }
     }
 }

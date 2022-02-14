@@ -158,13 +158,14 @@ public class TEWholeModel extends LXModel {
     while (s.hasNextLine()) {
       String line = s.nextLine();
       String[] tokens = line.split("\t");
-      assert tokens.length == 5 : "Found " + tokens.length + " tokens";
+      assert tokens.length == 6 : "Found " + tokens.length + " tokens";
 
       String id = tokens[0];
       String e0Id = tokens[1];
       String e1Id = tokens[2];
       String e2Id = tokens[3];
-      String panelType = tokens[4];
+      String flipStr = tokens[4];
+      String panelType = tokens[5];
 
       TEEdgeModel e0 = geometry.edgesById.get(e0Id);
       TEEdgeModel e1 = geometry.edgesById.get(e1Id);
@@ -184,6 +185,12 @@ public class TEWholeModel extends LXModel {
 
       TEPanelModel p = TEPanelFactory.build(id, vertexes[0], vertexes[1], vertexes[2],
               e0, e1, e2, panelType);
+
+      if (flipStr.equals("flipped")) {
+        p.offsetTriangles.flip();
+      } else if (!flipStr.equals("unflipped")) {
+        throw new Error("Panel " + id + " is neither flipped nor unflipped");
+      }
 
       e0.connectedPanels.add(p);
       e1.connectedPanels.add(p);
