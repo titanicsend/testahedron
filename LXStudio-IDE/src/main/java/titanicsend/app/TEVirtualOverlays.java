@@ -2,6 +2,7 @@ package titanicsend.app;
 
 import java.util.*;
 
+import heronarts.lx.color.LXColor;
 import heronarts.lx.parameter.BooleanParameter;
 import heronarts.lx.transform.LXVector;
 import heronarts.p4lx.ui.UI;
@@ -32,6 +33,11 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setDescription("Toggle whether unknown panels are visible")
                   .setValue(true);
 
+  public final BooleanParameter opaqueBackPanelsVisible =
+          new BooleanParameter("Backings")
+                  .setDescription("Toggle whether to render the back of lit panels as opaque")
+                  .setValue(true);
+
 
   public TEVirtualOverlays(TEWholeModel model) {
     super();
@@ -40,6 +46,7 @@ public class TEVirtualOverlays extends TEUIComponent {
     addParameter("vertexLabelsVisible", this.vertexLabelsVisible);
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
     addParameter("unknownPanelsVisible", this.unknownPanelsVisible);
+    addParameter("opaqueBackPanelsVisible", this.opaqueBackPanelsVisible);
   }
 
   @Override
@@ -75,6 +82,16 @@ public class TEVirtualOverlays extends TEUIComponent {
         pg.vertex(p.v0.x, p.v0.y, p.v0.z);
         pg.vertex(p.v1.x, p.v1.y, p.v1.z);
         pg.vertex(p.v2.x, p.v2.y, p.v2.z);
+        pg.endShape();
+      }
+
+      if (this.opaqueBackPanelsVisible.isOn() && p.panelType.equals(TEPanelModel.LIT)) {
+        LXVector[] inner = p.offsetTriangles.inner;
+        pg.fill(LXColor.rgb(0,0,0), 230);
+        pg.beginShape();
+        pg.vertex(inner[0].x, inner[0].y, inner[0].z);
+        pg.vertex(inner[1].x, inner[1].y, inner[1].z);
+        pg.vertex(inner[2].x, inner[2].y, inner[2].z);
         pg.endShape();
       }
 
