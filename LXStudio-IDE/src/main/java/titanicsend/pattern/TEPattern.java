@@ -34,7 +34,7 @@ public abstract class TEPattern extends LXModelPattern<TEWholeModel> {
             }
         }
         for (TELaserModel laser : this.model.lasersById.values()) {
-            laser.updateDirection(deltaMsec);
+            laser.control.update(deltaMsec);
             laser.color = colors[laser.points[0].index];
         }
     }

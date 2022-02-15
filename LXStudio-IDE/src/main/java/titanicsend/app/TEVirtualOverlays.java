@@ -2,6 +2,7 @@ package titanicsend.app;
 
 import java.util.*;
 
+import heronarts.lx.LX;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.parameter.BooleanParameter;
 import heronarts.lx.transform.LXVector;
@@ -130,7 +131,6 @@ public class TEVirtualOverlays extends TEUIComponent {
 
       LXVector mountainSpot = laserIntersection(mountainNormal, groundMountainPoint,
               laser.origin, laser.direction);
-
 
       // If the laser is pointed at a very steep upward angle, the math will
       // be so determined to find a spot where it hits the ground anyway that

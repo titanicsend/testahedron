@@ -5,10 +5,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import heronarts.lx.LX;
-import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
+import titanicsend.lasercontrol.Cone;
+import titanicsend.lasercontrol.Target;
 import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
@@ -20,8 +21,6 @@ public class TEWholeModel extends LXModel {
   public HashMap<String, List<TEPanelModel>> panelsByFlavor;
   public HashMap<String, TELaserModel> lasersById;
   public Set<LXPoint> edgePoints; // Points belonging to edges
-
-  private String subdir;
 
   private static class Geometry {
     public String subdir;
@@ -62,7 +61,6 @@ public class TEWholeModel extends LXModel {
   }
 
   private static Scanner loadFile(String filename) {
-    Scanner s;
     try {
       File f = new File(filename);
       return new Scanner(f);
@@ -91,7 +89,7 @@ public class TEWholeModel extends LXModel {
   }
 
   private static void registerController(TEModel subModel, String config) {
-    String[] tokens = tokens = config.split("#");
+    String[] tokens = config.split("#");
     assert tokens.length == 2;
     String ipAddress = tokens[0];
     tokens = tokens[1].split(":");
@@ -233,17 +231,9 @@ public class TEWholeModel extends LXModel {
       int y = Integer.parseInt(tokens[2]);
       int z = Integer.parseInt(tokens[3]);
 
-      LXVector homeDirection;
-
-      if (id.startsWith("AS")) {
-        // Shine towards the audience and down at a 3:1 slope
-        homeDirection = new LXVector(-3, -1, 0);
-      } else {
-        // Shine almost straight out, but slightly uppish
-        homeDirection = new LXVector(-1, TELaserModel.SPIN_RADIUS_RATIO, 0);
-      }
-
-      TELaserModel laser = new TELaserModel(x, y, z, homeDirection);
+      TELaserModel laser = new TELaserModel(id, x, y, z);
+      //laser.control = new Cone(laser);
+      laser.control = new Target(laser);
       geometry.lasersById.put(id, laser);
     }
   }
