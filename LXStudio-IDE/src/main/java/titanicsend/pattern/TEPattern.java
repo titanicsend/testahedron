@@ -33,7 +33,7 @@ public abstract class TEPattern extends LXModelPattern<TEWholeModel> {
                 panel.virtualColor.rgb = colors[panel.points[0].index];
             }
         }
-        for (TELaserModel laser : this.model.lasers) {
+        for (TELaserModel laser : this.model.lasersById.values()) {
             laser.color = colors[laser.points[0].index];
         }
     }

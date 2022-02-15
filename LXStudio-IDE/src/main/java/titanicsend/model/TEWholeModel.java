@@ -18,7 +18,7 @@ public class TEWholeModel extends LXModel {
   public HashMap<String, TEEdgeModel> edgesById;
   public HashMap<String, TEPanelModel> panelsById;
   public HashMap<String, List<TEPanelModel>> panelsByFlavor;
-  public List<TELaserModel> lasers;
+  public HashMap<String, TELaserModel> lasersById;
   public Set<LXPoint> edgePoints; // Points belonging to edges
 
   private String subdir;
@@ -31,7 +31,7 @@ public class TEWholeModel extends LXModel {
     public HashMap<String, TEEdgeModel> edgesById;
     public HashMap<String, TEPanelModel> panelsById;
     public HashMap<String, List<TEPanelModel>> panelsByFlavor;
-    public List<TELaserModel> lasers;
+    public HashMap<String, TELaserModel> lasersById;
     public LXModel[] children;
   }
 
@@ -47,7 +47,7 @@ public class TEWholeModel extends LXModel {
     this.edgesById = geometry.edgesById;
     this.panelsById = geometry.panelsById;
     this.panelsByFlavor = geometry.panelsByFlavor;
-    this.lasers = geometry.lasers;
+    this.lasersById = geometry.lasersById;
     this.edgePoints = new HashSet<LXPoint>();
     for (TEEdgeModel e : this.edgesById.values()) {
       this.edgePoints.addAll(Arrays.asList(e.points));
@@ -218,6 +218,37 @@ public class TEWholeModel extends LXModel {
     }
   }
 
+  private static void loadLasers(Geometry geometry) {
+    geometry.lasersById = new HashMap<>();
+
+    Scanner s = loadFile(geometry.subdir + "/lasers.txt");
+
+    while (s.hasNextLine()) {
+      String line = s.nextLine();
+      String[] tokens = line.split("\t");
+      assert tokens.length == 4 : "Found " + tokens.length + " tokens";
+
+      String id = tokens[0];
+      int x = Integer.parseInt(tokens[1]);
+      int y = Integer.parseInt(tokens[2]);
+      int z = Integer.parseInt(tokens[3]);
+
+      LXVector direction;
+
+      if (id.startsWith("AS")) {
+        // Shine towards the audience and down at a 3:1 slope
+        direction = new LXVector(3, -1, 0);
+      } else {
+        // Shine straight out
+        direction = new LXVector(1, 0, 0);
+      }
+
+      TELaserModel laser = new TELaserModel(x, y, z, direction);
+      geometry.lasersById.put(id, laser);
+    }
+  }
+
+
   private static void loadGeneral(Geometry geometry) {
     Scanner s = loadFile(geometry.subdir + "/general.txt");
 
@@ -248,17 +279,9 @@ public class TEWholeModel extends LXModel {
 
     // Vertexes aren't LXPoints (and thus, not LXModels) so they're not children
 
-    // TODO: Store this in a config file
-    geometry.lasers = new ArrayList<>();
-    LXVector laserAnchor = geometry.vertexesById.get(48);
-    if (laserAnchor != null) {
-      double laserElevation = -Math.PI / 4.0;  // Shine down at a 45-degree angle
-      double laserAzimuth = Math.PI / 2.0;  // ...towards the audience
-      TELaserModel laser = new TELaserModel(laserAnchor, laserElevation, laserAzimuth);
-      laser.color = LXColor.rgb(255, 0, 0);
-      geometry.lasers.add(laser);
-      childList.add(laser);
-    }
+    loadLasers(geometry);
+
+    childList.addAll(geometry.lasersById.values());
 
     loadEdges(geometry);
 

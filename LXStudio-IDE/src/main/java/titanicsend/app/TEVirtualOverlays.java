@@ -11,7 +11,6 @@ import titanicsend.model.*;
 
 public class TEVirtualOverlays extends TEUIComponent {
   TEWholeModel model;
-  public static final int LASER_DISTANCE = 10000000; // 10,000,000 microns ~= 33 feet
 
   public final BooleanParameter vertexSpheresVisible =
           new BooleanParameter("Vertex Spheres")
@@ -38,6 +37,9 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setDescription("Toggle whether to render the back of lit panels as opaque")
                   .setValue(true);
 
+  private final LXVector groundNormal = new LXVector(0,1,0);
+  private final LXVector groundMountainPoint = new LXVector(20e6F, 0, 0);
+  private final LXVector mountainNormal = new LXVector(-1, 0, 0);
 
   public TEVirtualOverlays(TEWholeModel model) {
     super();
@@ -47,6 +49,16 @@ public class TEVirtualOverlays extends TEUIComponent {
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
     addParameter("unknownPanelsVisible", this.unknownPanelsVisible);
     addParameter("opaqueBackPanelsVisible", this.opaqueBackPanelsVisible);
+  }
+
+  // https://stackoverflow.com/questions/5666222/3d-line-plane-intersection
+  private LXVector laserIntersection(LXVector planeNormal, LXVector planePoint,
+                                     LXVector linePoint, LXVector lineDirection) {
+    float numerator = planeNormal.dot(planePoint) - planeNormal.dot(linePoint);
+    float denominator = planeNormal.dot(lineDirection.normalize());
+    if (denominator == 0.0) return null;
+    float t = numerator / denominator;
+    return linePoint.copy().add(lineDirection.normalize().mult(t));
   }
 
   @Override
@@ -109,16 +121,36 @@ public class TEVirtualOverlays extends TEUIComponent {
         pg.popMatrix();
       }
     }
-    for (TELaserModel laser : model.lasers) {
-      // Tried checking for LXColor.BLACK and LXColor.rgb(0,0,0) but neither worked. Weird.
-      if (laser.color == 0) continue;
 
+    for (TELaserModel laser : model.lasersById.values()) {
+      if ((laser.color | LXColor.ALPHA_MASK) == LXColor.BLACK) continue;
+
+      LXVector groundSpot = laserIntersection(groundNormal, groundMountainPoint,
+              laser.origin, laser.direction);
+
+      LXVector mountainSpot = laserIntersection(mountainNormal, groundMountainPoint,
+              laser.origin, laser.direction);
+
+      LXVector laserSpot;
+      if (groundSpot == null && mountainSpot == null) {
+        continue;  // Laser never intersects ground or "mountain" plane
+      } else if (groundSpot == null) {
+        laserSpot = mountainSpot;
+      } else if (mountainSpot == null) {
+        laserSpot = groundSpot;
+      } else if (laser.origin.dist(groundSpot) < laser.origin.dist(mountainSpot)) {
+        laserSpot = groundSpot;
+      } else {
+        laserSpot = mountainSpot;
+      }
+
+      pg.stroke(laser.color, 0x90);
+      pg.line(laser.origin.x, laser.origin.y, laser.origin.z, laserSpot.x, laserSpot.y, laserSpot.z);
+      pg.pushMatrix();
       pg.stroke(laser.color);
-
-      double targetX = laser.origin.x + LASER_DISTANCE * Math.sin(laser.azimuth) * Math.cos(laser.elevation);
-      double targetY = laser.origin.y + LASER_DISTANCE * Math.sin(laser.elevation);
-      double targetZ = laser.origin.z + LASER_DISTANCE * Math.cos(laser.azimuth) * Math.cos(laser.elevation);
-      pg.line(laser.origin.x, laser.origin.y, laser.origin.z, (float)targetX, (float)targetY, (float)targetZ);
+      pg.translate(laserSpot.x, laserSpot.y, laserSpot.z);
+      pg.sphere(10000);
+      pg.popMatrix();
     }
     endDraw(ui, pg);
   }
