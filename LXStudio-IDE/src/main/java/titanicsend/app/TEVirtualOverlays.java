@@ -144,7 +144,13 @@ public class TEVirtualOverlays extends TEUIComponent {
         laserSpot = mountainSpot;
       }
 
-      pg.stroke(laser.color, 0x90);
+      // TODO: If the laser is pointed at a very steep upward angle, the math will
+      // conclude there's a second emitter on the back of the laser and that's the
+      // one firing the beam, because it's determined to put a spot on the ground.
+      // Once we can reproduce this, compare the sign of laserSpot to the sign of
+      // laser.direction and do nothing if they're opposites.
+
+      pg.stroke(laser.color, 0xA0);
       pg.line(laser.origin.x, laser.origin.y, laser.origin.z, laserSpot.x, laserSpot.y, laserSpot.z);
       pg.pushMatrix();
       pg.stroke(laser.color);
