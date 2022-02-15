@@ -38,7 +38,7 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setValue(true);
 
   private final LXVector groundNormal = new LXVector(0,1,0);
-  private final LXVector groundMountainPoint = new LXVector(20e6F, 0, 0);
+  private final LXVector groundMountainPoint = new LXVector(-20e6F, 0, 0);
   private final LXVector mountainNormal = new LXVector(-1, 0, 0);
 
   public TEVirtualOverlays(TEWholeModel model) {

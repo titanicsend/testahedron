@@ -237,10 +237,10 @@ public class TEWholeModel extends LXModel {
 
       if (id.startsWith("AS")) {
         // Shine towards the audience and down at a 3:1 slope
-        homeDirection = new LXVector(3, -1, 0);
+        homeDirection = new LXVector(-3, -1, 0);
       } else {
         // Shine straight out
-        homeDirection = new LXVector(1, 0, 0);
+        homeDirection = new LXVector(-1, 0, 0);
       }
 
       TELaserModel laser = new TELaserModel(x, y, z, homeDirection);
