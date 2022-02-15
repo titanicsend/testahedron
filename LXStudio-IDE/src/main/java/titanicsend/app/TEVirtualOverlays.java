@@ -2,6 +2,7 @@ package titanicsend.app;
 
 import java.util.*;
 
+import heronarts.lx.LX;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.parameter.BooleanParameter;
 import heronarts.lx.transform.LXVector;
@@ -11,7 +12,6 @@ import titanicsend.model.*;
 
 public class TEVirtualOverlays extends TEUIComponent {
   TEWholeModel model;
-  public static final int LASER_DISTANCE = 10000000; // 10,000,000 microns ~= 33 feet
 
   public final BooleanParameter vertexSpheresVisible =
           new BooleanParameter("Vertex Spheres")
@@ -38,6 +38,21 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setDescription("Toggle whether to render the back of lit panels as opaque")
                   .setValue(true);
 
+  private static class POV {
+    LXVector v;
+    int rgb;
+
+    POV(LXVector v, int rgb) {
+      this.v = v;
+      this.rgb = rgb;
+    }
+  }
+  private static final int numPOVs = 10;
+
+  private final LXVector groundNormal = new LXVector(0,1,0);
+  private final LXVector groundMountainPoint = new LXVector(-20e6F, 0, 0);
+  private final LXVector mountainNormal = new LXVector(-1, 0, 0);
+  private List<List<POV>> laserPOV;
 
   public TEVirtualOverlays(TEWholeModel model) {
     super();
@@ -47,6 +62,20 @@ public class TEVirtualOverlays extends TEUIComponent {
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
     addParameter("unknownPanelsVisible", this.unknownPanelsVisible);
     addParameter("opaqueBackPanelsVisible", this.opaqueBackPanelsVisible);
+    this.laserPOV = new ArrayList<>();
+    for (int i = 0; i < numPOVs; i++) {
+      this.laserPOV.add(new ArrayList<>());
+    }
+  }
+
+  // https://stackoverflow.com/questions/5666222/3d-line-plane-intersection
+  private LXVector laserIntersection(LXVector planeNormal, LXVector planePoint,
+                                     LXVector linePoint, LXVector lineDirection) {
+    float numerator = planeNormal.dot(planePoint) - planeNormal.dot(linePoint);
+    float denominator = planeNormal.dot(lineDirection.normalize());
+    if (denominator == 0.0) return null;
+    float t = numerator / denominator;
+    return linePoint.copy().add(lineDirection.normalize().mult(t));
   }
 
   @Override
@@ -109,17 +138,60 @@ public class TEVirtualOverlays extends TEUIComponent {
         pg.popMatrix();
       }
     }
-    for (TELaserModel laser : model.lasers) {
-      // Tried checking for LXColor.BLACK and LXColor.rgb(0,0,0) but neither worked. Weird.
-      if (laser.color == 0) continue;
 
-      pg.stroke(laser.color);
-
-      double targetX = laser.origin.x + LASER_DISTANCE * Math.sin(laser.azimuth) * Math.cos(laser.elevation);
-      double targetY = laser.origin.y + LASER_DISTANCE * Math.sin(laser.elevation);
-      double targetZ = laser.origin.z + LASER_DISTANCE * Math.cos(laser.azimuth) * Math.cos(laser.elevation);
-      pg.line(laser.origin.x, laser.origin.y, laser.origin.z, (float)targetX, (float)targetY, (float)targetZ);
+    for (List<POV> povs : this.laserPOV) {
+      for (POV p : povs) {
+        pg.pushMatrix();
+        pg.stroke(p.rgb, 0xA0);
+        pg.translate(p.v.x, p.v.y, p.v.z);
+        pg.sphere(10000);
+        pg.popMatrix();
+      }
     }
+
+    List<POV> newPOV = new ArrayList<>();
+    for (TELaserModel laser : model.lasersById.values()) {
+      if ((laser.color | LXColor.ALPHA_MASK) == LXColor.BLACK) continue;
+
+      LXVector groundSpot = laserIntersection(groundNormal, groundMountainPoint,
+              laser.origin, laser.getDirection());
+
+      LXVector mountainSpot = laserIntersection(mountainNormal, groundMountainPoint,
+              laser.origin, laser.getDirection());
+
+      // If the laser is pointed at a very steep upward angle, the math will
+      // be so determined to find a spot where it hits the ground anyway that
+      // it will conclude the laser must be capable of firing backward. Since
+      // this is not a Darth Maul double-sided laser, ignore those "solutions".
+      if (groundSpot != null && groundSpot.x > 0) groundSpot = null;
+      if (mountainSpot != null && mountainSpot.x > 0) mountainSpot = null;
+
+      LXVector laserSpot;
+      if (groundSpot == null && mountainSpot == null) {
+        continue;  // Laser never intersects ground or "mountain" plane
+      } else if (groundSpot == null) {
+        laserSpot = mountainSpot;
+      } else if (mountainSpot == null) {
+        laserSpot = groundSpot;
+      } else if (laser.origin.dist(groundSpot) < laser.origin.dist(mountainSpot)) {
+        laserSpot = groundSpot;
+      } else {
+        laserSpot = mountainSpot;
+      }
+
+      pg.stroke(laser.color, 0xA0);
+      pg.line(laser.origin.x, laser.origin.y, laser.origin.z, laserSpot.x, laserSpot.y, laserSpot.z);
+      pg.pushMatrix();
+      pg.stroke(laser.color);
+      pg.translate(laserSpot.x, laserSpot.y, laserSpot.z);
+      newPOV.add(new POV(laserSpot, laser.color));
+      pg.sphere(10000);
+      pg.popMatrix();
+    }
+
+    this.laserPOV.remove(0);
+    this.laserPOV.add(newPOV);
+
     endDraw(ui, pg);
   }
 }
