@@ -1,5 +1,6 @@
 package titanicsend.model;
 
+import heronarts.lx.LX;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class TELaserModel extends TEModel {
   public LXVector origin;
-  public LXVector direction;
+  private LXVector direction;
   public int color;
   public String id;
   public LaserControl control;
@@ -24,6 +25,16 @@ public class TELaserModel extends TEModel {
 
   public String getId() {
     return this.id;
+  }
+
+  public LXVector getDirection() { return this.direction; }
+
+  public void setDirection(LXVector direction) {
+    if (this.id.startsWith("HP") && direction.y < 0) {
+      LX.log("Refusing to aim " + this.id + " downward");
+      direction.y = 0;
+    }
+    this.direction = direction;
   }
 
   private static List<LXPoint> makePoint(double x, double y, double z) {

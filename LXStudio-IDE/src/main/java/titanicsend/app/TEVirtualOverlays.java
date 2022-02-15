@@ -38,9 +38,21 @@ public class TEVirtualOverlays extends TEUIComponent {
                   .setDescription("Toggle whether to render the back of lit panels as opaque")
                   .setValue(true);
 
+  private static class POV {
+    LXVector v;
+    int rgb;
+
+    POV(LXVector v, int rgb) {
+      this.v = v;
+      this.rgb = rgb;
+    }
+  }
+  private static final int numPOVs = 10;
+
   private final LXVector groundNormal = new LXVector(0,1,0);
   private final LXVector groundMountainPoint = new LXVector(-20e6F, 0, 0);
   private final LXVector mountainNormal = new LXVector(-1, 0, 0);
+  private List<List<POV>> laserPOV;
 
   public TEVirtualOverlays(TEWholeModel model) {
     super();
@@ -50,6 +62,10 @@ public class TEVirtualOverlays extends TEUIComponent {
     addParameter("panelLabelsVisible", this.panelLabelsVisible);
     addParameter("unknownPanelsVisible", this.unknownPanelsVisible);
     addParameter("opaqueBackPanelsVisible", this.opaqueBackPanelsVisible);
+    this.laserPOV = new ArrayList<>();
+    for (int i = 0; i < numPOVs; i++) {
+      this.laserPOV.add(new ArrayList<>());
+    }
   }
 
   // https://stackoverflow.com/questions/5666222/3d-line-plane-intersection
@@ -123,14 +139,25 @@ public class TEVirtualOverlays extends TEUIComponent {
       }
     }
 
+    for (List<POV> povs : this.laserPOV) {
+      for (POV p : povs) {
+        pg.pushMatrix();
+        pg.stroke(p.rgb, 0xA0);
+        pg.translate(p.v.x, p.v.y, p.v.z);
+        pg.sphere(10000);
+        pg.popMatrix();
+      }
+    }
+
+    List<POV> newPOV = new ArrayList<>();
     for (TELaserModel laser : model.lasersById.values()) {
       if ((laser.color | LXColor.ALPHA_MASK) == LXColor.BLACK) continue;
 
       LXVector groundSpot = laserIntersection(groundNormal, groundMountainPoint,
-              laser.origin, laser.direction);
+              laser.origin, laser.getDirection());
 
       LXVector mountainSpot = laserIntersection(mountainNormal, groundMountainPoint,
-              laser.origin, laser.direction);
+              laser.origin, laser.getDirection());
 
       // If the laser is pointed at a very steep upward angle, the math will
       // be so determined to find a spot where it hits the ground anyway that
@@ -157,9 +184,14 @@ public class TEVirtualOverlays extends TEUIComponent {
       pg.pushMatrix();
       pg.stroke(laser.color);
       pg.translate(laserSpot.x, laserSpot.y, laserSpot.z);
+      newPOV.add(new POV(laserSpot, laser.color));
       pg.sphere(10000);
       pg.popMatrix();
     }
+
+    this.laserPOV.remove(0);
+    this.laserPOV.add(newPOV);
+
     endDraw(ui, pg);
   }
 }

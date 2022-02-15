@@ -9,7 +9,7 @@ import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
 import titanicsend.lasercontrol.Cone;
-import titanicsend.lasercontrol.Target;
+import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
@@ -233,7 +233,7 @@ public class TEWholeModel extends LXModel {
 
       TELaserModel laser = new TELaserModel(id, x, y, z);
       //laser.control = new Cone(laser);
-      laser.control = new Target(laser);
+      laser.control = new MovingTarget(laser);
       geometry.lasersById.put(id, laser);
     }
   }
