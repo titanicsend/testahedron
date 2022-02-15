@@ -43,6 +43,6 @@ public class Checkers extends TEColorGroupPattern {
       int rgb = panelGroup == 0 ? color0 : color1;
       for (LXPoint point : panel.points) colors[point.index] = rgb;
     }
-    this.updateVirtualColors();
+    this.updateVirtualColors(deltaMs);
   }
 }

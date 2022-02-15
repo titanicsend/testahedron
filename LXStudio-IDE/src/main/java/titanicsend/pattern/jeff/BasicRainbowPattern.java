@@ -30,7 +30,7 @@ public class BasicRainbowPattern extends TEPattern {
             // Hue is a 360 degree wheel, so the final 0..1 value is multiplied by 360
             colors[p.index] = LXColor.hsb(360 * ((t1.getValuef() + ((float) p.index) / model.points.length) % 1), 100, 100);
         }
-        this.updateVirtualColors();
+        this.updateVirtualColors(deltaMs);
     }
 
 }

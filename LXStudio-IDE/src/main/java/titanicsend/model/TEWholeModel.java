@@ -233,17 +233,17 @@ public class TEWholeModel extends LXModel {
       int y = Integer.parseInt(tokens[2]);
       int z = Integer.parseInt(tokens[3]);
 
-      LXVector direction;
+      LXVector homeDirection;
 
       if (id.startsWith("AS")) {
         // Shine towards the audience and down at a 3:1 slope
-        direction = new LXVector(3, -1, 0);
+        homeDirection = new LXVector(3, -1, 0);
       } else {
         // Shine straight out
-        direction = new LXVector(1, 0, 0);
+        homeDirection = new LXVector(1, 0, 0);
       }
 
-      TELaserModel laser = new TELaserModel(x, y, z, direction);
+      TELaserModel laser = new TELaserModel(x, y, z, homeDirection);
       geometry.lasersById.put(id, laser);
     }
   }
