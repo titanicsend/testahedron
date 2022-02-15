@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TELaserModel extends TEModel {
-  public static double MSEC_PER_REVOLUTION = 3000;
+  public static double MSEC_PER_REVOLUTION = 2500;
   public static double RADIANS_PER_MSEC = (2.0 * Math.PI) / MSEC_PER_REVOLUTION;
-  public static float SPIN_RADIUS_RATIO = 0.3F; // Slope of the cone
+  public static float SPIN_RADIUS_RATIO = 0.1F; // Slope of the cone; smaller=tighter
 
   public LXVector origin;
   public LXVector homeDirection;

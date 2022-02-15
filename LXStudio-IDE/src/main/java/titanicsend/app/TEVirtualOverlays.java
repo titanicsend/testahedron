@@ -131,6 +131,14 @@ public class TEVirtualOverlays extends TEUIComponent {
       LXVector mountainSpot = laserIntersection(mountainNormal, groundMountainPoint,
               laser.origin, laser.direction);
 
+
+      // If the laser is pointed at a very steep upward angle, the math will
+      // be so determined to find a spot where it hits the ground anyway that
+      // it will conclude the laser must be capable of firing backward. Since
+      // this is not a Darth Maul double-sided laser, ignore those "solutions".
+      if (groundSpot != null && groundSpot.x > 0) groundSpot = null;
+      if (mountainSpot != null && mountainSpot.x > 0) mountainSpot = null;
+
       LXVector laserSpot;
       if (groundSpot == null && mountainSpot == null) {
         continue;  // Laser never intersects ground or "mountain" plane
@@ -143,12 +151,6 @@ public class TEVirtualOverlays extends TEUIComponent {
       } else {
         laserSpot = mountainSpot;
       }
-
-      // TODO: If the laser is pointed at a very steep upward angle, the math will
-      // conclude there's a second emitter on the back of the laser and that's the
-      // one firing the beam, because it's determined to put a spot on the ground.
-      // Once we can reproduce this, compare the sign of laserSpot to the sign of
-      // laser.direction and do nothing if they're opposites.
 
       pg.stroke(laser.color, 0xA0);
       pg.line(laser.origin.x, laser.origin.y, laser.origin.z, laserSpot.x, laserSpot.y, laserSpot.z);
