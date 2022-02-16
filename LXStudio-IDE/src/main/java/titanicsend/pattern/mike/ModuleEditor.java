@@ -23,9 +23,7 @@ import titanicsend.pattern.PeriodicPattern;
 import java.util.*;
 
 public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<ModuleEditor> {
-  private final Map<Integer, String> configsByModNum;
-  private final Map<TEEdgeModel, Integer> modNumsByEdge;
-  private final Map<Integer, List<TEEdgeModel>> edgesByModNum;
+  private static final double MOVE_PERIOD_MSEC = 50.0;
 
   private static class Link {
     TEEdgeModel edge;
@@ -36,9 +34,11 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
       this.fwd = fwd;
     }
   }
-  private final Map<Integer, List<List<Link>>> routesByModule;
 
-  private static final double MOVE_PERIOD_MSEC = 50.0;
+  private Map<Integer, String> configsByModNum;
+  private Map<TEEdgeModel, Integer> modNumsByEdge;
+  private Map<Integer, List<TEEdgeModel>> edgesByModNum;
+  private Map<Integer, List<List<Link>>> routesByModule;
 
   public final DiscreteParameter moduleNumber =
           new DiscreteParameter("Mod #", 1, 99)
@@ -98,16 +98,42 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
   }
 
   private void load() {
+    this.partsErr.setVisible(true);
     this.configsByModNum = new HashMap<>();
     this.modNumsByEdge = new HashMap<>();
     this.edgesByModNum = new HashMap<>();
+    this.routesByModule = new HashMap<>();
+
     Scanner s = this.model.loadFile("modules.txt");
+
+    int longestGlobalRoute = 0;
     while (s.hasNextLine()) {
       String line = s.nextLine();
-      String[] tokens = line.split("\\s+");
-      assert tokens.length >= 2;
+      String[] tokens = line.split(":\\s*");
+      assert tokens.length == 2;
       int modNum = Integer.parseInt(tokens[0]);
+      tokens = tokens[1].split("\\s+");
+      assert tokens.length >= 1;
+      List<TEEdgeModel> edges = new ArrayList<>();
+      List<List<Link>> routes = new ArrayList<>();
+      int longestRoute = this.getRoutes(tokens, routes, edges);
+      if (longestRoute < 0) return;
+
+      if (longestRoute > longestGlobalRoute) longestGlobalRoute = longestRoute;
+
+      for (TEEdgeModel edge : edges) {
+        if (this.modNumsByEdge.containsKey(edge)) return;
+        this.modNumsByEdge.put(edge, modNum);
+      }
+
+      if (this.routesByModule.containsKey(modNum)) return;
+
+      this.routesByModule.put(modNum, routes);
+      this.edgesByModNum.put(modNum, edges);
     }
+
+    LX.log("Longest route is " + longestGlobalRoute);
+    this.partsErr.setVisible(false);
   }
 
   public void loadParts(LXParameter unused) {
@@ -125,6 +151,42 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
     return this.model.vertexesById.getOrDefault(id, null);
   }
 
+  private int getRoutes(String[] tokens, List<List<Link>> routes, List<TEEdgeModel> edges) {
+    int longestRoute = 0;
+    for (String token : tokens) {
+      int thisRouteLength = 0;
+      List<Link> route = new ArrayList<>();
+
+      token = token.strip();
+      List<String> subTokens = new ArrayList<>(Arrays.asList(token.split("-")));
+      if (subTokens.size() == 0) continue;
+      TEVertex vCurr = vertexByString(subTokens.remove(0));
+      if (vCurr == null) return -1;
+      while (!subTokens.isEmpty()) {
+        TEVertex vNext = vertexByString(subTokens.remove(0));
+        if (vNext == null) return -1;
+
+        boolean fwd;
+        TEEdgeModel edge;
+        if (vCurr.id < vNext.id) {
+          fwd = true;
+          edge = this.model.edgesById.getOrDefault(vCurr.id + "-" + vNext.id, null);
+        } else {
+          fwd = false;
+          edge = this.model.edgesById.getOrDefault(vNext.id + "-" + vCurr.id, null);
+        }
+        if (edge == null) return -1;
+        edges.add(edge);
+        route.add(new Link(edge, fwd));
+        vCurr = vNext;
+        thisRouteLength += edge.points.length;
+      }
+      routes.add(route);
+      if (thisRouteLength > longestRoute) longestRoute = thisRouteLength;
+    }
+    return longestRoute;
+  }
+
   public void setParts(LXParameter unused) {
     String partStr = this.moduleParts.getString();
 
@@ -137,34 +199,8 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
 
     String[] tokens = partStr.split(",");
     List<List<Link>> routes = new ArrayList<>();
-    for (String token : tokens) {
-      List<Link> route = new ArrayList<>();
-
-      token = token.strip();
-      List<String> subTokens = new ArrayList<>(Arrays.asList(token.split("-")));
-      if (subTokens.size() == 0) continue;
-      TEVertex vCurr = vertexByString(subTokens.remove(0));
-      if (vCurr == null) return;
-      while (!subTokens.isEmpty()) {
-        TEVertex vNext = vertexByString(subTokens.remove(0));
-        if (vNext == null) return;
-
-        boolean fwd;
-        TEEdgeModel edge;
-        if (vCurr.id < vNext.id) {
-          fwd = true;
-          edge = this.model.edgesById.getOrDefault(vCurr.id + "-" + vNext.id, null);
-        } else {
-          fwd = false;
-          edge = this.model.edgesById.getOrDefault(vNext.id + "-" + vCurr.id, null);
-        }
-        if (edge == null) return;
-        edges.add(edge);
-        route.add(new Link(edge, fwd));
-        vCurr = vNext;
-      }
-      routes.add(route);
-    }
+    int longestRoute = getRoutes(tokens, routes, edges);
+    if (longestRoute < 0) return;
 
     int modNum = this.moduleNumber.getValuei();
 
@@ -201,9 +237,10 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
       }
     }
     for (Map.Entry<Integer, List<List<Link>>> entry : this.routesByModule.entrySet()) {
-      int hue = ((entry.getKey() - 1) * 15) % 360;
+      int hue = ((entry.getKey() - 1) * 27) % 360;
       int i = 0;
       for (List<Link> listOfLinks : entry.getValue()) {
+        int j = 0;
         for (Link link : listOfLinks) {
           LXPoint[] points = link.edge.points;
           if (!link.fwd) { // Reverse the points list
@@ -213,8 +250,16 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
           }
           for (LXPoint point : points) {
             //int sat = ((i++ % 10) == (phase % 10)) ? 0 : 100;
-            int sat = (i++ - phase) % 10 == 0 ? 0 : 100;
-            colors[point.index] = LXColor.hsb(hue, sat, 100);
+            int sat = 100;
+            int MIN_BRI = 20;
+            int bri = MIN_BRI + (100-MIN_BRI) * (400-j) / (400-MIN_BRI);
+            if (bri > 100) bri = 100;
+            if (bri < MIN_BRI) bri = MIN_BRI;
+            j++;
+            int ci = (10 + i++ - phase) % 10;
+            if (ci == 0) sat = 0;
+            if (ci == 1) bri = 0;
+            colors[point.index] = LXColor.hsb(hue, sat, bri);
           }
         }
       }
