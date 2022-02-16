@@ -8,6 +8,7 @@ import heronarts.lx.LX;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
+import titanicsend.lasercontrol.Cone;
 import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
 

@@ -14,5 +14,4 @@ public class TEVirtualColor {
   public TEVirtualColor(int r, int g, int b, float alpha) {
     this(LXColor.rgb(r, g, b), alpha);
   }
-  
 }
