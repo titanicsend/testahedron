@@ -13,6 +13,7 @@ import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
+  public String subdir;
   public String name;
   public LXPoint gapPoint;  // Used for pixels that shouldn't actually be lit
   public HashMap<Integer, TEVertex> vertexesById;
@@ -40,6 +41,7 @@ public class TEWholeModel extends LXModel {
 
   private TEWholeModel(Geometry geometry) {
     super(geometry.children);
+    this.subdir = geometry.subdir;
     this.name = geometry.name;
     this.gapPoint = geometry.gapPoint;
     this.vertexesById = geometry.vertexesById;
@@ -60,7 +62,7 @@ public class TEWholeModel extends LXModel {
            this.points.length + " pixels");
   }
 
-  private static Scanner loadFile(String filename) {
+  private static Scanner loadFilePrivate(String filename) {
     try {
       File f = new File(filename);
       return new Scanner(f);
@@ -69,9 +71,13 @@ public class TEWholeModel extends LXModel {
     }
   }
 
+  public Scanner loadFile(String filename) {
+    return loadFilePrivate(this.subdir + "/" + filename);
+  }
+
   private static void loadVertexes(Geometry geometry) {
     geometry.vertexesById = new HashMap<Integer, TEVertex>();
-    Scanner s = loadFile(geometry.subdir + "/vertexes.txt");
+    Scanner s = loadFilePrivate(geometry.subdir + "/vertexes.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
@@ -101,7 +107,7 @@ public class TEWholeModel extends LXModel {
 
   private static void loadEdges(Geometry geometry) {
     geometry.edgesById = new HashMap<String, TEEdgeModel>();
-    Scanner s = loadFile(geometry.subdir + "/edges.txt");
+    Scanner s = loadFilePrivate(geometry.subdir + "/edges.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
@@ -151,7 +157,7 @@ public class TEWholeModel extends LXModel {
     geometry.panelsById = new HashMap<String, TEPanelModel>();
     geometry.panelsByFlavor = new HashMap<>();
 
-    Scanner s = loadFile(geometry.subdir + "/panels.txt");
+    Scanner s = loadFilePrivate(geometry.subdir + "/panels.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
@@ -219,7 +225,7 @@ public class TEWholeModel extends LXModel {
   private static void loadLasers(Geometry geometry) {
     geometry.lasersById = new HashMap<>();
 
-    Scanner s = loadFile(geometry.subdir + "/lasers.txt");
+    Scanner s = loadFilePrivate(geometry.subdir + "/lasers.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
@@ -240,7 +246,7 @@ public class TEWholeModel extends LXModel {
 
 
   private static void loadGeneral(Geometry geometry) {
-    Scanner s = loadFile(geometry.subdir + "/general.txt");
+    Scanner s = loadFilePrivate(geometry.subdir + "/general.txt");
 
     while (s.hasNextLine()) {
       String line = s.nextLine();
