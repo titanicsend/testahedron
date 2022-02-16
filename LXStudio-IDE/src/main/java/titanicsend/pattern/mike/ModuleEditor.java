@@ -11,9 +11,13 @@ import heronarts.lx.studio.ui.device.UIDevice;
 import heronarts.lx.studio.ui.device.UIDeviceControls;
 import heronarts.p4lx.ui.UI2dComponent;
 import heronarts.p4lx.ui.UI2dContainer;
+import heronarts.p4lx.ui.component.UIButton;
+import heronarts.p4lx.ui.component.UIParameterControl;
+import heronarts.p4lx.ui.component.UISwitch;
 import heronarts.p4lx.ui.component.UITextBox;
 import titanicsend.model.TEEdgeModel;
 import titanicsend.model.TEVertex;
+import titanicsend.model.TEWholeModel;
 import titanicsend.pattern.TEPattern;
 
 import java.util.*;
@@ -49,6 +53,7 @@ public class ModuleEditor extends TEPattern implements UIDeviceControls<ModuleEd
 
     UI2dComponent ibModNumber;
     UITextBox tbModParts;
+    UIParameterControl loadSwitch;
 
     uiDevice.addChildren(
             controlLabel(ui, "Mod #"),
@@ -56,7 +61,16 @@ public class ModuleEditor extends TEPattern implements UIDeviceControls<ModuleEd
             controlLabel(ui, "Parts"),
             tbModParts = new UITextBox(0, 0, COL_WIDTH, 16).setParameter(moduleParts),
             this.partsErr = controlLabel(ui, "Bad parts"),
-            this.dupeErr = controlLabel(ui, "Dupe")
+            this.dupeErr = controlLabel(ui, "Dupe"),
+            new UIButton(0, 0, COL_WIDTH, 20) {
+              @Override
+              public void onToggle(boolean on) {
+                if (on) {
+                  load();
+                }
+              }
+            }
+            .setLabel("Load").setMomentary(true)
     );
 
     tbModParts.setEmptyValueAllowed(true);
@@ -65,6 +79,19 @@ public class ModuleEditor extends TEPattern implements UIDeviceControls<ModuleEd
 
     moduleNumber.addListener(this::loadParts);
     moduleParts.addListener(this::setParts);
+  }
+
+  private void load() {
+    this.configsByModNum = new HashMap<>();
+    this.modNumsByEdge = new HashMap<>();
+    this.edgesByModNum = new HashMap<>();
+    Scanner s = this.model.loadFile("modules.txt");
+    while (s.hasNextLine()) {
+      String line = s.nextLine();
+      String[] tokens = line.split("\\s+");
+      assert tokens.length >= 2;
+      int modNum = Integer.parseInt(tokens[0]);
+    }
   }
 
   public void loadParts(LXParameter unused) {

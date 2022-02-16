@@ -152,12 +152,13 @@ public class TEVirtualOverlays extends TEUIComponent {
     List<POV> newPOV = new ArrayList<>();
     for (TELaserModel laser : model.lasersById.values()) {
       if ((laser.color | LXColor.ALPHA_MASK) == LXColor.BLACK) continue;
-
+      LXVector direction = laser.getDirection();
+      if (direction == null) continue;
       LXVector groundSpot = laserIntersection(groundNormal, groundMountainPoint,
-              laser.origin, laser.getDirection());
+              laser.origin, direction);
 
       LXVector mountainSpot = laserIntersection(mountainNormal, groundMountainPoint,
-              laser.origin, laser.getDirection());
+              laser.origin, direction);
 
       // If the laser is pointed at a very steep upward angle, the math will
       // be so determined to find a spot where it hits the ground anyway that

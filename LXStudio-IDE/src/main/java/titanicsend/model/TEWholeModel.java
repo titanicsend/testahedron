@@ -13,6 +13,7 @@ import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
+  public String subdir;
   public String name;
   public LXPoint gapPoint;  // Used for pixels that shouldn't actually be lit
   public HashMap<Integer, TEVertex> vertexesById;
@@ -40,6 +41,7 @@ public class TEWholeModel extends LXModel {
 
   private TEWholeModel(Geometry geometry) {
     super(geometry.children);
+    this.subdir = geometry.subdir;
     this.name = geometry.name;
     this.gapPoint = geometry.gapPoint;
     this.vertexesById = geometry.vertexesById;
@@ -60,7 +62,7 @@ public class TEWholeModel extends LXModel {
            this.points.length + " pixels");
   }
 
-  private static Scanner loadFile(String filename) {
+  public static Scanner loadFile(String filename) {
     try {
       File f = new File(filename);
       return new Scanner(f);

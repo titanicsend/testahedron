@@ -31,7 +31,8 @@ public abstract class PeriodicPattern extends TEPattern {
   }
 
   // This is called for every run(), in case the subclass wants to hook into it
-  public void runHook(double deltaMs) {}
+  public void runHook(double deltaMs) {
+  }
 
   public void run(double deltaMs) {
     this.runHook(deltaMs);
