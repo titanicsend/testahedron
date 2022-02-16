@@ -2,12 +2,16 @@ package titanicsend.model;
 
 import java.util.*;
 
+import heronarts.lx.LX;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
 import titanicsend.app.TEVirtualColor;
+import titanicsend.util.OffsetTriangles;
 
 public class TEPanelModel extends TEModel {
+  public static final float PANEL_BACKING_DISTANCE = 50000;  // About two inches
+
   // Useful data for points inside LIT panels
   public static class LitPointData {
     public LXPoint point;
@@ -32,6 +36,7 @@ public class TEPanelModel extends TEModel {
   public String panelType;
   public String flavor;
   public List<LitPointData> litPointData;
+  public OffsetTriangles offsetTriangles;
 
   // Set to non-null and the virtual display will shade the panel's triangle
   public TEVirtualColor virtualColor;
@@ -46,9 +51,10 @@ public class TEPanelModel extends TEModel {
     super("Panel", points);
 
     this.id = id;
-    this.panelType = panelType;
+
     this.flavor = flavor;
     this.centroid = centroid;
+    this.panelType = panelType;
 
     switch (panelType) {
       case UNKNOWN:
@@ -68,6 +74,7 @@ public class TEPanelModel extends TEModel {
         double radius2 = v2.distanceTo(this.centroid);
         double maxRadius = Math.max(radius0, Math.max(radius1, radius2));
 
+        // Calculate useful data for each of this panel's points relative to the panel
         this.litPointData = new ArrayList<LitPointData>();
         for (LXPoint point : points) {
           double radius = TEVertex.distance(this.centroid, point);
@@ -81,7 +88,7 @@ public class TEPanelModel extends TEModel {
         this.litPointData = null;
         break;
       default:
-        throw new Error("Unknown panel type: " + panelType);
+        throw new Error("Unknown panel type: " + this.panelType);
     }
 
     // Make sure we have three different edges
@@ -111,6 +118,8 @@ public class TEPanelModel extends TEModel {
     this.v0 = v0;
     this.v1 = v1;
     this.v2 = v2;
+
+    this.offsetTriangles = new OffsetTriangles(v0, v1, v2, PANEL_BACKING_DISTANCE);
   }
 
   // Checks if two panels touch along an edge (not just at a vertex)

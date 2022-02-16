@@ -5,23 +5,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import heronarts.lx.LX;
-import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.transform.LXVector;
+import titanicsend.lasercontrol.Cone;
+import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
 
 public class TEWholeModel extends LXModel {
+  public String subdir;
   public String name;
   public LXPoint gapPoint;  // Used for pixels that shouldn't actually be lit
   public HashMap<Integer, TEVertex> vertexesById;
   public HashMap<String, TEEdgeModel> edgesById;
   public HashMap<String, TEPanelModel> panelsById;
   public HashMap<String, List<TEPanelModel>> panelsByFlavor;
-  public List<TELaserModel> lasers;
+  public HashMap<String, TELaserModel> lasersById;
   public Set<LXPoint> edgePoints; // Points belonging to edges
-
-  private String subdir;
 
   private static class Geometry {
     public String subdir;
@@ -31,7 +31,7 @@ public class TEWholeModel extends LXModel {
     public HashMap<String, TEEdgeModel> edgesById;
     public HashMap<String, TEPanelModel> panelsById;
     public HashMap<String, List<TEPanelModel>> panelsByFlavor;
-    public List<TELaserModel> lasers;
+    public HashMap<String, TELaserModel> lasersById;
     public LXModel[] children;
   }
 
@@ -41,13 +41,14 @@ public class TEWholeModel extends LXModel {
 
   private TEWholeModel(Geometry geometry) {
     super(geometry.children);
+    this.subdir = geometry.subdir;
     this.name = geometry.name;
     this.gapPoint = geometry.gapPoint;
     this.vertexesById = geometry.vertexesById;
     this.edgesById = geometry.edgesById;
     this.panelsById = geometry.panelsById;
     this.panelsByFlavor = geometry.panelsByFlavor;
-    this.lasers = geometry.lasers;
+    this.lasersById = geometry.lasersById;
     this.edgePoints = new HashSet<LXPoint>();
     for (TEEdgeModel e : this.edgesById.values()) {
       this.edgePoints.addAll(Arrays.asList(e.points));
@@ -61,8 +62,7 @@ public class TEWholeModel extends LXModel {
            this.points.length + " pixels");
   }
 
-  private static Scanner loadFile(String filename) {
-    Scanner s;
+  public static Scanner loadFile(String filename) {
     try {
       File f = new File(filename);
       return new Scanner(f);
@@ -91,7 +91,7 @@ public class TEWholeModel extends LXModel {
   }
 
   private static void registerController(TEModel subModel, String config) {
-    String[] tokens = tokens = config.split("#");
+    String[] tokens = config.split("#");
     assert tokens.length == 2;
     String ipAddress = tokens[0];
     tokens = tokens[1].split(":");
@@ -158,13 +158,14 @@ public class TEWholeModel extends LXModel {
     while (s.hasNextLine()) {
       String line = s.nextLine();
       String[] tokens = line.split("\t");
-      assert tokens.length == 5 : "Found " + tokens.length + " tokens";
+      assert tokens.length == 6 : "Found " + tokens.length + " tokens";
 
       String id = tokens[0];
       String e0Id = tokens[1];
       String e1Id = tokens[2];
       String e2Id = tokens[3];
-      String panelType = tokens[4];
+      String flipStr = tokens[4];
+      String panelType = tokens[5];
 
       TEEdgeModel e0 = geometry.edgesById.get(e0Id);
       TEEdgeModel e1 = geometry.edgesById.get(e1Id);
@@ -184,6 +185,12 @@ public class TEWholeModel extends LXModel {
 
       TEPanelModel p = TEPanelFactory.build(id, vertexes[0], vertexes[1], vertexes[2],
               e0, e1, e2, panelType);
+
+      if (flipStr.equals("flipped")) {
+        p.offsetTriangles.flip();
+      } else if (!flipStr.equals("unflipped")) {
+        throw new Error("Panel " + id + " is neither flipped nor unflipped");
+      }
 
       e0.connectedPanels.add(p);
       e1.connectedPanels.add(p);
@@ -210,6 +217,29 @@ public class TEWholeModel extends LXModel {
       // LX.log(flavorStr.toString());
     }
   }
+
+  private static void loadLasers(Geometry geometry) {
+    geometry.lasersById = new HashMap<>();
+
+    Scanner s = loadFile(geometry.subdir + "/lasers.txt");
+
+    while (s.hasNextLine()) {
+      String line = s.nextLine();
+      String[] tokens = line.split("\t");
+      assert tokens.length == 4 : "Found " + tokens.length + " tokens";
+
+      String id = tokens[0];
+      int x = Integer.parseInt(tokens[1]);
+      int y = Integer.parseInt(tokens[2]);
+      int z = Integer.parseInt(tokens[3]);
+
+      TELaserModel laser = new TELaserModel(id, x, y, z);
+      //laser.control = new Cone(laser);
+      laser.control = new MovingTarget(laser);
+      geometry.lasersById.put(id, laser);
+    }
+  }
+
 
   private static void loadGeneral(Geometry geometry) {
     Scanner s = loadFile(geometry.subdir + "/general.txt");
@@ -241,17 +271,9 @@ public class TEWholeModel extends LXModel {
 
     // Vertexes aren't LXPoints (and thus, not LXModels) so they're not children
 
-    // TODO: Store this in a config file
-    geometry.lasers = new ArrayList<>();
-    LXVector laserAnchor = geometry.vertexesById.get(48);
-    if (laserAnchor != null) {
-      double laserElevation = -Math.PI / 4.0;  // Shine down at a 45-degree angle
-      double laserAzimuth = Math.PI / 2.0;  // ...towards the audience
-      TELaserModel laser = new TELaserModel(laserAnchor, laserElevation, laserAzimuth);
-      laser.color = LXColor.rgb(255, 0, 0);
-      geometry.lasers.add(laser);
-      childList.add(laser);
-    }
+    loadLasers(geometry);
+
+    childList.addAll(geometry.lasersById.values());
 
     loadEdges(geometry);
 

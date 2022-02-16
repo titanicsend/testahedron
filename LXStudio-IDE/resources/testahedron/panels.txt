@@ -1,7 +1,7 @@
-AD	0-1	1-12	0-12	lit
-AB	0-2	2-12	0-12	lit
-BA	0-2	2-23	0-23	10.10.1.1#1:5
-BC	0-3	3-23	0-23	lit
-CB	0-3	3-34	0-34	lit
-CD	0-4	4-34	0-34	lit
-D	0-4	1-4	0-1	lit
+AD	0-1	1-12	0-12	unflipped	lit
+AB	0-2	2-12	0-12	unflipped	lit
+BA	0-2	2-23	0-23	unflipped	10.10.1.1#1:5
+BC	0-3	3-23	0-23	unflipped	lit
+CB	0-3	3-34	0-34	unflipped	lit
+CD	0-4	4-34	0-34	unflipped	lit
+D	0-4	1-4	0-1	unflipped	lit

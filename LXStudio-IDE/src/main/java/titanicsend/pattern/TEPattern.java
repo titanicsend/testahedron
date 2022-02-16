@@ -27,13 +27,14 @@ public abstract class TEPattern extends LXModelPattern<TEWholeModel> {
 
     // Make the virtual model's solid panels and lasers get rendered to match
     // their LXPoint color
-    public void updateVirtualColors() {
+    public void updateVirtualColors(double deltaMsec) {
         for (TEPanelModel panel : this.model.panelsById.values()) {
             if (panel.panelType.equals(TEPanelModel.SOLID)) {
                 panel.virtualColor.rgb = colors[panel.points[0].index];
             }
         }
-        for (TELaserModel laser : this.model.lasers) {
+        for (TELaserModel laser : this.model.lasersById.values()) {
+            laser.control.update(deltaMsec);
             laser.color = colors[laser.points[0].index];
         }
     }
