@@ -275,7 +275,7 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
       else if (unassignedEdgeCount % 3 == 0) color = LXColor.rgb(0,150,200);
       else if (unassignedEdgeCount % 3 == 1) color = LXColor.rgb(200,0,0);
       else color = LXColor.rgb(200,180,0);
-      v.virtualColor = new TEVirtualColor(color);
+      v.virtualColor = new TEVirtualColor(color, 0xFF);
     }
   }
 }
