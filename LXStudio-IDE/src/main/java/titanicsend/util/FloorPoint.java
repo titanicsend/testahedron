@@ -5,6 +5,8 @@ public class FloorPoint {
   double x;
   double z;
   FloorPoint(double x, double z) {
+    assert (!Double.isInfinite(x));
+    assert (!Double.isInfinite(z));
     this.x = x;
     this.z = z;
   }
