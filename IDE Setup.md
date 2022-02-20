@@ -32,7 +32,7 @@ As well as in the App Run Config:
 
 ### Recognize LX Studio JSON file extensions
 
-If can be handy to edit LX Studio's JSON config files in the IDE. Add the .lfp and .lxp extension to be recognized as JSON.
+If can be handy to edit LX Studio's JSON config files in the IDE. Add the .lxf and .lxp extension to be recognized as JSON.
 
 Open IntelliJ preferences (⌘-, on Mac) and go to Editor → File Types → JSON.
 
