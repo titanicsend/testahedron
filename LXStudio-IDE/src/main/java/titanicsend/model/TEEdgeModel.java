@@ -9,8 +9,8 @@ public class TEEdgeModel extends TEModel {
   public TEVertex v0, v1;
   public HashSet<TEPanelModel> connectedPanels;
 
-  // In microns, the same unit x,y,z coordinates use. 25k microns ~= 1 inch
-  public static final int DISTANCE_BETWEEN_PIXELS = 25000;
+  // In microns, the same unit x,y,z coordinates use
+  public static final int DISTANCE_BETWEEN_PIXELS = 33333; // 0.76 inches/pixel; 1.31 pix/inch
 
   public TEEdgeModel(TEVertex v0, TEVertex v1, boolean dark) {
     super("Edge", makePoints(v0, v1, dark));
@@ -25,10 +25,6 @@ public class TEEdgeModel extends TEModel {
 
   public TEEdgeModel(TEVertex v0, TEVertex v1) {
     this(v0, v1, false);
-  }
-
-  public String repr() {
-    return this.v0.repr() + "-" + this.v1.repr();
   }
 
   private static List<LXPoint> makePoints(TEVertex v0, TEVertex v1, boolean dark) {

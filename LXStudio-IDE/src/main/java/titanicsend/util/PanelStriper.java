@@ -114,6 +114,7 @@ public class PanelStriper {
         currentPoint = nextPoint;
       } else {
         // Bump over a row
+
         nextX = currentPoint.x + DISTANCE_BETWEEN_PIXELS * Math.cos(endOfRowHeading);
         nextZ = currentPoint.z + DISTANCE_BETWEEN_PIXELS * Math.sin(endOfRowHeading);
 
