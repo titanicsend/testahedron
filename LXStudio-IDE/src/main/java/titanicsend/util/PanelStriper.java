@@ -88,47 +88,38 @@ public class PanelStriper {
     FloorPoint currentPoint = findStartingPoint(fStart, fMid, fEnd);
     ArrayList<FloorPoint> rv = new ArrayList<FloorPoint>();
 
-    // Calc the angle we set off at to get from near fStart -> fMid
-    double heading = calcHeading(fStart, fMid);
-
-    // When we get to fMid (or, at least, hit the margin),
-    // we bump over in this direction (toward fEnd) before
-    // spinning 180 degrees and making a new stripe.
-    double endOfRowHeading = calcHeading(fMid, fEnd);
-
-    // And then when we reach the end of the second row,
-    // we again bump towards fEnd, but now the angle will
-    // be different because we're in the neighborhood of fStart.
-    double endOfRowHeadingNext = calcHeading(fStart, fEnd);
-
     final int MAX_POINTS = 2500;  // Sanity check
 
+    boolean movingRight = true;
     for (int i = 0; i < MAX_POINTS; i++) {
       rv.add(currentPoint);
 
-      double nextX = currentPoint.x + DISTANCE_BETWEEN_PIXELS * Math.cos(heading);
-      double nextZ = currentPoint.z + DISTANCE_BETWEEN_PIXELS * Math.sin(heading);
+      double deltaX = movingRight ? 1.0 : -1.0;
+      deltaX *= DISTANCE_BETWEEN_PIXELS;
+
+      double nextX = currentPoint.x + deltaX;
+      double nextZ = currentPoint.z;
+
       FloorPoint nextPoint = new FloorPoint(nextX, nextZ);
       if (distanceToEdge(fStart, fMid, fEnd, nextPoint) >= MARGIN) {
         // We haven't yet reached the margin.
         currentPoint = nextPoint;
       } else {
         // Bump over a row
+        double deltaZ = DISTANCE_BETWEEN_PIXELS * 0.5 * Math.sqrt(3.0);
+        nextZ = currentPoint.z + deltaZ;
 
-        nextX = currentPoint.x + DISTANCE_BETWEEN_PIXELS * Math.cos(endOfRowHeading);
-        nextZ = currentPoint.z + DISTANCE_BETWEEN_PIXELS * Math.sin(endOfRowHeading);
+        movingRight = !movingRight;
+        nextX = currentPoint.x - deltaX * 0.5;
 
-        // And reverse the heading
-        heading = (Math.PI + heading) % (2.0 * Math.PI);
+        // Maybe add a point half the distance back. About half the time
+        // we can't, even when there's still striping to do.
+        FloorPoint maybePoint = new FloorPoint(nextX, nextZ);
+        if (distanceToEdge(fStart, fMid, fEnd, maybePoint) >= MARGIN) rv.add(maybePoint);
 
-        // TODO: Will we have to burn a pixel when we switch rows?
-
-        // And swap end-of-row headings
-        double tmp = endOfRowHeadingNext;
-        endOfRowHeadingNext = endOfRowHeading;
-        endOfRowHeading = tmp;
-
-        // And get started on the next row... unless there's no room for it.
+        // But if we move another horizontal span back, there should
+        // definitely be room. If not, we're done.
+        nextX -= deltaX;
         currentPoint = new FloorPoint(nextX, nextZ);
         if (distanceToEdge(fStart, fMid, fEnd, currentPoint) < MARGIN) return rv;
       }
