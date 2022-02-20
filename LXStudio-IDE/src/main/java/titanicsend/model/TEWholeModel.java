@@ -11,6 +11,7 @@ import heronarts.lx.transform.LXVector;
 import titanicsend.lasercontrol.Cone;
 import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
+import titanicsend.util.ComparePointValues;
 
 public class TEWholeModel extends LXModel {
   public String subdir;
@@ -54,6 +55,7 @@ public class TEWholeModel extends LXModel {
       this.edgePoints.addAll(Arrays.asList(e.points));
     }
     reindexPoints();
+    debugPrintScreenBoundaries();
 
     LX.log(this.name + " loaded. " +
            this.vertexesById.size() + " vertexes, " +
@@ -268,6 +270,25 @@ public class TEWholeModel extends LXModel {
     }
     s.close();
     assert geometry.name != null : "Model has no name";
+  }
+
+  private void debugPrintScreenBoundaries() {
+    ArrayList<LXPoint> pointsList = new ArrayList<>(Arrays.asList(this.points));
+
+    LXPoint maxXValuePoint = pointsList.stream().max(Comparator.comparing(p -> p.x)).get();
+    LXPoint minXValuePoint = pointsList.stream().min(Comparator.comparing(p -> p.x)).get();
+    LX.log(String.format("Max X value: %f", maxXValuePoint.x));
+    LX.log(String.format("Min X value: %f", minXValuePoint.x));
+
+    LXPoint maxYValuePoint = pointsList.stream().max(Comparator.comparing(p -> p.y)).get();
+    LXPoint minYValuePoint = pointsList.stream().min(Comparator.comparing(p -> p.y)).get();
+    LX.log(String.format("Max Y value: %f", maxYValuePoint.y));
+    LX.log(String.format("Min Y value: %f", minYValuePoint.y));
+
+    LXPoint maxZValuePoint = pointsList.stream().max(Comparator.comparing(p -> p.z)).get();
+    LXPoint minZValuePoint = pointsList.stream().min(Comparator.comparing(p -> p.z)).get();
+    LX.log(String.format("Max Z value: %f", maxZValuePoint.z));
+    LX.log(String.format("Min Z value: %f", minZValuePoint.z));
   }
 
   private static Geometry loadGeometry(String subdir) {
