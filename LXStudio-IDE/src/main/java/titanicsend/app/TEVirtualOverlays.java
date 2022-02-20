@@ -52,7 +52,7 @@ public class TEVirtualOverlays extends TEUIComponent {
   private final LXVector groundNormal = new LXVector(0,1,0);
   private final LXVector groundMountainPoint = new LXVector(-20e6F, 0, 0);
   private final LXVector mountainNormal = new LXVector(-1, 0, 0);
-  private List<List<POV>> laserPOV;
+  private final List<List<POV>> laserPOV;
 
   public TEVirtualOverlays(TEWholeModel model) {
     super();

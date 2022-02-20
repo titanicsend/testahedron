@@ -88,44 +88,35 @@ public class PanelStriper {
     FloorPoint currentPoint = findStartingPoint(fStart, fMid, fEnd);
     ArrayList<FloorPoint> rv = new ArrayList<FloorPoint>();
 
-    final int MAX_POINTS = 2500;  // Sanity check
-
-    boolean movingRight = true;
-    for (int i = 0; i < MAX_POINTS; i++) {
-      rv.add(currentPoint);
-
-      double deltaX = movingRight ? 1.0 : -1.0;
-      deltaX *= DISTANCE_BETWEEN_PIXELS;
+    double deltaX = DISTANCE_BETWEEN_PIXELS;
+    while (currentPoint.z < fEnd.z) {
+      if (triangleContains(fStart, fMid, fEnd, currentPoint) &&
+              distanceToEdge(fStart, fMid, fEnd, currentPoint) >= MARGIN
+      ) rv.add(currentPoint);
 
       double nextX = currentPoint.x + deltaX;
       double nextZ = currentPoint.z;
 
-      FloorPoint nextPoint = new FloorPoint(nextX, nextZ);
-      if (distanceToEdge(fStart, fMid, fEnd, nextPoint) >= MARGIN) {
-        // We haven't yet reached the margin.
-        currentPoint = nextPoint;
-      } else {
-        // Bump over a row
-        double deltaZ = DISTANCE_BETWEEN_PIXELS * 0.5 * Math.sqrt(3.0);
-        nextZ = currentPoint.z + deltaZ;
+      boolean nextRow = false;
 
-        movingRight = !movingRight;
-        nextX = currentPoint.x - deltaX * 0.5;
-
-        // Maybe add a point half the distance back. About half the time
-        // we can't, even when there's still striping to do.
-        FloorPoint maybePoint = new FloorPoint(nextX, nextZ);
-        if (distanceToEdge(fStart, fMid, fEnd, maybePoint) >= MARGIN) rv.add(maybePoint);
-
-        // But if we move another horizontal span back, there should
-        // definitely be room. If not, we're done.
-        nextX -= deltaX;
-        currentPoint = new FloorPoint(nextX, nextZ);
-        if (distanceToEdge(fStart, fMid, fEnd, currentPoint) < MARGIN) return rv;
+      while (nextX > fMid.x) {
+        nextX -= DISTANCE_BETWEEN_PIXELS / 2.0;
+        nextRow = true;
       }
+
+      while (nextX < 0.0) {
+        nextX += DISTANCE_BETWEEN_PIXELS / 2.0;
+        nextRow = true;
+      }
+
+      if (nextRow) {
+        nextZ += DISTANCE_BETWEEN_PIXELS * 0.5 * Math.sqrt(3.0);
+        deltaX = -deltaX;
+      }
+
+      currentPoint = new FloorPoint(nextX, nextZ);
     }
 
-    LX.log("Giving up on a panel after " + MAX_POINTS + " points");
     return rv;
   }
 
@@ -140,6 +131,24 @@ public class PanelStriper {
     double top = Math.abs((f1.x - f0.x) * (f0.z - f.z) - (f0.x - f.x) * (f1.z - f0.z));
     double bot = Math.sqrt(Math.pow(f1.x - f0.x, 2) + Math.pow(f1.z - f0.z, 2));
     return top / bot;
+  }
+
+  private static double sign(FloorPoint f0, FloorPoint f1, FloorPoint f2) {
+    return (f0.x - f2.x) * (f1.z - f2.z) - (f1.x - f2.x) * (f0.z - f2.z);
+  }
+
+  private static boolean triangleContains(FloorPoint f0, FloorPoint f1, FloorPoint f2, FloorPoint f) {
+    double d1, d2, d3;
+    boolean has_neg, has_pos;
+
+    d1 = sign(f, f0, f1);
+    d2 = sign(f, f1, f2);
+    d3 = sign(f, f2, f0);
+
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+    return !(has_neg && has_pos);
   }
 
   // Returns the distance from f to the nearest edge of the f0-f1-f2 triangle.
