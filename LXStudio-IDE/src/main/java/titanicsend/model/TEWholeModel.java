@@ -94,7 +94,7 @@ public class TEWholeModel extends LXModel {
     s.close();
   }
 
-  private static void registerController(TEModel subModel, String config) {
+  private static void registerController(TEModel subModel, String config, boolean fwd) {
     String[] tokens = config.split("#");
     assert tokens.length == 2;
     String ipAddress = tokens[0];
@@ -102,7 +102,7 @@ public class TEWholeModel extends LXModel {
     assert tokens.length == 2;
     int universeNum = Integer.parseInt(tokens[0]);
     int strandOffset = Integer.parseInt(tokens[1]);
-    TESacnOutput.registerSubmodel(subModel, ipAddress, universeNum, strandOffset);
+    TESacnOutput.registerSubmodel(subModel, ipAddress, universeNum, strandOffset, fwd);
   }
 
   private static void loadEdges(Geometry geometry) {
@@ -119,9 +119,14 @@ public class TEWholeModel extends LXModel {
       String controller = tokens[2];
 
       boolean dark;
+      boolean fwd = true;
       switch (edgeKind) {
         case "default":
           dark = false;
+          break;
+        case "reversed":
+          dark = false;
+          fwd = false;
           break;
         case "dark":
           dark = true;
@@ -145,7 +150,7 @@ public class TEWholeModel extends LXModel {
       v1.addEdge(e);
 
       if (!controller.equals("uncontrolled")) {
-        registerController(e, controller);
+        registerController(e, controller, fwd);
       }
 
       geometry.edgesById.put(id, e);
@@ -206,7 +211,8 @@ public class TEWholeModel extends LXModel {
         geometry.panelsByFlavor.put(flavor, new ArrayList<>());
       geometry.panelsByFlavor.get(flavor).add(p);
 
-      if (lit) registerController(p, outputConfig);
+      // TODO: Do we need to support backwards-wired panels?
+      if (lit) registerController(p, outputConfig, true);
     }
     s.close();
 

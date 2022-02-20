@@ -55,8 +55,8 @@ public class TEApp extends PApplet implements LXPlugin  {
     flags.useGLPointCloud = false;
     flags.startMultiThreaded = true;
 
-    //String subdir = "testahedron";
-    String subdir = "vehicle";
+    String subdir = "testahedron";
+    //String subdir = "vehicle";
 
     this.model = new TEWholeModel(subdir);
 

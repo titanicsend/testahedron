@@ -14,10 +14,12 @@ public class TESacnOutput {
     TEModel subModel;
     int universeNum;
     int strandOffset;
-    public SubModelEntry(TEModel subModel, int universeNum, int strandOffset) {
+    boolean fwd;
+    public SubModelEntry(TEModel subModel, int universeNum, int strandOffset, boolean fwd) {
       this.subModel = subModel;
       this.universeNum = universeNum;
       this.strandOffset = strandOffset;
+      this.fwd = fwd;
     }
   }
 
@@ -40,13 +42,14 @@ public class TESacnOutput {
     return ipMap.get(ipAddress);
   }
 
-  public static void registerSubmodel(TEModel subModel, String ipAddress, int deviceNum, int strandOffset) {
+  public static void registerSubmodel(TEModel subModel, String ipAddress, int deviceNum,
+                                      int strandOffset, boolean fwd) {
     assert deviceNum >= 1;
     assert deviceNum <= 4;
     assert strandOffset >= 0;
     TESacnOutput output = getOrMake(ipAddress);
     assert !output.activated;
-    output.subModelEntries.add(new SubModelEntry(subModel, deviceNum, strandOffset));
+    output.subModelEntries.add(new SubModelEntry(subModel, deviceNum, strandOffset, fwd));
   }
 
   // Sort by device number, then by strand offset
@@ -105,12 +108,17 @@ public class TESacnOutput {
         currentStrandOffset += gap;
         for (int i = 0; i < gap; i++) indexBuffer.add(gapPointIndex);
       }
-      String smSummary = "[" + currentStrandOffset + ":" + subModelEntry.subModel.repr() + "=" + numPoints + "] ";
+      String rStr = subModelEntry.fwd ? "" : "(r)";
+      String smSummary = "[" + currentStrandOffset + ":" + rStr + subModelEntry.subModel.repr() + "=" + numPoints + "] ";
       logString.append(smSummary);
       currentStrandOffset += numPoints;
       this.deviceLengths.put(currentUniverseNum, currentStrandOffset);
-      for (LXPoint point : subModelEntry.subModel.points)
+      for (int i = 0; i < subModelEntry.subModel.points.length; i++) {
+        LXPoint point;
+        if (subModelEntry.fwd) point = subModelEntry.subModel.points[i];
+        else point = subModelEntry.subModel.points[subModelEntry.subModel.points.length - i - 1];
         indexBuffer.add(point.index);
+      }
     }
 
     // We did this in the loop when we changed universes, but there might be one left at the end
