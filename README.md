@@ -66,6 +66,16 @@ We need your help right now. The problems that need to be solved are on a [board
 * Resources for getting better
     * LX (underlying engine, not the Studio UI) [core classes](https://github.com/heronarts/LX/tree/master/src/main/java/heronarts/lx)
 
+### Switching between titanicsend and testahedron
+
+At press time, the default model imported for the mapping of edges, panels, and points is the mapping produced from the CAD renderings for the art car, Titanic's End. You can see these files (just text files) listed under: `LXStudio-IDE/resources/vehicle`
+
+However, some of the original purpose of this repo is to test with a scaled-down testahedron shape. The geometry for these points also exist in a similar resource location. Switching between the geometries is pretty simple!
+
+1. Open [TEApp.java](https://github.com/titanicsend/testahedron/blob/main/LXStudio-IDE/src/main/java/titanicsend/app/TEApp.java#L58)
+2. Uncomment whichever `subdir` line is commented out and comment the other one
+3. Rebuild
+
 ### Writing a Pattern
 
 You've got the IDE up and running and you're working in the simulator. You saw some examples above. Check out the example and the breakdown below.
