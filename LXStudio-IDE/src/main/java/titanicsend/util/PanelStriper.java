@@ -85,7 +85,7 @@ public class PanelStriper {
   // border margin, and that's where the first pixel goes, then it stripes back and forth,
   // one row at a time, until it runs out of triangle.
   private static List<FloorPoint> stripeFloor(FloorPoint fStart, FloorPoint fMid, FloorPoint fEnd) {
-    FloorPoint currentPoint = findStartingPoint(fStart, fMid, fEnd);
+    FloorPoint currentPoint = findStartingPoint(fEnd);
     ArrayList<FloorPoint> rv = new ArrayList<FloorPoint>();
 
     double deltaX = DISTANCE_BETWEEN_PIXELS;
@@ -159,50 +159,13 @@ public class PanelStriper {
     return Math.min(Math.min(d1, d2), d3);
   }
 
-  // Nudge a number toward a target, at most epsilon at a time
-  private static double nudgeToward(double target, double current, double epsilon) {
-    double delta = target - current;
-    if (Math.abs(delta) < epsilon) {
-      return target;
-    } else if (current < target) {
-      return current + epsilon;
-    } else {
-      return current - epsilon;
-    }
-  }
+  private static FloorPoint findStartingPoint(FloorPoint fEnd) {
+    double z = MARGIN;
+    assert (fEnd.x > 0);
+    assert (fEnd.z > 0);
 
-  private static FloorPoint findStartingPoint(FloorPoint f0, FloorPoint f1, FloorPoint f2) {
-    FloorPoint floorCentroid = new FloorPoint(
-            ((f0.x + f1.x + f2.x) / 3.0),
-            ((f0.z + f1.z + f2.z) / 3.0));
-
-    // Calculate heading (in radians) from p1 to centroid
-    // This is the angle we set off at to get closer to it
-    double heading = calcHeading(f0, floorCentroid);
-
-    // Find starting point for pixel strand, bumped in from the edges by `margin`.
-    // Best approach I could figure out so far is to keep nudging toward the
-    // centroid until we're no longer in the margin. We'll try MAX_ITERATIONS times,
-    // each time nudging by EPSILON, which is calculated as a ratio of the margin.
-    final double EPSILON_MARGIN_RATIO = 10.0;
-    final double EPSILON = MARGIN / EPSILON_MARGIN_RATIO;
-    final double MAX_ITERATIONS = EPSILON_MARGIN_RATIO * 10.0; // For some of the sharpest panels
-    double x = f0.x;
-    double z = f0.z;
-    int curIteration = 0;
-    FloorPoint guess;
-    while (true) {
-      guess = new FloorPoint(x, z);
-
-      // Are we at least MARGIN distance away from the nearest edge? We're done!
-      if (distanceToEdge(f0, f1, f2, guess) >= MARGIN) return guess;
-
-      if (curIteration++ > MAX_ITERATIONS) {
-        throw new Error("Never found the starting point; impossible margins?");
-      }
-
-      x = nudgeToward(floorCentroid.x, x, EPSILON * Math.abs(Math.cos(heading)));
-      z = nudgeToward(floorCentroid.z, z, EPSILON * Math.abs(Math.sin(heading)));
-    }
+    double slope = fEnd.z / fEnd.x;
+    double x = z / slope;
+    return new FloorPoint(x, z);
   }
 }

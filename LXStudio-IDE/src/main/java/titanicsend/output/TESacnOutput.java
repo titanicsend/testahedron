@@ -45,7 +45,7 @@ public class TESacnOutput {
   public static void registerSubmodel(TEModel subModel, String ipAddress, int deviceNum,
                                       int strandOffset, boolean fwd) {
     assert deviceNum >= 1;
-    assert deviceNum <= 4;
+    //assert deviceNum <= 4;
     assert strandOffset >= 0;
     TESacnOutput output = getOrMake(ipAddress);
     assert !output.activated;
@@ -71,6 +71,11 @@ public class TESacnOutput {
     lx.addOutput(outputDevice);
   }
 
+  private String pixString(int numPix) {
+    if (numPix == 0) return "";
+    else return " {" + numPix + "pix}";
+  }
+
   private void activate(LX lx, int gapPointIndex) {
     assert !this.activated;
     this.deviceLengths = new HashMap<>();
@@ -91,11 +96,12 @@ public class TESacnOutput {
       int numPoints = subModelEntry.subModel.points.length;
       if (subModelEntry.universeNum > currentUniverseNum) {
         registerOutput(lx, addr, indexBuffer, currentUniverseNum);
-        indexBuffer = new ArrayList<>();
         currentUniverseNum = subModelEntry.universeNum;
         currentStrandOffset = 0;
         String deviceSummary = "#" + currentUniverseNum + " ";
+        logString.append(pixString(indexBuffer.size()));
         logString.append(deviceSummary);
+        indexBuffer = new ArrayList<>();
       }
       assert subModelEntry.universeNum == currentUniverseNum;
 
@@ -120,6 +126,8 @@ public class TESacnOutput {
         indexBuffer.add(point.index);
       }
     }
+
+    logString.append(pixString(indexBuffer.size()));
 
     // We did this in the loop when we changed universes, but there might be one left at the end
     registerOutput(lx, addr, indexBuffer, currentUniverseNum);
