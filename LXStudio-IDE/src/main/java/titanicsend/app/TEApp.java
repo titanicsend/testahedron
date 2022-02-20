@@ -78,6 +78,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(BasicRainbowPattern.class);
     lx.registry.addPattern(Bounce.class);
     lx.registry.addPattern(BrightScreen.class);
+    lx.registry.addPattern(ResizeableScreen.class);
     lx.registry.addPattern(Bubbles.class);
     lx.registry.addPattern(Checkers.class);
     lx.registry.addPattern(EdgeRunner.class);
