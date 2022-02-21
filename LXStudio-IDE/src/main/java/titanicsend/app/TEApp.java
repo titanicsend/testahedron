@@ -19,9 +19,11 @@
 package titanicsend.app;
 
 import java.io.File;
+import java.net.SocketException;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
+import heronarts.lx.osc.LXOscEngine;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEWholeModel;
@@ -34,6 +36,7 @@ import titanicsend.pattern.mike.*;
 
 public class TEApp extends PApplet implements LXPlugin  {
   private TEWholeModel model;
+  private LXOscEngine osc;
 
   private static int WIDTH = 1280;
   private static int HEIGHT = 800;
@@ -60,7 +63,6 @@ public class TEApp extends PApplet implements LXPlugin  {
     //String subdir = "vehicle";
 
     this.model = new TEWholeModel(subdir);
-
     new LXStudio(this, flags, this.model);
     this.surface.setTitle(this.model.name);
   }
@@ -87,6 +89,11 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
     lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
+    try {
+      lx.engine.osc.receiver(3030).addListener(new OSCListener());
+    } catch (SocketException sx) {
+      throw new RuntimeException(sx);
+    }
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
