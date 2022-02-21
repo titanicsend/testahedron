@@ -90,7 +90,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
     try {
-      lx.engine.osc.receiver(3030).addListener(new OSCListener());
+      lx.engine.osc.receiver(3030).addListener(new OSCListener(lx, this.model));
     } catch (SocketException sx) {
       throw new RuntimeException(sx);
     }
