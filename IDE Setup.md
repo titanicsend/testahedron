@@ -49,6 +49,16 @@ Jeff's enjoying the folllowing (he comes from Sublime and vim)
 * KeyPromoter X
 * Python Community Edition
 
+### Coming from VS Code?
+
+Many of you may use VS Code in your day to day life. If you do, and you'd like IntelliJ to behave more like VS Code, I'd recommend:
+
+1. In IntelliJ, open "IntelliJ IDEA" menu and select "Preferences"
+2. Click "Plugins"
+3. Search for "VSCode Keymap"; install
+4. Go back to "Preferences"
+5. Go to "Keymap", select one of the VS Code keymap options, (either macOS or not) hit apply, and enjoy increased happiness in your IDE
+
 ## Eclipse
 
 If Eclipse is like a warm snuggie to you, we'd appreciate you adding any SDK and evirnoment config tips here.
