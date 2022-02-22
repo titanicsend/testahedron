@@ -16,7 +16,7 @@ public class ImageParser {
         this.filepath = filepath;
     }
 
-    private ParsedImage parse() throws Exception {
+    public ParsedImage parse() throws Exception {
         File file = new File(this.filepath);
         BufferedImage img = ImageIO.read(file);
 
