@@ -52,16 +52,23 @@ public class ResizeableScreen extends TEPattern implements UIDeviceControls<Resi
             new BooleanParameter("Double Sided?")
                     .setDescription("Toggle whether screen is drawn on both sides of the car or not (Default false)")
                     .setValue(false);
+    public BooleanParameter disableEdgesParam =
+            new BooleanParameter("Disable Edges?")
+                    .setDescription("Toggle whether screen is drawn on pixels along the edges (Default false)")
+                    .setValue(false);
+
 
     private void toggleDoubleSided() {
         this.doubleSidedParam.setValue(!this.doubleSidedParam.getValueb());
     }
-    
+    private void toggleDisableEdges() {
+        this.disableEdgesParam.setValue(!this.disableEdgesParam.getValueb());
+    }
+
     @Override
     public void buildDeviceControls(LXStudio.UI ui, UIDevice uiDevice, ResizeableScreen pattern) {
         uiDevice.setLayout(UI2dContainer.Layout.VERTICAL);
         uiDevice.setChildSpacing(5);
-        uiDevice.setContentWidth(3 * COL_WIDTH);
 
         uiDevice.addChildren(
             controlLabel(ui, "Lower Y Bound"),
@@ -72,23 +79,36 @@ public class ResizeableScreen extends TEPattern implements UIDeviceControls<Resi
             newIntegerBox(this.lowerZBoundParam), 
             controlLabel(ui, "Upper Z Bound"),
             newIntegerBox(this.upperZBoundParam),
-            new UIButton(0, 0, 2 * COL_WIDTH, 20) {
+            new UIButton(0, 0, COL_WIDTH, 20) {
                 @Override
                 public void onToggle(boolean unused) {
                     toggleDoubleSided();
                 }
             }
             .setLabel("Double Sided?"));
+            // TODO: reconfigure UI to make this button fit
+//            new UIButton(0, 0, COL_WIDTH, 20) {
+//                @Override
+//                public void onToggle(boolean unused) {
+//                    toggleDisableEdges();
+//                }
+//            }
+//            .setLabel("Disable Edges?"));
         this.lowerYBoundParam.addListener(this::repaint);
         this.upperYBoundParam.addListener(this::repaint);
         this.lowerZBoundParam.addListener(this::repaint);
         this.upperZBoundParam.addListener(this::repaint);
         this.doubleSidedParam.addListener(this::repaint);
+        this.disableEdgesParam.addListener(this::repaint);
     }
 
     private void paint(double deltaMs) {
         for (LXPoint point : this.screen.screenGrid) {
-            colors[point.index] = LXColor.WHITE;
+            if (this.disableEdgesParam.getValueb() && this.model.edgePoints.contains(point)) {
+                colors[point.index] = LXColor.BLACK;
+            } else {
+                colors[point.index] = LXColor.WHITE;
+            }
         }
     }
 
