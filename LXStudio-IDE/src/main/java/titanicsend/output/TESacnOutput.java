@@ -9,7 +9,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 
+// TESacnOutput represents our Art Control Network (ACN, or Art-Net) outputs. ACN is how
+// LXStudio drives the LEDs and other devices we want to perform on. This is the final step
+// in the chain of CAD -> geometry files -> WholeModel -> ACN before we have outputs we can
+// start modeling to. The whole goal in here is to create a mapping of IP addresses on the
+// network to submodules that we know how to drive lights to.
+//
+// For more on ACN: https://en.wikipedia.org/wiki/Art-Net
 public class TESacnOutput {
+  // A SubModelEntry is an addressable element of our installation. This could be a panel or an edge
+  // for this current project.
   private static class SubModelEntry {
     TEModel subModel;
     int universeNum;
@@ -42,6 +51,8 @@ public class TESacnOutput {
     return ipMap.get(ipAddress);
   }
 
+  // registerSubmodel registers a panel or an edge along with its IP address, the number
+  // of the device, any strand offset, and whether
   public static void registerSubmodel(TEModel subModel, String ipAddress, int deviceNum,
                                       int strandOffset, boolean fwd) {
     assert deviceNum >= 1;
@@ -63,6 +74,10 @@ public class TESacnOutput {
     }
   }
 
+  // registerOutput tells LXStudio that we have a device at a given IP address and constructs
+  // a StreamingACNDiagram to represent the ordering and indexing of devices on this address.
+  // For more on StreamingACN, see:
+  // https://github.com/heronarts/LX/blob/master/src/main/java/heronarts/lx/output/StreamingACNDatagram.java#L24-L30
   private static void registerOutput(LX lx, InetAddress addr, List<Integer> indexBuffer, int universe) {
     if (indexBuffer.size() == 0) return;
     int[] ib = indexBuffer.stream().mapToInt(i -> i).toArray();
@@ -76,6 +91,8 @@ public class TESacnOutput {
     else return " {" + numPix + "pix}";
   }
 
+  // activate tells LXStudio that our submodel (panel or edge) is addressable via a
+  // controller at a certain IP address and that each
   private void activate(LX lx, int gapPointIndex) {
     assert !this.activated;
     this.deviceLengths = new HashMap<>();

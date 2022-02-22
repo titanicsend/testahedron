@@ -96,6 +96,16 @@ It exposes a public constructor (`public Bounce`) start starts the modulator we 
 
 Then, it exposes a public `run` method that LXStudio will call. The only information passed between is the time the `run` was last called, in milliseconds. We range over all edges (`model.edgesById.values()`) and then over all points on the edge (`edge.points`) and update the semi-public `colors` map (which addresses all possible lit pixels as points, by index) and bounces white pixels along the edges between the vertices.
 
+### How do we go from a CAD model to a lit pixel?
+
+```mermaid
+flowchart TB
+A[CAD Design] -->|magic| B[Geometry under /resources/<project>]
+B --> C[TEApp loads TEWholeModel from subdir]
+C --> D[TEWholeModel constructs edge/panel/vertex geometry from files]
+D --> E[]
+```
+
 ### What's next?
 
 - Visualize: What would be cool as a pattern on the art car?

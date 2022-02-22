@@ -135,6 +135,8 @@ public class TEWholeModel extends LXModel {
     s.close();
   }
 
+  // registerController registers a configured device (a controllable configuration of lights either
+  // as a panel or an edge) as an ACN (Art Control Network) submodule.
   private static void registerController(TEModel subModel, String config, boolean fwd) {
     String[] tokens = config.split("#");
     assert tokens.length == 2;
@@ -199,10 +201,17 @@ public class TEWholeModel extends LXModel {
     s.close();
   }
 
+  // loadPanels loads a description of the panels for the geometry we're working with into
+  // data structures. This is responsible for parsing in the real-world description of panels,
+  // their orientation, and their networking params along with any offset for the strands we
+  // light on them.
   private static void loadPanels(Geometry geometry) {
     geometry.panelsById = new HashMap<String, TEPanelModel>();
     geometry.panelsByFlavor = new HashMap<>();
 
+    // This file was produced in part by the CAD models of the testahedron/art car
+    // and also includes other metadata added by humans with each column separated
+    // by tabs.
     Scanner s = loadFilePrivate(geometry.subdir + "/panels.txt");
 
     while (s.hasNextLine()) {
@@ -210,11 +219,17 @@ public class TEWholeModel extends LXModel {
       String[] tokens = line.split("\t");
       assert tokens.length == 6 : "Found " + tokens.length + " tokens";
 
+      // id is the capital alphabet descriptor for this panel.
       String id = tokens[0];
+      // e0Id through e2Id are identifiers for the edges of the panel in question. Matching
+      // edges mean that panels are adjacent.
       String e0Id = tokens[1];
       String e1Id = tokens[2];
       String e2Id = tokens[3];
+      // flipStr denotes if the panel is flipped in orientation.
       String flipStr = tokens[4];
+      // panelType is either a lit/unlit descriptor or an address for this device on the network.
+      // It also may include information about the strand offset.
       String panelType = tokens[5];
 
       TEEdgeModel e0 = geometry.edgesById.get(e0Id);
@@ -236,6 +251,9 @@ public class TEWholeModel extends LXModel {
       TEPanelModel p = TEPanelFactory.build(id, vertexes[0], vertexes[1], vertexes[2],
               e0, e1, e2, panelType);
 
+      // 'flipped' denotes whether or not this panel is closer to the 0,0,0 origin point.
+      // For titanicsend, panels are mostly 'unflipped', but on testahedron most of the
+      // panels are 'flipped'.
       if (flipStr.equals("flipped")) {
         p.offsetTriangles.flip();
       } else if (!flipStr.equals("unflipped")) {
