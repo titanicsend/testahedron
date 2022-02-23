@@ -32,7 +32,7 @@ As well as in the App Run Config:
 
 ### Recognize LX Studio JSON file extensions
 
-If can be handy to edit LX Studio's JSON config files in the IDE. Add the .lfp and .lxp extension to be recognized as JSON.
+If can be handy to edit LX Studio's JSON config files in the IDE. Add the .lxf and .lxp extension to be recognized as JSON.
 
 Open IntelliJ preferences (⌘-, on Mac) and go to Editor → File Types → JSON.
 
@@ -48,6 +48,16 @@ Jeff's enjoying the folllowing (he comes from Sublime and vim)
 * CSV
 * KeyPromoter X
 * Python Community Edition
+
+### Coming from VS Code?
+
+Many of you may use VS Code in your day to day life. If you do, and you'd like IntelliJ to behave more like VS Code, I'd recommend:
+
+1. In IntelliJ, open "IntelliJ IDEA" menu and select "Preferences"
+2. Click "Plugins"
+3. Search for "VSCode Keymap"; install
+4. Go back to "Preferences"
+5. Go to "Keymap", select one of the VS Code keymap options, (either macOS or not) hit apply, and enjoy increased happiness in your IDE
 
 ## Eclipse
 

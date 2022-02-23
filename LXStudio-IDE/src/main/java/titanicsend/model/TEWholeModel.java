@@ -11,6 +11,7 @@ import heronarts.lx.transform.LXVector;
 import titanicsend.lasercontrol.Cone;
 import titanicsend.lasercontrol.MovingTarget;
 import titanicsend.output.TESacnOutput;
+import titanicsend.util.ComparePointValues;
 
 public class TEWholeModel extends LXModel {
   public String subdir;
@@ -22,6 +23,34 @@ public class TEWholeModel extends LXModel {
   public HashMap<String, List<TEPanelModel>> panelsByFlavor;
   public HashMap<String, TELaserModel> lasersById;
   public Set<LXPoint> edgePoints; // Points belonging to edges
+  public Boundaries boundaryPoints;
+
+  // Boundaries are the points at the boundaries of our 3-dimensional grid. We retain
+  // the `LXPoint` for convenience, but only the respective coordinate of each bound
+  // point is important.
+  public static class Boundaries {
+    public final LXPoint minXBoundaryPoint;
+    public final LXPoint maxXBoundaryPoint;
+    public final LXPoint minYBoundaryPoint;
+    public final LXPoint maxYBoundaryPoint;
+    public final LXPoint minZBoundaryPoint;
+    public final LXPoint maxZBoundaryPoint;
+
+    public Boundaries(
+      LXPoint minXBoundaryPoint,
+      LXPoint maxXBoundaryPoint,
+      LXPoint minYBoundaryPoint,
+      LXPoint maxYBoundaryPoint,
+      LXPoint minZBoundaryPoint,
+      LXPoint maxZBoundaryPoint) {
+      this.minXBoundaryPoint = minXBoundaryPoint;
+      this.maxXBoundaryPoint = maxXBoundaryPoint;
+      this.minYBoundaryPoint = minYBoundaryPoint;
+      this.maxYBoundaryPoint = maxYBoundaryPoint;
+      this.minZBoundaryPoint = minZBoundaryPoint;
+      this.maxZBoundaryPoint = maxZBoundaryPoint;
+    }
+  }
 
   private static class Geometry {
     public String subdir;
@@ -54,6 +83,15 @@ public class TEWholeModel extends LXModel {
       this.edgePoints.addAll(Arrays.asList(e.points));
     }
     reindexPoints();
+    this.boundaryPoints = initializeBoundaries();
+    LX.log(String.format("Min X boundary: %f", boundaryPoints.minXBoundaryPoint.x));
+    LX.log(String.format("Max X boundary: %f", boundaryPoints.maxXBoundaryPoint.x));
+
+    LX.log(String.format("Min Y boundary: %f", boundaryPoints.minYBoundaryPoint.y));
+    LX.log(String.format("Max Y boundary: %f", boundaryPoints.maxYBoundaryPoint.y));
+
+    LX.log(String.format("Min Z boundary: %f", boundaryPoints.minZBoundaryPoint.z));
+    LX.log(String.format("Max Z boundary: %f", boundaryPoints.maxZBoundaryPoint.z));
 
     LX.log(this.name + " loaded. " +
            this.vertexesById.size() + " vertexes, " +
@@ -268,6 +306,29 @@ public class TEWholeModel extends LXModel {
     }
     s.close();
     assert geometry.name != null : "Model has no name";
+  }
+
+  // initializeBoundaries finds the boundaries of the grid we've drawn to contain our shape
+  // and instantiates a helper class called Boundaries to keep track of the edge values
+  // represented by that outermost LXPoint for each axis.
+  private Boundaries initializeBoundaries() {
+    ArrayList<LXPoint> pointsList = new ArrayList<>(Arrays.asList(this.points));
+
+    LXPoint minXValuePoint = pointsList.stream().min(Comparator.comparing(p -> p.x)).get();
+    LXPoint maxXValuePoint = pointsList.stream().max(Comparator.comparing(p -> p.x)).get();
+
+    LXPoint minYValuePoint = pointsList.stream().min(Comparator.comparing(p -> p.y)).get();
+    LXPoint maxYValuePoint = pointsList.stream().max(Comparator.comparing(p -> p.y)).get();
+
+    LXPoint minZValuePoint = pointsList.stream().min(Comparator.comparing(p -> p.z)).get();
+    LXPoint maxZValuePoint = pointsList.stream().max(Comparator.comparing(p -> p.z)).get();
+    return new Boundaries(
+      minXValuePoint,
+      maxXValuePoint,
+      minYValuePoint,
+      maxYValuePoint,
+      minZValuePoint,
+      maxZValuePoint);
   }
 
   private static Geometry loadGeometry(String subdir) {

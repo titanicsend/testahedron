@@ -66,6 +66,46 @@ We need your help right now. The problems that need to be solved are on a [board
 * Resources for getting better
     * LX (underlying engine, not the Studio UI) [core classes](https://github.com/heronarts/LX/tree/master/src/main/java/heronarts/lx)
 
+### Switching between titanicsend and testahedron
+
+At press time, the default model imported for the mapping of edges, panels, and points is the mapping produced from the CAD renderings for the art car, Titanic's End. You can see these files (just text files) listed under: `LXStudio-IDE/resources/vehicle`
+
+However, some of the original purpose of this repo is to test with a scaled-down testahedron shape. The geometry for these points also exist in a similar resource location. Switching between the geometries is pretty simple!
+
+1. Open [TEApp.java](https://github.com/titanicsend/testahedron/blob/main/LXStudio-IDE/src/main/java/titanicsend/app/TEApp.java#L58)
+2. Uncomment whichever `subdir` line is commented out and comment the other one
+3. Rebuild
+
+### Writing a Pattern
+
+You've got the IDE up and running and you're working in the simulator. You saw some examples above. Check out the example and the breakdown below.
+
+#### Example
+
+Here's a very simple example:
+
+https://github.com/titanicsend/testahedron/blob/main/LXStudio-IDE/src/main/java/titanicsend/pattern/tom/Bounce.java
+
+This class only operates on the edges. (the metal bars lit with LEDs that follow the superstructure)
+
+It defines a public class `public class Bounce extends TEPattern` that defines a pattern.
+
+It instantiates and extends some base LXStudio attributes (parameter: `CompoundParameter`, modulator: `SinLFO`) you can [read about here in source](https://github.com/heronarts/LX/tree/master/src/main/java/heronarts/lx).
+
+It exposes a public constructor (`public Bounce`) start starts the modulator we instantiated (the `SinLFO`) and adds a new `rate` parameter. (the `CompoundParameter`) This should be public.
+
+Then, it exposes a public `run` method that LXStudio will call. The only information passed between is the time the `run` was last called, in milliseconds. We range over all edges (`model.edgesById.values()`) and then over all points on the edge (`edge.points`) and update the semi-public `colors` map (which addresses all possible lit pixels as points, by index) and bounces white pixels along the edges between the vertices.
+
+### What's next?
+
+- Visualize: What would be cool as a pattern on the art car?
+- Break down: How can you distill this vision into a series of programmable steps, addressing individual pixels along edges and 
+- Contribute: create a new github branch, (`git checkout -b <your branch name>`) add a pattern under `src/main/java/titanicsend/pattern/<your name>/<PatternName>.java`, and make it flow in the simulator
+  - When you feel good, commit your code to your branch (`git commit -v -m <your message for your commit>`) put up a pull request and get a review (`git push -u origin HEAD` and open it with a button that'll appear at https://github.com/titanicsend/testahedron)
+- Orchestrate: How would that work in concert with music, lasers, projection mapping, etc. to make a complete experience?
+- Forecast: How will people operate this on an art car in a dust storm? How will a DJ be able to synchronize a certain pattern to the music?
+- Collaborate: Check out the [SW Tasks page on Notion](https://www.notion.so/titanicsend/d4a7f54ab5f84784b79268e81c9342a7?v=1950f7f8703d498cb51e6e01ec84c577) and the #lighting channel in Slack
+
 ### About LX Studio
 
 Initial impressions are that [LX](https://github.com/heronarts/LXStudio) is powerful and thoughtful, though less documented than ideal. The maintainer, Mark Slee, is incredibly kind and responsive over email ([mark@heronarts.com](mailto:mark@heronarts.com)). LX is not open source - I've copied some of it's license here:
