@@ -61,8 +61,8 @@ public class TEApp extends PApplet implements LXPlugin  {
     flags.useGLPointCloud = false;
     flags.startMultiThreaded = true;
 
-    //String subdir = "testahedron";
-    String subdir = "vehicle";
+    String subdir = "testahedron";
+    //String subdir = "vehicle";
 
     this.model = new TEWholeModel(subdir);
 
@@ -83,6 +83,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(BasicRainbowPattern.class);
     lx.registry.addPattern(Bounce.class);
     lx.registry.addPattern(BrightScreen.class);
+    lx.registry.addPattern(PictureScreen.class);
     lx.registry.addPattern(ResizeableScreen.class);
     lx.registry.addPattern(Bubbles.class);
     lx.registry.addPattern(Checkers.class);

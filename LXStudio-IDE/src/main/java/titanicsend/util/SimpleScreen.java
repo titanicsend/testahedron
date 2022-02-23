@@ -24,7 +24,8 @@ public class SimpleScreen {
         int zLowerBound,
         int zUpperBound,
         boolean doubleSided) {
-        this.screenGrid = new ArrayList<ArrayList<LXPoint>>(1);
+        this.screenGrid = new ArrayList<ArrayList<LXPoint>>();
+        this.screenGrid.add(new ArrayList<LXPoint>());
 
         LX.log("Inside SimpleScreen.buildScreenGrid");
         LX.log(String.format("  Lower Y: %d", yLowerBound));
@@ -42,7 +43,7 @@ public class SimpleScreen {
         // the previous grid's z value, we move onto the next row in the grid.
         for (LXPoint point : pointsList) {
             if (pointInBounds(point, yLowerBound, yUpperBound, zLowerBound, zUpperBound)) {
-                if (!doubleSided || point.x < 0) {
+                if (point.x < 0 && !doubleSided) {
                     continue;
                 }
 
@@ -52,7 +53,11 @@ public class SimpleScreen {
                     currentGridZ = 0;
                 }
 
-                this.screenGrid.get(currentGridZ).add(currentGridY, point);
+                if (this.screenGrid.get(currentGridZ).size() == 0) {
+                    this.screenGrid.add(currentGridZ, new ArrayList<LXPoint>());
+                }
+
+                this.screenGrid.get(currentGridZ).add(point);
                 currentGridZ += 1;
                 previousGridZ = point.z;
             }
