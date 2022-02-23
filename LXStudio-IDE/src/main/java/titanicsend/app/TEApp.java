@@ -24,6 +24,7 @@ import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
+import titanicsend.gigglepixel.GPListenerTask;
 import titanicsend.model.TEWholeModel;
 import titanicsend.output.TESacnOutput;
 import titanicsend.pattern.alex.*;
@@ -88,6 +89,9 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
     lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
+
+    GPListenerTask gpListener = new GPListenerTask(lx,"127.0.0.1");
+    lx.engine.addLoopTask(gpListener);
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
