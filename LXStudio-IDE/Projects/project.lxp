@@ -1,6 +1,6 @@
 {
   "version": "0.4.0",
-  "timestamp": 1645598385293,
+  "timestamp": 1645599652471,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -42,7 +42,7 @@
           "autoCycleEnabled": false,
           "autoCycleMode": 0,
           "autoCycleTimeSecs": 60.0,
-          "autoCycleCursor": 0,
+          "autoCycleCursor": 1,
           "triggerSwatchCycle": false
         },
         "children": {
@@ -53,7 +53,7 @@
               "modulationColor": 0
             },
             "parameters": {
-              "label": "Swatch-1",
+              "label": "Cool",
               "recall": false,
               "autoCycleEligible": true
             },
@@ -69,9 +69,9 @@
                   "label": "LX",
                   "mode": 0,
                   "period": 30.0,
-                  "primary/brightness": 99.0,
-                  "primary/saturation": 67.0,
-                  "primary/hue": 61.0,
+                  "primary/brightness": 75.0,
+                  "primary/saturation": 77.0,
+                  "primary/hue": 256.0,
                   "secondary/brightness": 100.0,
                   "secondary/saturation": 100.0,
                   "secondary/hue": 120.0
@@ -88,9 +88,9 @@
                   "label": "LX",
                   "mode": 0,
                   "period": 30.0,
-                  "primary/brightness": 96.0,
-                  "primary/saturation": 74.0,
-                  "primary/hue": 40.0,
+                  "primary/brightness": 90.0,
+                  "primary/saturation": 64.0,
+                  "primary/hue": 229.0,
                   "secondary/brightness": 100.0,
                   "secondary/saturation": 100.0,
                   "secondary/hue": 120.0
@@ -145,9 +145,9 @@
                   "label": "LX",
                   "mode": 0,
                   "period": 30.0,
-                  "primary/brightness": 90.0,
-                  "primary/saturation": 64.0,
-                  "primary/hue": 229.0,
+                  "primary/brightness": 96.0,
+                  "primary/saturation": 74.0,
+                  "primary/hue": 40.0,
                   "secondary/brightness": 100.0,
                   "secondary/saturation": 100.0,
                   "secondary/hue": 120.0
@@ -165,7 +165,7 @@
               "modulationColor": 0
             },
             "parameters": {
-              "label": "Swatch-1",
+              "label": "Hot",
               "recall": false,
               "autoCycleEligible": true
             },
@@ -219,9 +219,9 @@
                   "label": "LX",
                   "mode": 0,
                   "period": 30.0,
-                  "primary/brightness": 89.0,
-                  "primary/saturation": 75.0,
-                  "primary/hue": 323.0,
+                  "primary/brightness": 98.0,
+                  "primary/saturation": 67.0,
+                  "primary/hue": 80.0,
                   "secondary/brightness": 100.0,
                   "secondary/saturation": 100.0,
                   "secondary/hue": 120.0
@@ -269,39 +269,20 @@
             ]
           },
           {
-            "id": 444,
+            "id": 508,
             "class": "heronarts.lx.color.LXSwatch",
             "internal": {
               "modulationColor": 0
             },
             "parameters": {
-              "label": "Swatch-1",
+              "label": "Cool",
               "recall": false,
               "autoCycleEligible": true
             },
             "children": {},
             "colors": [
               {
-                "id": 445,
-                "class": "heronarts.lx.color.LXDynamicColor",
-                "internal": {
-                  "modulationColor": 0
-                },
-                "parameters": {
-                  "label": "LX",
-                  "mode": 0,
-                  "period": 30.0,
-                  "primary/brightness": 99.0,
-                  "primary/saturation": 67.0,
-                  "primary/hue": 61.0,
-                  "secondary/brightness": 100.0,
-                  "secondary/saturation": 100.0,
-                  "secondary/hue": 120.0
-                },
-                "children": {}
-              },
-              {
-                "id": 447,
+                "id": 509,
                 "class": "heronarts.lx.color.LXDynamicColor",
                 "internal": {
                   "modulationColor": 0
@@ -320,7 +301,7 @@
                 "children": {}
               },
               {
-                "id": 449,
+                "id": 511,
                 "class": "heronarts.lx.color.LXDynamicColor",
                 "internal": {
                   "modulationColor": 0
@@ -329,9 +310,9 @@
                   "label": "LX",
                   "mode": 0,
                   "period": 30.0,
-                  "primary/brightness": 98.0,
-                  "primary/saturation": 67.0,
-                  "primary/hue": 80.0,
+                  "primary/brightness": 90.0,
+                  "primary/saturation": 64.0,
+                  "primary/hue": 229.0,
                   "secondary/brightness": 100.0,
                   "secondary/saturation": 100.0,
                   "secondary/hue": 120.0
@@ -339,7 +320,26 @@
                 "children": {}
               },
               {
-                "id": 451,
+                "id": 513,
+                "class": "heronarts.lx.color.LXDynamicColor",
+                "internal": {
+                  "modulationColor": 0
+                },
+                "parameters": {
+                  "label": "LX",
+                  "mode": 0,
+                  "period": 30.0,
+                  "primary/brightness": 89.0,
+                  "primary/saturation": 75.0,
+                  "primary/hue": 323.0,
+                  "secondary/brightness": 100.0,
+                  "secondary/saturation": 100.0,
+                  "secondary/hue": 120.0
+                },
+                "children": {}
+              },
+              {
+                "id": 515,
                 "class": "heronarts.lx.color.LXDynamicColor",
                 "internal": {
                   "modulationColor": 0
@@ -358,7 +358,7 @@
                 "children": {}
               },
               {
-                "id": 453,
+                "id": 517,
                 "class": "heronarts.lx.color.LXDynamicColor",
                 "internal": {
                   "modulationColor": 0
@@ -367,9 +367,9 @@
                   "label": "LX",
                   "mode": 0,
                   "period": 30.0,
-                  "primary/brightness": 90.0,
-                  "primary/saturation": 64.0,
-                  "primary/hue": 229.0,
+                  "primary/brightness": 96.0,
+                  "primary/saturation": 74.0,
+                  "primary/hue": 40.0,
                   "secondary/brightness": 100.0,
                   "secondary/saturation": 100.0,
                   "secondary/hue": 120.0
