@@ -7,8 +7,8 @@ import titanicsend.model.TEVertex;
 import java.util.*;
 
 public class PanelStriper {
-  public static final int MARGIN = 50000; // 50k microns ~= 2 inches
-  public static final int DISTANCE_BETWEEN_PIXELS = 50000; // 50k microns ~= 2 inches
+  public static final int MARGIN = 68000; // 50k microns ~= 2 inches
+  public static final int DISTANCE_BETWEEN_PIXELS = 62000; // 50k microns ~= 2 inches
 
   public static String stripe(TEVertex v0, TEVertex v1, TEVertex v2, List<LXPoint> pointList) {
     TEVertex vStart;

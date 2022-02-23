@@ -10,7 +10,7 @@ public class TEEdgeModel extends TEModel {
   public HashSet<TEPanelModel> connectedPanels;
 
   // In microns, the same unit x,y,z coordinates use
-  public static final int DISTANCE_BETWEEN_PIXELS = 33333; // 0.76 inches/pixel; 1.31 pix/inch
+  public static final int DISTANCE_BETWEEN_PIXELS = 16666; // 0.76 inches/pixel; 1.31 pix/inch
 
   public TEEdgeModel(TEVertex v0, TEVertex v1, boolean dark) {
     super("Edge", makePoints(v0, v1, dark));
