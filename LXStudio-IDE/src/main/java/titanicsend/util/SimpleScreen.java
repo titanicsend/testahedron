@@ -43,6 +43,7 @@ public class SimpleScreen {
         // the previous grid's z value, we move onto the next row in the grid.
         for (LXPoint point : pointsList) {
             if (pointInBounds(point, yLowerBound, yUpperBound, zLowerBound, zUpperBound)) {
+                // Unless we're double-sided, if we're negative on X value, just skip.
                 if (point.x < 0 && !doubleSided) {
                     continue;
                 }

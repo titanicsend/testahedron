@@ -126,7 +126,13 @@ public class PictureScreen extends TEPattern implements UIDeviceControls<Picture
     }
 
     private void load() {
-        ImageParser parser = new ImageParser(this.model.subdir + "/" + photoPathParam.getValue());
+        if (photoPathParam.getString() == "") {
+            return;
+        }
+
+        String filepath = this.model.subdir + "/" + photoPathParam.getString();
+        LX.log(String.format("Loading file from filepath: %s", filepath));
+        ImageParser parser = new ImageParser(filepath);
         try {
             this.parsedImage = parser.parse();
         } catch (Exception e) {
@@ -142,8 +148,14 @@ public class PictureScreen extends TEPattern implements UIDeviceControls<Picture
             if (this.parsedImage == null) {
                 return;
             }
-            assert this.parsedImage.data.length == this.screen.screenGrid.size();
-            assert this.parsedImage.data[0].length == this.screen.screenGrid.get(0).size();
+            LX.log("PictureScreen.paint");
+            LX.log(String.format("  parsedImage.data.length: %d", parsedImage.data.length));
+            LX.log(String.format("  this.screen.screenGrid.size: %d", this.screen.screenGrid.size()));
+            LX.log(String.format("  parsedImage.data[0].length: %d", parsedImage.data[0].length));
+            LX.log(String.format("  this.screen.screenGrid.get(0).size: %d", this.screen.screenGrid.get(0).size()));
+
+            //assert this.parsedImage.data.length == this.screen.screenGrid.size();
+            //assert this.parsedImage.data[0].length == this.screen.screenGrid.get(0).size();
 
             for (int z = 0; z < this.screen.screenGrid.size(); z++) {
                 for (int y = 0; y < this.screen.screenGrid.get(z).size(); y++) {
