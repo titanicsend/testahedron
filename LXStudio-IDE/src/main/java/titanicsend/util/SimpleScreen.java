@@ -3,6 +3,7 @@ package titanicsend.util;
 import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -14,7 +15,7 @@ import titanicsend.util.ZYPointsSorter;
 // the lasers will blast the crowd through) and preserve the Y and Z coordinates.
 // TODO: allow arbitrary positioning of this screen
 public class SimpleScreen {
-    public LXPoint[][] screenGrid;
+    public ArrayList<ArrayList<LXPoint>> screenGrid;
 
     private void buildScreenGrid(
         ArrayList<LXPoint> pointsList,
@@ -23,6 +24,8 @@ public class SimpleScreen {
         int zLowerBound,
         int zUpperBound,
         boolean doubleSided) {
+        this.screenGrid = new ArrayList<ArrayList<LXPoint>>(1);
+
         LX.log("Inside SimpleScreen.buildScreenGrid");
         LX.log(String.format("  Lower Y: %d", yLowerBound));
         LX.log(String.format("  Upper Y: %d", yUpperBound));
@@ -43,17 +46,17 @@ public class SimpleScreen {
                     continue;
                 }
 
-                // Here we move onto the next line of the grid.
+                // Here we move onto the next line of the grid. (moving down the y axis)
                 if (point.z < previousGridZ) {
-                    currentGridY = currentGridY + 1;
+                    currentGridY += 1;
                     currentGridZ = 0;
                 }
 
-                this.screenGrid[currentGridZ][currentGridY] = point;
+                this.screenGrid.get(currentGridZ).add(currentGridY, point);
+                currentGridZ += 1;
                 previousGridZ = point.z;
             }
         }
-        this.screenGrid = screenGrid;
     }
 
     private static boolean pointInBounds(
