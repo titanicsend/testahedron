@@ -24,11 +24,11 @@ public class ImageParser {
         int height = img.getHeight();
         ParsedImage parsedImage = new ParsedImage(width, height);
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 // TODO: fetch alpha values from img as well
-                TEVirtualColor color = new TEVirtualColor(img.getRGB(x,y), 1.0f);
-                parsedImage.setPixel(x, y, color);
+                TEVirtualColor color = new TEVirtualColor(img.getRGB(i,j), 1.0f);
+                parsedImage.setPixel(i, j, color);
             }
         }
         return parsedImage;
