@@ -19,9 +19,11 @@
 package titanicsend.app;
 
 import java.io.File;
+import java.util.*;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
+import heronarts.lx.midi.LXMidiInput;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.gigglepixel.GPListenerTask;
@@ -32,6 +34,8 @@ import titanicsend.pattern.jeff.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
 import titanicsend.pattern.mike.*;
+
+import javax.sound.midi.*;
 
 public class TEApp extends PApplet implements LXPlugin  {
   private TEWholeModel model;
@@ -90,8 +94,32 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
-    GPListenerTask gpListener = new GPListenerTask(lx,"127.0.0.1");
+    GPListenerTask gpListener = new GPListenerTask(lx, "127.0.0.1");
     lx.engine.addLoopTask(gpListener);
+
+    loadMidi(lx);
+  }
+
+  private void loadMidi(LX lx) {
+    final String apcName = "APC40 mkII";
+    for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
+      try {
+        MidiDevice device = MidiSystem.getMidiDevice(info);
+        String name = info.getName();
+        LX.log("Found a midi device named " + name);
+        if (name.equals(apcName)) {
+          LX.log("Opening it");
+          device.open();
+        }
+      } catch (MidiUnavailableException ignored) {
+      }
+    }
+    LXMidiInput input = lx.engine.midi.matchInput(apcName);
+    if (input == null) {
+      LX.log("No midi controller found");
+    } else {
+      LX.log("APC found in LX input list");
+    }
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
