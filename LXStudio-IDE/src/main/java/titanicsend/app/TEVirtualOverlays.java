@@ -128,12 +128,13 @@ public class TEVirtualOverlays extends TEUIComponent {
       if (this.panelLabelsVisible.getValueb()) {
         pg.pushMatrix();
         LXVector centroid = p.centroid;
-        pg.translate(centroid.x, centroid.y, centroid.z);
+        pg.translate(centroid.x * 1.12f, centroid.y, centroid.z * 1.02f);
         //pg.rotateY((float) (-Math.PI / 2.0));  // Face port (non-show) side
-        pg.rotateY((float) (Math.PI / 2.0));  // Face starboard (show) side
+        pg.rotateY((float) (Math.atan2(centroid.x, centroid.z/5) + Math.PI));  // Face out
 
         pg.scale(10000, -10000);
         pg.fill(255, 0, 0);
+        pg.textAlign(pg.CENTER, pg.CENTER);
         pg.text(entry.getKey(), 0, 0, -100000);
         pg.popMatrix();
       }
