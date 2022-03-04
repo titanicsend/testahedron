@@ -23,6 +23,7 @@ public class TEWholeModel extends LXModel {
   public HashMap<String, List<TEPanelModel>> panelsByFlavor;
   public HashMap<String, TELaserModel> lasersById;
   public Set<LXPoint> edgePoints; // Points belonging to edges
+  public List<TEBox> boxes;
   public Boundaries boundaryPoints;
 
   // Boundaries are the points at the boundaries of our 3-dimensional grid. We retain
@@ -61,6 +62,7 @@ public class TEWholeModel extends LXModel {
     public HashMap<String, TEPanelModel> panelsById;
     public HashMap<String, List<TEPanelModel>> panelsByFlavor;
     public HashMap<String, TELaserModel> lasersById;
+    public List<TEBox> boxes;
     public LXModel[] children;
   }
 
@@ -78,6 +80,7 @@ public class TEWholeModel extends LXModel {
     this.panelsById = geometry.panelsById;
     this.panelsByFlavor = geometry.panelsByFlavor;
     this.lasersById = geometry.lasersById;
+    this.boxes = geometry.boxes;
     this.edgePoints = new HashSet<LXPoint>();
     for (TEEdgeModel e : this.edgesById.values()) {
       this.edgePoints.addAll(Arrays.asList(e.points));
@@ -288,6 +291,27 @@ public class TEWholeModel extends LXModel {
     }
   }
 
+  private static void loadBoxes(Geometry geometry) {
+    geometry.boxes = new ArrayList<>();
+
+    Scanner s = loadFilePrivate(geometry.subdir + "/boxes.txt");
+
+    while (s.hasNextLine()) {
+      String line = s.nextLine();
+      String[] tokens = line.split("\\s+");
+      assert tokens.length == 6 : "Found " + tokens.length + " tokens";
+
+      int x = Integer.parseInt(tokens[0]);
+      int y = Integer.parseInt(tokens[1]);
+      int z = Integer.parseInt(tokens[2]);
+      int dx = Integer.parseInt(tokens[3]);
+      int dy = Integer.parseInt(tokens[4]);
+      int dz = Integer.parseInt(tokens[5]);
+
+      TEBox box = new TEBox(new LXVector(x,y,z), new LXVector(dx,dy,dz));
+      geometry.boxes.add(box);
+    }
+  }
 
   private static void loadGeneral(Geometry geometry) {
     Scanner s = loadFilePrivate(geometry.subdir + "/general.txt");
@@ -337,6 +361,8 @@ public class TEWholeModel extends LXModel {
     List<LXModel> childList = new ArrayList<LXModel>();
 
     loadGeneral(geometry);
+
+    loadBoxes(geometry);
 
     loadVertexes(geometry);
 

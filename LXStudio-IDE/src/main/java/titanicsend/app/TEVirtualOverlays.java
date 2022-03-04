@@ -139,6 +139,17 @@ public class TEVirtualOverlays extends TEUIComponent {
       }
     }
 
+    for (TEBox box : model.boxes) {
+      pg.fill(LXColor.rgb(50, 60, 40), 255);
+      for (List<LXVector> face : box.faces) {
+        pg.beginShape();
+        for (LXVector corner : face) {
+          pg.vertex(corner.x, corner.y, corner.z);
+        }
+        pg.endShape();
+      }
+    }
+
     for (List<POV> povs : this.laserPOV) {
       for (POV p : povs) {
         pg.pushMatrix();
