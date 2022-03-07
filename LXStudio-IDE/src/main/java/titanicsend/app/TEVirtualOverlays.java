@@ -128,8 +128,11 @@ public class TEVirtualOverlays extends TEUIComponent {
       if (this.panelLabelsVisible.getValueb()) {
         pg.pushMatrix();
         LXVector centroid = p.centroid;
-        pg.translate(centroid.x * 1.12f, centroid.y, centroid.z * 1.02f);
+        // Panel labels are outset from their centroid by different percentages of x and z,
+        // with hand-picked values to provide ovular clearance for the rotated labels below.
+        pg.translate(centroid.x * 1.15f, centroid.y, centroid.z * 1.02f);
         //pg.rotateY((float) (-Math.PI / 2.0));  // Face port (non-show) side
+        // Squashing z (the long fore-aft dimension) before rotating text to be normal to a radius
         pg.rotateY((float) (Math.atan2(centroid.x, centroid.z/5) + Math.PI));  // Face out
 
         pg.scale(10000, -10000);
