@@ -58,6 +58,13 @@
 			<version>2.4.0-rc-20210111</version>
 			<scope>provided</scope>
 		</dependency>
+
+                <dependency>
+                        <groupId>playasystems</groupId>
+                        <artifactId>gigglepixel</artifactId>
+                        <version>0.0.1</version>
+                        <scope>provided</scope>
+                </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
