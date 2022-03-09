@@ -144,21 +144,23 @@ public class PictureScreen extends TEPattern implements UIDeviceControls<Picture
     private void paint(double deltaMs) {
         assert this.screen != null;
         assert this.screen.screenGrid != null;
+        LX.log("PictureScreen.paint");
+        LX.log(String.format("  this.screen.screenGrid.size: %d", this.screen.screenGrid.size()));
+
         if (!this.photoPathParam.getString().isEmpty()) {
             if (this.parsedImage == null) {
                 return;
             }
-            LX.log("PictureScreen.paint");
             LX.log(String.format("  parsedImage.data.length: %d", parsedImage.data.length));
-            LX.log(String.format("  this.screen.screenGrid.size: %d", this.screen.screenGrid.size()));
             LX.log(String.format("  parsedImage.data[0].length: %d", parsedImage.data[0].length));
-            LX.log(String.format("  this.screen.screenGrid.get(0).size: %d", this.screen.screenGrid.get(0).size()));
 
             //assert this.parsedImage.data.length == this.screen.screenGrid.size();
             //assert this.parsedImage.data[0].length == this.screen.screenGrid.get(0).size();
 
-            for (int z = 0; z < this.screen.screenGrid.size(); z++) {
-                for (int y = 0; y < this.screen.screenGrid.get(z).size(); y++) {
+            for (int z = 0; z < this.screen.screenGrid.size() - 1; z++) {
+                LX.log(String.format("  this.screen.screenGrid.get(z).size(): %d", this.screen.screenGrid.get(z).size()));
+                LX.log(String.format("  this.parsedImage[z].length %d", this.parsedImage.data[z].length));
+                for (int y = 0; y < this.screen.screenGrid.get(z).size() - 1; y++) {
                     LXPoint currentPixel = this.screen.screenGrid.get(z).get(y);
 
                     if (this.disableEdgesParam.getValueb() && this.model.edgePoints.contains(currentPixel)) {
@@ -171,10 +173,11 @@ public class PictureScreen extends TEPattern implements UIDeviceControls<Picture
 
         } else {
             for (int z = 0; z < this.screen.screenGrid.size(); z++) {
+                LX.log(String.format("  this.screen.screenGrid.get(z).size: %d", this.screen.screenGrid.get(z).size()));
                 for (int y = 0; y < this.screen.screenGrid.get(z).size(); y++) {
                     LXPoint currentPixel = this.screen.screenGrid.get(z).get(y);
 
-                    if (this.disableEdgesParam.getValueb() && this.model.edgePoints.contains(currentPixel)) {
+                    if (this.disableEdgesParam.getValueb() && this.model.edgePoints.contains(currentPixel)) {g
                         colors[currentPixel.index] = LXColor.BLACK;
                     } else {
                         colors[currentPixel.index] = LXColor.WHITE;

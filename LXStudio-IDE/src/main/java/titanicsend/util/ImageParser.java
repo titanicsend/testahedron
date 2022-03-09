@@ -1,5 +1,7 @@
 package titanicsend.util;
 
+import heronarts.lx.LX;
+
 import java.io.File;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -22,6 +24,8 @@ public class ImageParser {
 
         int width = img.getWidth();
         int height = img.getHeight();
+        LX.log("ImageParser.parse:");
+        LX.log(String.format("Image height: %d; width: %d", height, width));
         ParsedImage parsedImage = new ParsedImage(width, height);
 
         for (int i = 0; i < width; i++) {

@@ -3,9 +3,7 @@ package titanicsend.util;
 import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import titanicsend.util.ZYPointsSorter;
 
@@ -36,7 +34,6 @@ public class SimpleScreen {
         pointsList.sort(new ZYPointsSorter());
 
         int currentGridZ = 0;
-        int currentGridY = 0;
         double previousGridZ = 0;
 
         // Start from ordered points and move left to right. Once a point's z value is lower than
@@ -50,7 +47,6 @@ public class SimpleScreen {
 
                 // Here we move onto the next line of the grid. (moving down the y axis)
                 if (point.z < previousGridZ) {
-                    currentGridY += 1;
                     currentGridZ = 0;
                 }
 
