@@ -62,7 +62,7 @@
                 <dependency>
                         <groupId>playasystems</groupId>
                         <artifactId>gigglepixel</artifactId>
-                        <version>0.0.1</version>
+                        <version>0.0.2</version>
                         <scope>provided</scope>
                 </dependency>
         <dependency>

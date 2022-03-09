@@ -9,14 +9,12 @@ import heronarts.lx.color.LXSwatch;
 import java.io.IOException;
 
 public class GigglePixelListener implements LXLoopTask {
-  private static final int GP_PORT = 8080;
-
   private final LX lx;
   private final GPListenerTask gp;
 
   public GigglePixelListener(LX lx, String listenIP) {
     this.lx = lx;
-    this.gp = new GPListenerTask(listenIP, GP_PORT);
+    this.gp = new GPListenerTask(listenIP);
   }
 
   @Override
