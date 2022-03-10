@@ -31,6 +31,7 @@ import titanicsend.pattern.jeff.*;
 import titanicsend.pattern.tmc.*;
 import titanicsend.pattern.tom.*;
 import titanicsend.pattern.mike.*;
+import titanicsend.pattern.cesar.*;
 
 public class TEApp extends PApplet implements LXPlugin  {
   private TEWholeModel model;
@@ -88,6 +89,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
     lx.registry.addPattern(Pulse.class);
     lx.registry.addPattern(Fire.class);
+    lx.registry.addPattern(HandTracker.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
   }
 
