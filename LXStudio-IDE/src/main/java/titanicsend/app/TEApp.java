@@ -19,12 +19,12 @@
 package titanicsend.app;
 
 import java.io.File;
+import java.io.IOException;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
-import titanicsend.GigglePixelListener;
 import titanicsend.model.TEWholeModel;
 import titanicsend.output.TESacnOutput;
 import titanicsend.pattern.alex.*;
@@ -39,6 +39,9 @@ public class TEApp extends PApplet implements LXPlugin  {
   private static int WIDTH = 1280;
   private static int HEIGHT = 800;
   private static boolean FULLSCREEN = false;
+
+  private GigglePixelListener gpListener;
+  private GigglePixelBroadcaster gpBroadcaster;
 
   @Override
   public void settings() {
@@ -90,8 +93,23 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(Pulse.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
-    GigglePixelListener gpListener = new GigglePixelListener(lx,"127.0.0.1");
-    lx.engine.addLoopTask(gpListener);
+    int myGigglePixelID = 73;  // Looks like "TE"
+    try {
+      this.gpListener = new GigglePixelListener(lx, "0.0.0.0", myGigglePixelID);
+      lx.engine.addLoopTask(this.gpListener);
+      LX.log("GigglePixel listener created");
+    } catch (IOException e) {
+      LX.log("Failed to create GigglePixel listener: " + e.getMessage());
+    }
+
+    try {
+      this.gpBroadcaster = new GigglePixelBroadcaster(
+              lx, "127.0.0.1", this.model.name, myGigglePixelID);
+      lx.engine.addLoopTask(this.gpBroadcaster);
+      LX.log("GigglePixel broadcaster created");
+    } catch (IOException e) {
+      LX.log("Failed to create GigglePixel broadcaster: " + e.getMessage());
+    }
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
@@ -107,6 +125,10 @@ public class TEApp extends PApplet implements LXPlugin  {
     TEVirtualOverlays visual = new TEVirtualOverlays(this.model);
     lx.ui.preview.addComponent(visual);
     new TEUIControls(ui, visual, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global);
+
+    GigglePixelUI gpui = new GigglePixelUI(ui, ui.leftPane.global.getContentWidth(),
+            this.gpListener, this.gpBroadcaster);
+    gpui.addToContainer(ui.leftPane.global);
   }
 
   @Override
