@@ -236,7 +236,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.processing:core:4.0b2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jogamp.jogl:jogl-all:2.4.0-rc-20210111" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.4.0-rc-20210111" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: playasystems:gigglepixel:0.0.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter:5.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
@@ -245,5 +244,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-params:5.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-engine:1.8.2" level="project" />
+    <orderEntry type="library" name="gigglepixel-0.0.3" level="project" />
   </component>
 </module>

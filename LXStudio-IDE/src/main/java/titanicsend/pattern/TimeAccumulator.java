@@ -4,7 +4,7 @@ public class TimeAccumulator {
   private double accumulatedMsec;
   private final double threshold;
 
-  TimeAccumulator(double threshold) {
+  public TimeAccumulator(double threshold) {
     this.accumulatedMsec = 0.0;
     this.threshold = threshold;
   }
