@@ -3,7 +3,6 @@ package titanicsend.app;
 import heronarts.lx.LX;
 import heronarts.lx.LXLoopTask;
 import heronarts.lx.color.LXColor;
-import heronarts.lx.color.LXDynamicColor;
 import playasystems.gigglepixel.*;
 import titanicsend.pattern.TimeAccumulator;
 
@@ -21,6 +20,7 @@ public class GigglePixelBroadcaster implements LXLoopTask {
   private final TimeAccumulator timeAccumulator;
   private final String name;
   public boolean enabled;
+  private List<Integer> colors;
 
   public GigglePixelBroadcaster(LX lx, String destIP, String myName, int myID) throws IOException {
     this.lx = lx;
@@ -30,12 +30,18 @@ public class GigglePixelBroadcaster implements LXLoopTask {
     this.name = myName;
     this.timeAccumulator = new TimeAccumulator(BROADCAST_PERIOD_MSEC);
     this.enabled = false;
+    this.colors = null;
+  }
+
+  public void setColors(List<Integer> colors) {
+    this.colors = colors;
   }
 
   @Override
   public void loop(double deltaMs) {
     this.timeAccumulator.add(deltaMs);
     if (!this.enabled) return;
+    if (this.colors == null) return;
     if (!this.timeAccumulator.timeToRun()) return;
 
     GPIdentificationPacket idPacket = new GPIdentificationPacket(this.name);
@@ -46,11 +52,10 @@ public class GigglePixelBroadcaster implements LXLoopTask {
       return;
     }
 
-    int numColors = this.lx.engine.palette.swatch.colors.size();
+    int numColors = this.colors.size();
     if (numColors < 1) return;
     List<GPColor> entries = new ArrayList<>();
-    for (LXDynamicColor dColor : this.lx.engine.palette.swatch.colors) {
-      int color = dColor.getColor();
+    for (Integer color : this.colors) {
       int r = (256 + LXColor.red(color)) % 256;
       int g = (256 + LXColor.green(color)) % 256;
       int b = (256 + LXColor.blue(color)) % 256;

@@ -26,6 +26,7 @@ import heronarts.lx.LXPlugin;
 import heronarts.lx.studio.LXStudio;
 import processing.core.PApplet;
 import titanicsend.model.TEWholeModel;
+import titanicsend.output.GPOutput;
 import titanicsend.output.TESacnOutput;
 import titanicsend.pattern.alex.*;
 import titanicsend.pattern.jeff.*;
@@ -110,6 +111,9 @@ public class TEApp extends PApplet implements LXPlugin  {
     } catch (IOException e) {
       LX.log("Failed to create GigglePixel broadcaster: " + e.getMessage());
     }
+
+    GPOutput gpOutput = new GPOutput(lx, this.gpBroadcaster);
+    lx.addOutput(gpOutput);
   }
 
   public void initializeUI(LXStudio lx, LXStudio.UI ui) {
@@ -149,8 +153,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     boolean headless = false;
     File projectFile = null;
     for (int i = 0; i < args.length; ++i) {
-      if ("--help".equals(args[i]) || "-h".equals(args[i])) {
-      } else if ("--headless".equals(args[i])) {
+      if ("--headless".equals(args[i])) {
         headless = true;
       } else if ("--fullscreen".equals(args[i]) || "-f".equals(args[i])) {
         FULLSCREEN = true;
