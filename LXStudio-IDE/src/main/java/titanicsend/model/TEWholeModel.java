@@ -296,21 +296,30 @@ public class TEWholeModel extends LXModel {
 
     Scanner s = loadFilePrivate(geometry.subdir + "/boxes.txt");
 
+    List<LXVector> vectors = new ArrayList<>();
     while (s.hasNextLine()) {
       String line = s.nextLine();
+      if (line.isBlank()) continue;
       String[] tokens = line.split("\\s+");
-      assert tokens.length == 6 : "Found " + tokens.length + " tokens";
+      assert tokens.length == 3 : "Found " + tokens.length + " tokens";
 
       int x = Integer.parseInt(tokens[0]);
       int y = Integer.parseInt(tokens[1]);
       int z = Integer.parseInt(tokens[2]);
-      int dx = Integer.parseInt(tokens[3]);
-      int dy = Integer.parseInt(tokens[4]);
-      int dz = Integer.parseInt(tokens[5]);
 
-      TEBox box = new TEBox(new LXVector(x,y,z), new LXVector(dx,dy,dz));
-      geometry.boxes.add(box);
+      vectors.add(new LXVector(x,y,z));
+
+      if (vectors.size() == 8) {
+        geometry.boxes.add(new TEBox(vectors));
+        List<LXVector> mirrored = new ArrayList<>();
+        for (LXVector v : vectors) {
+          mirrored.add(new LXVector(v.x, v.y, -v.z));
+        }
+        geometry.boxes.add(new TEBox(mirrored));
+        vectors.clear();
+      }
     }
+    assert vectors.size() == 0 : "Leftover lines in boxes.txt";
   }
 
   private static void loadGeneral(Geometry geometry) {
