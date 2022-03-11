@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 
-import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class GigglePixelBroadcaster implements LXLoopTask {
   public static final int BROADCAST_PERIOD_MSEC = 5000;
@@ -54,7 +54,7 @@ public class GigglePixelBroadcaster implements LXLoopTask {
       int r = (256 + LXColor.red(color)) % 256;
       int g = (256 + LXColor.green(color)) % 256;
       int b = (256 + LXColor.blue(color)) % 256;
-      int frac = max(255, 256 / numColors);
+      int frac = min(255, 256 / numColors);
       entries.add(new GPColor(r,g,b,frac));
     }
     GPPalettePacket palettePacket = new GPPalettePacket(entries);
