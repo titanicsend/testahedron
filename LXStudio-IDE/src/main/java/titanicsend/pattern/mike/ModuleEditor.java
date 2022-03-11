@@ -22,6 +22,8 @@ import titanicsend.pattern.PeriodicPattern;
 
 import java.util.*;
 
+import static java.lang.Math.floorMod;
+
 public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<ModuleEditor> {
   private static final double MOVE_PERIOD_MSEC = 50.0;
 
@@ -239,8 +241,13 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
     for (Map.Entry<Integer, List<List<Link>>> entry : this.routesByModule.entrySet()) {
       int hue = ((entry.getKey() - 1) * 27) % 360;
       int i = 0;
+      int numAnts = 0;
+
       for (List<Link> listOfLinks : entry.getValue()) {
         int j = 0;
+        numAnts++;
+
+        int trailLength = numAnts + 50;
         for (Link link : listOfLinks) {
           LXPoint[] points = link.edge.points;
           if (!link.fwd) { // Reverse the points list
@@ -256,9 +263,12 @@ public class ModuleEditor extends PeriodicPattern implements UIDeviceControls<Mo
             if (bri > 100) bri = 100;
             if (bri < MIN_BRI) bri = MIN_BRI;
             j++;
-            int ci = (10 + i++ - phase) % 10;
-            if (ci == 0) sat = 0;
-            if (ci == 1) bri = 0;
+
+            int ci = floorMod(i++ - phase, trailLength);
+            if (ci < numAnts * 3) {
+              if (ci % 3 == 0) sat = 0;
+              if (ci % 3 == 1) bri = 0;
+            }
             colors[point.index] = LXColor.hsb(hue, sat, bri);
           }
         }
