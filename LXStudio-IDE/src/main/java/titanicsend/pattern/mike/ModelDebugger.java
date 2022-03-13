@@ -13,6 +13,8 @@ import heronarts.lx.studio.ui.device.UIDeviceControls;
 import heronarts.p4lx.ui.UI2dComponent;
 import heronarts.p4lx.ui.UI2dContainer;
 import heronarts.p4lx.ui.component.UITextBox;
+import titanicsend.app.TEVirtualColor;
+import titanicsend.model.TEVertex;
 import titanicsend.pattern.TEPattern;
 
 public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDebugger> {
@@ -80,7 +82,9 @@ public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDe
 
   public void repaint(LXParameter unused) {
     this.clearPixels();
+    this.clearVertexes();
     List<LXModel> subModels = new ArrayList<>();
+    List<TEVertex> vertexes = new ArrayList<>();
     String idStr = this.objectId.getString().trim().toUpperCase();
     boolean getAll = idStr.equals("");
 
@@ -88,7 +92,7 @@ public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDe
 
     switch (this.objectType.getEnum()) {
       case VERTEX:
-        // TODO: implement
+        vertexes.add(this.model.vertexesById.get(Integer.parseInt(idStr)));
         break;
       case EDGE:
         if (getAll)
@@ -115,7 +119,7 @@ public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDe
 
     // If no submodels, don't print error about invalid points.
     // If there are submodels, turn on the error for now and see if it gets turned off.
-    boolean pointErr = !subModels.isEmpty();
+    boolean pointErr = !(subModels.isEmpty() && vertexes.isEmpty());
 
     int pi = this.pointIndex.getValuei();
     for (LXModel subModel : subModels) {
@@ -127,7 +131,17 @@ public class ModelDebugger extends TEPattern implements UIDeviceControls<ModelDe
         }
       }
     }
+
+    for (TEVertex vertex : vertexes) {
+      vertex.virtualColor = new TEVirtualColor(255, 0, 0, 255);
+    }
     this.pointErrLabel.setVisible(pointErr);
+  }
+
+  public void clearVertexes() {
+    for(TEVertex vertex : this.model.vertexesById.values()) {
+      vertex.virtualColor = new TEVirtualColor(255, 255, 255, 255);
+    }
   }
 
   public void run(double deltaMs) {
