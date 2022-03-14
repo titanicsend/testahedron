@@ -105,7 +105,7 @@ public class TEApp extends PApplet implements LXPlugin  {
 
     try {
       this.gpBroadcaster = new GigglePixelBroadcaster(
-              lx, "127.0.0.1", this.model.name, myGigglePixelID);
+              lx, "255.255.255.255", this.model.name, myGigglePixelID);
       lx.engine.addLoopTask(this.gpBroadcaster);
       LX.log("GigglePixel broadcaster created");
     } catch (IOException e) {

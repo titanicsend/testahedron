@@ -143,6 +143,7 @@ public class TEWholeModel extends LXModel {
     assert tokens.length == 2;
     int universeNum = Integer.parseInt(tokens[0]);
     int strandOffset = Integer.parseInt(tokens[1]);
+    // ipAddress = "127.0.0.1"
     TESacnOutput.registerSubmodel(subModel, ipAddress, universeNum, strandOffset, fwd);
   }
 
