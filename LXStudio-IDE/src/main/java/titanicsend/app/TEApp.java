@@ -92,6 +92,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     lx.registry.addPattern(SimpleSolidEdgePattern.class);
     lx.registry.addPattern(SimpleSolidPanelPattern.class);
     lx.registry.addPattern(Pulse.class);
+    lx.registry.addPattern(Fire.class);
     lx.registry.addEffect(titanicsend.effect.BasicEffect.class);
 
     int myGigglePixelID = 73;  // Looks like "TE"
