@@ -1,7 +1,9 @@
 package titanicsend.pattern.tom;
 
 import heronarts.lx.LX;
+import heronarts.lx.Tempo;
 import heronarts.lx.color.LXColor;
+import heronarts.lx.effect.LXEffect;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.modulator.SawLFO;
 import heronarts.lx.parameter.*;
@@ -23,6 +25,18 @@ public class Pulse extends TEPattern {
                     .setUnits(LXParameter.Units.HERTZ)
                     .setDescription("Rate of the rotation");
 
+    public final BooleanParameter tempoSync =
+            new BooleanParameter("Sync", false)
+                    .setDescription("Whether this modulator syncs to a tempo");
+
+    public final EnumParameter<Tempo.Division> tempoDivision =
+            new EnumParameter<Tempo.Division>("Division", Tempo.Division.QUARTER)
+                    .setDescription("Tempo division when in sync mode");
+
+    public final BooleanParameter tempoLock =
+            new BooleanParameter("Lock", true)
+                    .setDescription("Whether this modulator is locked to the beat grid or free-running");
+
     protected final SawLFO phase = new SawLFO(0, 1, new FunctionalParameter() {
         public double getValue() {
             return 1000 / rate.getValue();
@@ -33,6 +47,9 @@ public class Pulse extends TEPattern {
         super(lx);
         startModulator(this.phase);
         addParameter("rate", this.rate);
+        addParameter("tempoDivision", this.tempoDivision);
+        addParameter("tempoSync", this.tempoSync);
+        addParameter("tempoLock", this.tempoLock);
         pointMap = buildPointMap(model.panelsById);
     }
 
@@ -74,7 +91,7 @@ public class Pulse extends TEPattern {
         };
 
         int i = 1;
-        while (currentVertices[0].distanceTo(panel.centroid) > (2 * PanelStriper.DISTANCE_BETWEEN_PIXELS)) {
+        while (currentVertices[0].distanceTo(panel.centroid) > (PanelStriper.DISTANCE_BETWEEN_PIXELS)) {
             points.add(0, new ArrayList<LXPoint>());
             LXVector[][] edges = {
                     {currentVertices[0], currentVertices[1]},
@@ -116,4 +133,18 @@ public class Pulse extends TEPattern {
         return v0.dist(projection);
     }
 
+    @Override
+    public void onParameterChanged(LXParameter parameter) {
+        super.onParameterChanged(parameter);
+        if (parameter.getPath().equals("tempoSync")) {
+            BooleanParameter p = (BooleanParameter) parameter;
+            this.phase.tempoSync.setValue(p.getValueb());
+        } else if (parameter.getPath().equals("tempoDivision")) {
+            EnumParameter<Tempo.Division> p = (EnumParameter<Tempo.Division>) parameter;
+            this.phase.tempoDivision.setValue(p.getEnum());
+        } else if (parameter.getPath().equals("tempoLock")) {
+            BooleanParameter p = (BooleanParameter) parameter;
+            this.phase.tempoDivision.setValue(p.getValueb());
+        }
+    }
 }
